@@ -1,0 +1,13 @@
+.v-grid-default-theme {
+    /* custom variables */
+
+    /* global */
+    --border-color: #bdc3c7;
+    --default-font-size: 12px;
+    /* headers */
+    --header-background-color: #f5f7f7;
+    --header-foreground-color: rgb(0, 0, 0, 0.5);
+
+    /* global styles */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;;
+}

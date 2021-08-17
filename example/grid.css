@@ -1,0 +1,10 @@
+body, html {
+    padding: 0;
+    margin: 0;
+}
+
+.example-grid-wrapper {
+    width: 960px;
+    height: 480px;
+    margin: 50px auto;
+}

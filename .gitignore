@@ -102,3 +102,15 @@ dist
 
 # TernJS port file
 .tern-port
+
+# MacOS and windows dirty
+._*
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode
+.idea
+
+# ENV
+.env

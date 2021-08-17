@@ -1,0 +1,58 @@
+.root {
+    border: 1px solid var(--border-color);
+    font-size: var(--default-font-size);
+    display: flex;
+    flex-direction: column;
+}
+
+/* headers */
+
+.header {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+}
+
+.header-columns {
+    display: flex;
+    color: var(--header-foreground-color);
+    font-weight: 600;
+    background-color: var(--header-background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+
+.normal-cells {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.normal-cells,
+.normal-columns {
+    flex-grow: 1;
+    overflow: hidden;
+}
+.normal-cells {
+    overflow-x: auto;
+}
+
+.pinned-left-cells,
+.pinned-left-columns {
+    border-right: 1px solid var(--border-color);
+}
+
+.pinned-right-cells,
+.pinned-right-columns {
+    border-left: 1px solid var(--border-color);
+}
+
+/* body */
+.body {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+}
+
+.row-cells {
+    display: flex;
+}

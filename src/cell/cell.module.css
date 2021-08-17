@@ -1,0 +1,13 @@
+.row-cell {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    position: relative;
+    padding: 0 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}

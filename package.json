@@ -1,0 +1,36 @@
+{
+  "name": "visual-grid",
+  "version": "1.0.0",
+  "description": "JavaScript Data Table",
+  "main": "./dist/visual-grid.umd.js",
+  "module": "./dist/visual-grid.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/visual-grid.es.js",
+      "require": "./dist/visual-grid.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/visualjs/grid.git"
+  },
+  "keywords": [
+    "visualjs",
+    "grid",
+    "table"
+  ],
+  "author": "visualjs",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/visualjs/grid/issues"
+  },
+  "homepage": "https://github.com/visualjs/grid#readme",
+  "devDependencies": {
+    "vite": "^2.5.0"
+  }
+}

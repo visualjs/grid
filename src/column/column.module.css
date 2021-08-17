@@ -1,0 +1,22 @@
+.header-column {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    position: relative;
+    padding: 0 12px;
+    border-right: 1px solid var(--border-color);
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.column-resize {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 8px;
+    height: 100%;
+    cursor: ew-resize;
+    z-index: 2;
+}
