@@ -26,8 +26,8 @@ for (let i = 0; i < 100; i++) {
 new Grid({
     container: document.querySelector("#grid"),
     columns: [
-        { headerName: 'Name', field: 'name', pinned: 'left' },
-        { headerName: 'Language', field: 'language' },
+        { headerName: 'Name', field: 'name', pinned: 'left', width: 120 },
+        { headerName: 'Language', field: 'language', pinned: 'left', width: 100, },
         { headerName: 'Country', field: 'country' },
         { headerName: 'Continent', field: 'continent' },
         { headerName: 'Game Name', field: 'game' },

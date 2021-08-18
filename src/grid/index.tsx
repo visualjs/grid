@@ -5,12 +5,16 @@ import { Component, h, render } from '@/component';
 
 import styles from './grid.module.css';
 
-const defaultOptions = {
+const defaultGridOptions = {
     width: '100%',
     height: '100%',
     headerHeight: 30,
     rowHeight: 28,
 }
+
+const defaultColumnOptions = {
+    width: 200,
+};
 
 class Grid extends Component<GridOptions> {
 
@@ -27,9 +31,11 @@ class Grid extends Component<GridOptions> {
     constructor(props: GridOptions) {
         super(props);
 
-        this.props = Object.assign(defaultOptions, props);
+        this.props = Object.assign({}, defaultGridOptions, props);
 
         this.props.columns.forEach(col => {
+            col = Object.assign({}, defaultColumnOptions, col);
+            
             if (col.pinned == 'left') {
                 this.pinnedLeftColumns.push(col.field);
             } else if (col.pinned == 'right') {
