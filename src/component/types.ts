@@ -18,11 +18,13 @@ export interface ComponentClass<P = {}> {
 
 export type ComponentType<P = {}> = ComponentClass<P> | FunctionComponent<P>;
 
+export type RefCallback<T> = (instance: T | null) => void;
+
 export interface VNode<P = {}> {
 	type: ComponentType<P> | string;
 	props: P & { children: ComponentChildren };
 	key?: any;
-	ref?: string;
+	ref?: RefCallback<any>;
 	_vnode?: boolean;
 	_dom?: Node;
 }

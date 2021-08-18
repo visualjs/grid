@@ -17,7 +17,8 @@ export function render(vnode: VNode<any>, parent: Node): any {
 
     if ('function' == typeof newType) {
         if ('prototype' in newType && newType.prototype.render) {
-            vnode._dom = render((new newType(vnode.props)).render(), parent);
+            const c = (new newType(vnode.props));
+            vnode._dom = render(c.render(), parent);
         } else {
             vnode._dom = render(newType(vnode.props), parent);
         }
@@ -35,6 +36,10 @@ export function render(vnode: VNode<any>, parent: Node): any {
         const c = vnode.props.children;
         renderChildren(vnode._dom, Array.isArray(c) ? c : [c]);
         parent.appendChild(vnode._dom);
+
+        if (vnode.ref) {
+            vnode.ref(vnode._dom);
+        }
     }
 
     return vnode._dom;

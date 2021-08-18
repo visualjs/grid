@@ -14,11 +14,13 @@ declare namespace JSX {
 
     export type ComponentType<P = {}> = ComponentClass<P> | FunctionComponent<P>;
 
+    export type RefCallback<T> = (instance: T | null) => void;
+
     export interface VNode<P = {}> {
         type: ComponentType<P> | string;
         props: P & { children: ComponentChildren };
         key?: any;
-        ref?: string;
+        ref?: RefCallback<any>;
     }
 
     export type ComponentChild =
@@ -37,7 +39,7 @@ declare namespace JSX {
     interface ElementClass extends Component<any> { }
 
     export interface ClassAttributes<T> {
-        ref?: string;
+        ref?: RefCallback<any>;
     }
 
     interface ElementAttributesProperty {

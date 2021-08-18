@@ -10,6 +10,12 @@ abstract class Component<P> {
         //
     }
 
+    protected createRef(name: string) {
+        return (e: HTMLElement) => {
+            this.refs[name] = e;
+        }
+    }
+
     // create jsx fragment
     abstract render(): ComponentChild;
 }

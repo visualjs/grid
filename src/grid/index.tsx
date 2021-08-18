@@ -50,6 +50,10 @@ class Grid extends Component<GridOptions> {
     }
 
     protected resetScrollSpacer() {
+        const spacerX = this.refs.body.offsetWidth - this.refs.body.clientWidth;
+        this.refs.header.style.paddingRight = spacerX + 'px';
+
+        console.log(this.refs.normalCells.offsetHeight - this.refs.normalCells.clientHeight);
     }
 
     public render() {
@@ -70,9 +74,9 @@ class Grid extends Component<GridOptions> {
         }
 
         return (
-            <div ref="root" className={styles.root} style={rootStyle}>
+            <div ref={this.createRef("root")} className={styles.root} style={rootStyle}>
                 {/* headers */}
-                <div ref="header" className={styles.header} style={headerStyle}>
+                <div ref={this.createRef("header")} className={styles.header} style={headerStyle}>
                     <div className={[styles.pinnedLeftColumns, styles.headerColumns]}>
                         {
                             this.pinnedLeftColumns.map(col => {
@@ -96,7 +100,7 @@ class Grid extends Component<GridOptions> {
                     </div>
                 </div>
                 {/* body */}
-                <div ref="body" className={styles.body}>
+                <div ref={this.createRef("body")} className={styles.body}>
                     <div className={styles.pinnedLeftCells}>
                         {
                             this.props.rows.map(row => {
@@ -112,7 +116,7 @@ class Grid extends Component<GridOptions> {
                             })
                         }
                     </div>
-                    <div ref="normalCells" className={styles.normalCells}>
+                    <div ref={this.createRef("normalCells")} className={styles.normalCells}>
                         {
                             this.props.rows.map(row => {
                                 return (
@@ -141,7 +145,7 @@ class Grid extends Component<GridOptions> {
                                 )
                             })
                         }
-                    </div>
+                    </div>                        
                 </div>
             </div>
         );

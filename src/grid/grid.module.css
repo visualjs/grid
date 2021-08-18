@@ -45,12 +45,17 @@
 .pinned-right-columns {
     border-left: 1px solid var(--border-color);
 }
+.pinned-left-cells,
+.pinned-right-cells {
+    position: relative;
+}
 
 /* body */
 .body {
     flex-grow: 1;
     overflow-y: auto;
     display: flex;
+    position: relative;
 }
 
 .row-cells {
