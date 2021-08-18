@@ -23,6 +23,8 @@ export interface VNode<P = {}> {
 	props: P & { children: ComponentChildren };
 	key?: any;
 	ref?: string;
+	_vnode?: boolean;
+	_dom?: Node;
 }
 
 export type ComponentChild =

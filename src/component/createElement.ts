@@ -14,7 +14,7 @@ export function createVNode(
         props,
         key,
         ref,
-        constructor: undefined as any,
+        _vnode: true,
     };
 
     return vnode;

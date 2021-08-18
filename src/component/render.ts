@@ -10,37 +10,34 @@ export function render(vnode: VNode<any>, parent: Node): any {
     let newType: any = vnode.type;
 
     // When passing through createElement it assigns the object
-    // constructor as undefined. This to prevent JSON-injection.
-    if (vnode.constructor !== undefined) {
+    // _vnode as true. This to prevent JSON-injection.
+    if (vnode._vnode != true) {
         return null;
     }
 
-    let dom: HTMLElement | Text | null = null;
-
     if ('function' == typeof newType) {
         if ('prototype' in newType && newType.prototype.render) {
-            return render((new newType(vnode.props)).render(), parent);
+            vnode._dom = render((new newType(vnode.props)).render(), parent);
         } else {
-            return render(newType(vnode.props), parent);
+            vnode._dom = render(newType(vnode.props), parent);
         }
-
     } else if (newType == null) {
-        dom = document.createTextNode(vnode.props);
+        vnode._dom = document.createTextNode(vnode.props);
     } else {
-        dom = document.createElement(newType, vnode.props);
+        vnode._dom = document.createElement(newType, vnode.props);
     }
 
-    if (dom instanceof HTMLElement) {
-        setProps(dom, vnode.props);
+    if (vnode._dom instanceof HTMLElement) {
+        setProps(vnode._dom, vnode.props);
     }
 
-    if (dom) {
+    if (vnode._dom) {
         const c = vnode.props.children;
-        renderChildren(dom, Array.isArray(c) ? c : [c]);
-        parent.appendChild(dom);
+        renderChildren(vnode._dom, Array.isArray(c) ? c : [c]);
+        parent.appendChild(vnode._dom);
     }
 
-    return dom;
+    return vnode._dom;
 }
 
 /**
@@ -53,13 +50,8 @@ function renderChildren(parent: Node, children: any[]) {
 
         if (child == null || typeof child == 'boolean') {
 			child = null;
-		}
-        else if (
-			typeof child == 'string' ||
-			typeof child == 'number' ||
-			typeof child == 'bigint'
-		) {
-			child = createVNode(null, child as any);
+		} else if (!Array.isArray(child) && child._vnode != true) {
+			child = createVNode(null, child.toString() as any);
         }
 
         if (child == null || child == undefined) {
