@@ -1,9 +1,9 @@
 
 export type Key = string | number | any;
 
-export interface Attributes {
-	key?: Key;
-	jsx?: boolean;
+export interface IntrinsicAttributes {
+	ref?: RefCallback<any>;
+	key?: any;
 }
 
 export interface Component<P> {}

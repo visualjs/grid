@@ -535,6 +535,7 @@ declare namespace JSX {
     }
 
     interface IntrinsicAttributes {
+        ref?: RefCallback<any>;
         key?: any;
     }
 

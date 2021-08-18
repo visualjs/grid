@@ -6,7 +6,8 @@
     --default-font-size: 12px;
     /* headers */
     --header-background-color: #f5f7f7;
-    --header-foreground-color: rgb(0, 0, 0, 0.5);
+    --header-foreground-color: rgba(0, 0, 0, 0.5);
+    --header-resizer-active-color: #409eff;
     /* cells */
 
     /* global styles */

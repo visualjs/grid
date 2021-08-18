@@ -1,18 +1,14 @@
-import { ColumnProps } from "@/column";
 import Component, { h } from "@/component";
+import { ColumnOptions } from "@/types";
 
 import styles from './cell.module.css';
 
 export interface CellProps {
     data: any;
-    column: ColumnProps;
+    column: ColumnOptions;
 }
 
 class Cell extends Component<CellProps> {
-
-    constructor(protected props: CellProps) {
-        super(props);
-    }
 
     render() {
 

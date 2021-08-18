@@ -6,6 +6,9 @@
     padding: 0 12px;
     border-right: 1px solid var(--border-color);
     box-sizing: border-box;
+}
+
+.header-column span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -15,8 +18,9 @@
     position: absolute;
     right: 0;
     top: 0;
-    width: 8px;
+    width: 10px;
     height: 100%;
     cursor: ew-resize;
     z-index: 2;
+    border-right: 0px solid var(--header-resizer-active-color, #409eff);
 }

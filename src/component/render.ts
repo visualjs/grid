@@ -16,12 +16,20 @@ export function render(vnode: VNode<any>, parent: Node): any {
     }
 
     if ('function' == typeof newType) {
+        let dom: HTMLElement | null = null;
+        
         if ('prototype' in newType && newType.prototype.render) {
             const c = (new newType(vnode.props));
-            return render(c.render(), parent);
+            dom = render(c.render(), parent);
         } else {
-            return render(newType(vnode.props), parent);
+            dom = render(newType(vnode.props), parent);
         }
+
+        if (vnode.ref) {
+            vnode.ref(dom);
+        }
+
+        return dom;
     } else if (newType == null) {
         vnode._dom = document.createTextNode(vnode.props);
     } else {

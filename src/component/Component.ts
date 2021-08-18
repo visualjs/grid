@@ -1,4 +1,4 @@
-import { ComponentChild } from "./types";
+import { ComponentChild, IntrinsicAttributes } from "./types";
 
 abstract class Component<P> {
 
@@ -6,13 +6,24 @@ abstract class Component<P> {
 
     protected refs: Record<string, HTMLElement> = {};
 
-    constructor(protected props?: P) {
-        //
+    protected listRefs: Record<string, HTMLElement[]> = {};
+
+    constructor(protected props?: P & IntrinsicAttributes) {
+        // 
     }
 
     protected createRef(name: string) {
         return (e: HTMLElement) => {
-            this.refs[name] = e;
+            if (name.endsWith('[]')) {
+                name = name.replace('[]', '');
+                if (!this.listRefs[name]) {
+                    this.listRefs[name] = [];
+                }
+
+                this.listRefs[name].push(e);
+            } else {
+                this.refs[name] = e;
+            }
         }
     }
 

@@ -3,6 +3,7 @@
     font-size: var(--default-font-size);
     display: flex;
     flex-direction: column;
+    user-select: none;
 }
 
 /* headers and cells */
