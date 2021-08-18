@@ -1,12 +1,12 @@
-import h from './h';
-export * from './helper';
-
-abstract class Component {
-    // create jsx fragment
-    abstract render(): HTMLElement;
-}
+import { createElement } from './createElement';
+import Component from './Component';
+export * from './render';
+export * from './types';
 
 export default Component;
+
 export {
-    h
+    createElement,
+    createElement as h,
+    Component
 }

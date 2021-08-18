@@ -1,7 +1,7 @@
 import { GridOptions } from '@/types';
 import Column, { ColumnProps } from '@/column';
 import Cell from '@/cell';
-import { h } from '@/component';
+import { Component, h, render } from '@/component';
 
 import styles from './grid.module.css';
 
@@ -12,7 +12,7 @@ const defaultOptions = {
     rowHeight: 28,
 }
 
-class Grid {
+class Grid extends Component<GridOptions> {
 
     // save ordered column fields
     protected pinnedLeftColumns: string[] = [];
@@ -24,10 +24,12 @@ class Grid {
     // use the column field as the key, and the column option as the value
     protected columns: Record<string, ColumnProps> = {};
 
-    constructor(private options: GridOptions) {
-        this.options = Object.assign(defaultOptions, options);
+    constructor(props: GridOptions) {
+        super(props);
 
-        this.options.columns.forEach(col => {
+        this.props = Object.assign(defaultOptions, props);
+
+        this.props.columns.forEach(col => {
             if (col.pinned == 'left') {
                 this.pinnedLeftColumns.push(col.field);
             } else if (col.pinned == 'right') {
@@ -39,34 +41,38 @@ class Grid {
             this.columns[col.field] = col;
         })
 
-        this.load();
+        this.doRender();
+        this.resetScrollSpacer();
     }
 
-    protected load() {
-        this.options.container.appendChild(this.render());
+    protected doRender() {
+        render(this.render(), this.props.container);
     }
 
-    protected render(): HTMLElement {
+    protected resetScrollSpacer() {
+    }
+
+    public render() {
 
         const rootStyle = {
-            width: this.options.width,
-            height: this.options.height,
+            width: this.props.width,
+            height: this.props.height,
         };
 
         const headerStyle = {
-            height: this.options.headerHeight,
-            minHeight: this.options.headerHeight,
+            height: this.props.headerHeight,
+            minHeight: this.props.headerHeight,
         };
 
         const rowStyle = {
-            height: this.options.rowHeight,
-            minHeight: this.options.rowHeight,
+            height: this.props.rowHeight,
+            minHeight: this.props.rowHeight,
         }
 
         return (
-            <div className={styles.root} style={rootStyle}>
+            <div ref="root" className={styles.root} style={rootStyle}>
                 {/* headers */}
-                <div className={styles.header} style={headerStyle}>
+                <div ref="header" className={styles.header} style={headerStyle}>
                     <div className={[styles.pinnedLeftColumns, styles.headerColumns]}>
                         {
                             this.pinnedLeftColumns.map(col => {
@@ -90,10 +96,10 @@ class Grid {
                     </div>
                 </div>
                 {/* body */}
-                <div className={styles.body}>
+                <div ref="body" className={styles.body}>
                     <div className={styles.pinnedLeftCells}>
                         {
-                            this.options.rows.map(row => {
+                            this.props.rows.map(row => {
                                 return (
                                     <div className={styles.rowCells} style={rowStyle}>
                                         {
@@ -106,9 +112,9 @@ class Grid {
                             })
                         }
                     </div>
-                    <div className={styles.normalCells}>
+                    <div ref="normalCells" className={styles.normalCells}>
                         {
-                            this.options.rows.map(row => {
+                            this.props.rows.map(row => {
                                 return (
                                     <div className={styles.rowCells} style={rowStyle}>
                                         {
@@ -123,7 +129,7 @@ class Grid {
                     </div>
                     <div className={styles.pinnedRightCells}>
                         {
-                            this.options.rows.map(row => {
+                            this.props.rows.map(row => {
                                 return (
                                     <div className={styles.rowCells} style={rowStyle}>
                                         {

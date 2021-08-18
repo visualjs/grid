@@ -15,7 +15,7 @@ export interface ColumnProps {
 }
 
 
-class Column extends Component {
+class Column extends Component<ColumnProps> {
     constructor(private options: ColumnProps, private children: any) {
         super();
 
