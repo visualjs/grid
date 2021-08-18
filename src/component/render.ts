@@ -18,9 +18,9 @@ export function render(vnode: VNode<any>, parent: Node): any {
     if ('function' == typeof newType) {
         if ('prototype' in newType && newType.prototype.render) {
             const c = (new newType(vnode.props));
-            vnode._dom = render(c.render(), parent);
+            return render(c.render(), parent);
         } else {
-            vnode._dom = render(newType(vnode.props), parent);
+            return render(newType(vnode.props), parent);
         }
     } else if (newType == null) {
         vnode._dom = document.createTextNode(vnode.props);

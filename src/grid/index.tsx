@@ -42,20 +42,42 @@ class Grid extends Component<GridOptions> {
         })
 
         this.doRender();
-        this.resetScrollSpacer();
+        this.resize();
     }
 
     protected doRender() {
         render(this.render(), this.props.container);
     }
 
-    protected resetScrollSpacer() {
+    protected resize() {
+        // If a vertical scroll bar appears, the last column will be misaligned
+        // a spacer needs to be added
         const spacerX = this.refs.body.offsetWidth - this.refs.body.clientWidth;
         this.refs.header.style.paddingRight = spacerX + 'px';
+
+        // Set the cell container height according to the content height
+        const contentHeight = this.props.rows.length * this.props.rowHeight + 'px';
+        this.refs.pinnedLeftCells.style.height = contentHeight;
+        this.refs.normalCells.style.height = contentHeight;
+        this.refs.pinnedRightCells.style.height = contentHeight;
+
+        // fake horizontal scrollbar
+        if (this.refs.headerContainer.scrollWidth > this.refs.normalCells.clientWidth) {
+            // we need to show a horizontal scrollbar
+            this.refs.horizontalScroll.style.height = this.refs.horizontalScrollContainer.offsetHeight + 'px';
+        } else {
+            this.refs.horizontalScroll.style.height = '0px';
+        }
+
+        this.refs.horizontalLeftSpacer.style.width = this.refs.pinnedLeftCells.offsetWidth + 'px';
+        this.refs.horizontalRightSpacer.style.width = this.refs.pinnedRightCells.offsetWidth + spacerX + 'px';
+        this.refs.horizontalScrollContainer.style.width = this.refs.normalColumns.scrollWidth + 'px';
     }
 
-    protected handleRootClick = () => {
-        console.log('root clicked');
+    protected handleHorizontalScroll = (ev: UIEvent) => {
+        const scrollLeft = this.refs.horizontalScrollView.scrollLeft + 'px';
+        this.refs.headerContainer.style.transform = `translateX(-${scrollLeft})`;
+        this.refs.rowsContainer.style.transform = `translateX(-${scrollLeft})`;
     }
 
     public render() {
@@ -76,7 +98,7 @@ class Grid extends Component<GridOptions> {
         }
 
         return (
-            <div onClick={this.handleRootClick} ref={this.createRef("root")} className={styles.root} style={rootStyle}>
+            <div className={styles.root} style={rootStyle}>
                 {/* headers */}
                 <div ref={this.createRef("header")} className={styles.header} style={headerStyle}>
                     <div className={[styles.pinnedLeftColumns, styles.headerColumns]}>
@@ -86,12 +108,14 @@ class Grid extends Component<GridOptions> {
                             })
                         }
                     </div>
-                    <div className={[styles.normalColumns, styles.headerColumns]}>
-                        {
-                            this.normalColumns.map(col => {
-                                return <Column {...this.columns[col]} />
-                            })
-                        }
+                    <div ref={this.createRef("normalColumns")} className={styles.normalColumns}>
+                        <div ref={this.createRef("headerContainer")} className={[styles.headerContainer, styles.headerColumns]}>
+                            {
+                                this.normalColumns.map(col => {
+                                    return <Column {...this.columns[col]} />
+                                })
+                            }
+                        </div>
                     </div>
                     <div className={[styles.pinnedRightColumns, styles.headerColumns]}>
                         {
@@ -103,7 +127,7 @@ class Grid extends Component<GridOptions> {
                 </div>
                 {/* body */}
                 <div ref={this.createRef("body")} className={styles.body}>
-                    <div className={styles.pinnedLeftCells}>
+                    <div ref={this.createRef("pinnedLeftCells")} className={styles.pinnedLeftCells}>
                         {
                             this.props.rows.map(row => {
                                 return (
@@ -119,21 +143,23 @@ class Grid extends Component<GridOptions> {
                         }
                     </div>
                     <div ref={this.createRef("normalCells")} className={styles.normalCells}>
-                        {
-                            this.props.rows.map(row => {
-                                return (
-                                    <div className={styles.rowCells} style={rowStyle}>
-                                        {
-                                            this.normalColumns.map(col => {
-                                                return <Cell data={row[col]} column={this.columns[col]} />;
-                                            })
-                                        }
-                                    </div>
-                                )
-                            })
-                        }
+                        <div ref={this.createRef("rowsContainer")}>
+                            {
+                                this.props.rows.map(row => {
+                                    return (
+                                        <div className={styles.rowCells} style={rowStyle}>
+                                            {
+                                                this.normalColumns.map(col => {
+                                                    return <Cell data={row[col]} column={this.columns[col]} />;
+                                                })
+                                            }
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
                     </div>
-                    <div className={styles.pinnedRightCells}>
+                    <div ref={this.createRef("pinnedRightCells")} className={styles.pinnedRightCells}>
                         {
                             this.props.rows.map(row => {
                                 return (
@@ -147,7 +173,15 @@ class Grid extends Component<GridOptions> {
                                 )
                             })
                         }
-                    </div>                        
+                    </div>
+                </div>
+                {/* fake horizontal scroll bar */}
+                <div ref={this.createRef("horizontalScroll")} className={styles.horizontalScroll}>
+                    <div ref={this.createRef("horizontalLeftSpacer")} className={styles.horizontalLeftSpacer}></div>
+                    <div ref={this.createRef("horizontalScrollView")} className={styles.horizontalScrollView} onScroll={this.handleHorizontalScroll}>
+                        <div ref={this.createRef("horizontalScrollContainer")} className={styles.horizontalScrollContainer}></div>
+                    </div>
+                    <div ref={this.createRef("horizontalRightSpacer")} className={styles.horizontalRightSpacer}></div>
                 </div>
             </div>
         );
