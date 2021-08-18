@@ -52,8 +52,10 @@ class Grid extends Component<GridOptions> {
     protected resetScrollSpacer() {
         const spacerX = this.refs.body.offsetWidth - this.refs.body.clientWidth;
         this.refs.header.style.paddingRight = spacerX + 'px';
+    }
 
-        console.log(this.refs.normalCells.offsetHeight - this.refs.normalCells.clientHeight);
+    protected handleRootClick = () => {
+        console.log('root clicked');
     }
 
     public render() {
@@ -74,7 +76,7 @@ class Grid extends Component<GridOptions> {
         }
 
         return (
-            <div ref={this.createRef("root")} className={styles.root} style={rootStyle}>
+            <div onClick={this.handleRootClick} ref={this.createRef("root")} className={styles.root} style={rootStyle}>
                 {/* headers */}
                 <div ref={this.createRef("header")} className={styles.header} style={headerStyle}>
                     <div className={[styles.pinnedLeftColumns, styles.headerColumns]}>

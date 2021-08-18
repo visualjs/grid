@@ -49,9 +49,29 @@ export function setProperty(dom: HTMLElement, name: string, value: any) {
             setStyle(dom.style, name, value[name]);
         }
     }
-    // TODO: events binding
+    // events binding
     else if (name[0] === 'o' && name[1] === 'n') {
-        // 
+        let useCapture = name !== (name = name.replace(/Capture$/, ''));
+
+        if (name.toLowerCase() in dom) {
+            name = name.toLowerCase().slice(2);
+        } else {
+            name = name.slice(2);
+        }
+
+        if (!(dom as any)._listeners) {
+            (dom as any)._listeners = {};
+        };
+
+        (dom as any)._listeners[name + useCapture] = value;
+
+        if (value) {
+            const handler = useCapture ? eventProxyCapture : eventProxy;
+            dom.addEventListener(name, handler, useCapture);
+		} else {
+			const handler = useCapture ? eventProxyCapture : eventProxy;
+			dom.removeEventListener(name, handler, useCapture);
+		}
     }
     // normal props
     else if (name !== 'dangerouslySetInnerHTML') {
@@ -82,4 +102,15 @@ export function setProperty(dom: HTMLElement, name: string, value: any) {
 		}
     }
 
+}
+
+/**
+ * Proxy an event to hooked event handlers
+ */
+ function eventProxy(e: Event) {
+	this._listeners[e.type + false](e);
+}
+
+function eventProxyCapture(e: Event) {
+	this._listeners[e.type + true](e);
 }
