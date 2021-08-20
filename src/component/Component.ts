@@ -9,6 +9,8 @@ abstract class Component<P> {
 
     protected base?: Element | Text;
 
+    protected instances: Record<string, Component<any>> = {};
+
     protected refs: Record<string, HTMLElement> = {};
 
     protected listRefs: Record<string, HTMLElement[]> = {};
@@ -18,16 +20,17 @@ abstract class Component<P> {
     }
 
     protected createRef(name: string) {
-        return (e: HTMLElement) => {
+        return (e: VNode<any>) => {
             if (name.endsWith('[]')) {
                 name = name.replace('[]', '');
                 if (!this.listRefs[name]) {
                     this.listRefs[name] = [];
                 }
 
-                this.listRefs[name].push(e);
+                this.listRefs[name].push(e._dom as HTMLElement);
             } else {
-                this.refs[name] = e;
+                this.refs[name] = e._dom as HTMLElement;
+                this.instances[name] = e._component;
             }
         }
     }

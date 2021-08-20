@@ -23,7 +23,13 @@ class Row extends GridElement<Props> {
             <div className={styles.rowCells} style={style}>
                 {
                     this.props.columns.map(col => {
-                        return <Cell data={this.props.data[col]} column={this.grid.getColumnOptions(col)} />
+                        return (
+                            <Cell
+                                data={this.props.data[col]}
+                                row={this.props.data.id}
+                                column={this.grid.getColumnOptions(col)}
+                            />
+                        )
                     })
                 }
             </div>

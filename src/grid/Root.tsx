@@ -1,7 +1,8 @@
 import GridElement from "@/grid/GridElement";
 import { h } from '@/component';
 import Column from '@/column';
-import Row from '@/row';
+import List from './List';
+import Body from './Body';
 
 import styles from './grid.module.css';
 import { ColumnOptions, GridOptions } from "@/types";
@@ -45,16 +46,6 @@ class GridRoot extends GridElement<GridOptions> {
         this.resize();
     }
 
-    protected handleColumnResize = (field: string, width: number) => {
-        this.resize();
-    }
-
-    protected handleHorizontalScroll = (ev: UIEvent) => {
-        const scrollLeft = this.refs.horizontalScrollView.scrollLeft + 'px';
-        this.refs.headerContainer.style.transform = `translateX(-${scrollLeft})`;
-        this.refs.rowsContainer.style.transform = `translateX(-${scrollLeft})`;
-    }
-
     public getColumnOptions(col: string) {
         return this.columns[col];
     }
@@ -65,15 +56,12 @@ class GridRoot extends GridElement<GridOptions> {
         const spacerX = this.refs.body.offsetWidth - this.refs.body.clientWidth;
         this.refs.header.style.paddingRight = spacerX + 'px';
 
-        // Set the cell container height according to the content height
-        const contentHeight = this.props.rows.length * this.props.rowHeight + 'px';
-        // this.refs.phantom.style.height = contentHeight;
-        this.refs.pinnedLeftCells.style.height = contentHeight;
-        this.refs.normalCells.style.height = contentHeight;
-        this.refs.pinnedRightCells.style.height = contentHeight;
+        // this.refs.pinnedLeftCells.style.height = contentHeight;
+        // this.refs.normalCells.style.height = contentHeight;
+        // this.refs.pinnedRightCells.style.height = contentHeight;
 
         // fake horizontal scrollbar
-        if (this.refs.headerContainer.scrollWidth > this.refs.normalCells.clientWidth) {
+        if (this.refs.headerContainer.scrollWidth > this.refs.normalColumns.clientWidth) {
             // we need to show a horizontal scrollbar
             this.refs.horizontalScroll.style.height = this.refs.horizontalScrollContainer.offsetHeight + 'px';
         } else {
@@ -83,6 +71,24 @@ class GridRoot extends GridElement<GridOptions> {
         this.refs.horizontalLeftSpacer.style.width = this.refs.pinnedLeftColumns.offsetWidth + 'px';
         this.refs.horizontalRightSpacer.style.width = this.refs.pinnedRightColumns.offsetWidth + spacerX + 'px';
         this.refs.horizontalScrollContainer.style.width = this.refs.normalColumns.scrollWidth + 'px';
+    }
+
+    /**
+     * Event handlers
+     */
+
+    protected handleColumnResize = (field: string, width: number) => {
+        this.resize();
+    }
+
+    protected handleHorizontalScroll = (ev: UIEvent) => {
+        const scrollLeft = this.refs.horizontalScrollView.scrollLeft + 'px';
+        this.refs.headerContainer.style.transform = `translateX(-${scrollLeft})`;
+        // this.refs.rowsContainer.style.transform = `translateX(-${scrollLeft})`;
+    }
+
+    protected listRender = (item: any) => {
+        return <Body grid={this.grid} item={item} />
     }
 
     public render() {
@@ -98,7 +104,7 @@ class GridRoot extends GridElement<GridOptions> {
         };
 
         return (
-            <div onClick={this.update} className={styles.root} style={rootStyle}>
+            <div className={styles.root} style={rootStyle}>
                 {/* headers */}
                 <div ref={this.createRef("header")} className={styles.header} style={headerStyle}>
                     <div ref={this.createRef("pinnedLeftColumns")} className={[styles.pinnedLeftColumns, styles.headerColumns]}>
@@ -127,7 +133,8 @@ class GridRoot extends GridElement<GridOptions> {
                 </div>
                 {/* body */}
                 <div ref={this.createRef("body")} className={styles.body}>
-                    <div ref={this.createRef("pinnedLeftCells")} className={styles.pinnedLeftCells}>
+                    <List grid={this.grid} items={this.props.rows} itemHeight={this.props.rowHeight} render={this.listRender} />
+                    {/* <div ref={this.createRef("pinnedLeftCells")} className={styles.pinnedLeftCells}>
                         {
                             this.props.rows.map(row => {
                                 return <Row grid={this.grid} data={row} columns={this.pinnedLeftColumns} />
@@ -149,7 +156,7 @@ class GridRoot extends GridElement<GridOptions> {
                                 return <Row grid={this.grid} data={row} columns={this.pinnedRightColumns} />
                             })
                         }
-                    </div>
+                    </div> */}
                 </div>
                 {/* fake horizontal scroll bar */}
                 <div ref={this.createRef("horizontalScroll")} className={styles.horizontalScroll}>

@@ -45,8 +45,8 @@
 
 /* body */
 .body {
+    height: 0;
     flex-grow: 1;
-    overflow-y: auto;
     display: flex;
     position: relative;
 }

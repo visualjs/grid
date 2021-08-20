@@ -3,6 +3,7 @@ export interface Styles {
 }
 
 export interface RowData {
+    id: string;
     [key: string]: any;
 }
 

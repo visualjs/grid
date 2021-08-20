@@ -5,10 +5,18 @@ import styles from './cell.module.css';
 
 export interface CellProps {
     data: any;
+    row: string;
     column: ColumnOptions;
 }
 
 class Cell extends Component<CellProps> {
+
+    protected handleClick = () => {
+        console.log({
+            row: this.props.row,
+            col: this.props.column.field,
+        })
+    }
 
     render() {
 
@@ -21,7 +29,7 @@ class Cell extends Component<CellProps> {
         }
 
         return (
-            <div className={styles.rowCell} style={cellStyle}>
+            <div onClick={this.handleClick} className={styles.rowCell} style={cellStyle}>
                 {this.props.data}
             </div>
         );

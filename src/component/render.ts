@@ -1,6 +1,7 @@
+import Component from './Component';
 import { createElement, createVNode } from './createElement';
 import { setProps } from './props';
-import { Component, VNode } from './types';
+import { VNode } from './types';
 
 interface QueueCallback {
     (): void;
@@ -22,10 +23,13 @@ function renderComponent(c: Component<any>, parent?: Node, commitQueue: QueueCal
         c.componentDidUnmount && c.componentDidUnmount();
     }
 
-    vnode._dom = createDOMElement(parent, c.render(), commitQueue);
+    const result: any = c.render();
+    if ('object' === typeof result && result._vnode === true) {
+        vnode._dom = createDOMElement(parent, result, commitQueue);
+    }
 
     if (vnode.ref) {
-        vnode.ref(vnode._dom);
+        vnode.ref(vnode);
     }
 
     return vnode._dom;
@@ -61,7 +65,7 @@ function createDOMElement(parent: Node, vnode: VNode<any>, commitQueue: QueueCal
         parent.appendChild(vnode._dom);
 
         if (vnode.ref) {
-            vnode.ref(vnode._dom);
+            vnode.ref(vnode);
         }
     }
 

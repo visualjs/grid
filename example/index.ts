@@ -10,6 +10,7 @@ for (let i = 0; i < 100; i++) {
     const countryData = country(i);
 
     rows.push({
+        id: 'row_' + i,
         name: name(i),
         language: countryData.language,
         country: countryData.country,
