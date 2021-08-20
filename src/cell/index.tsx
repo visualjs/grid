@@ -1,4 +1,4 @@
-import Component, { h } from "@/component";
+import GridElement from "@/grid/GridElement";
 import { ColumnOptions } from "@/types";
 
 import styles from './cell.module.css';
@@ -9,7 +9,7 @@ export interface CellProps {
     column: ColumnOptions;
 }
 
-class Cell extends Component<CellProps> {
+class Cell extends GridElement<CellProps> {
 
     protected handleClick = () => {
         console.log({

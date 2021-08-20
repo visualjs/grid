@@ -5,7 +5,7 @@ import './grid.css';
 
 let rows: RowData[] = [];
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 10000; i++) {
 
     const countryData = country(i);
 
@@ -20,12 +20,13 @@ for (let i = 0; i < 100; i++) {
         balance: numeric(10000),
         rating: numeric(10),
         winnings: numeric(100000),
-        date: date(new Date(2021, 1), new Date(2021, 6)),
+        date: date(new Date(2021, 1), new Date(2021, 6)).toString(),
     });
 }
 
 new Grid(document.querySelector("#grid"), {
     columns: [
+        { headerName: 'ID', field: 'id', pinned: 'left', width: 100},
         { headerName: 'Name', field: 'name', pinned: 'left', width: 120, resizable: true },
         { headerName: 'Language', field: 'language', pinned: 'left', width: 100, },
         { headerName: 'Country', field: 'country', resizable: true },

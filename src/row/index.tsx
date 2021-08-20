@@ -1,4 +1,3 @@
-import { h } from "@/component";
 import GridElement from "@/grid/GridElement";
 import Cell from '@/cell';
 import { RowData } from "@/types";
@@ -25,6 +24,7 @@ class Row extends GridElement<Props> {
                     this.props.columns.map(col => {
                         return (
                             <Cell
+                                grid={this.grid}
                                 data={this.props.data[col]}
                                 row={this.props.data.id}
                                 column={this.grid.getColumnOptions(col)}

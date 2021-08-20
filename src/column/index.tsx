@@ -1,4 +1,4 @@
-import Component, { h } from '@/component';
+import GridElement from '@/grid/GridElement';
 import { ColumnOptions } from '@/types';
 import styles from './column.module.css';
 
@@ -6,28 +6,42 @@ export interface Props extends ColumnOptions {
     onResize?: (field: string, width: number) => void;
 }
 
-class Column extends Component<Props> {
+interface State {
+    width: number;
+}
+
+class Column extends GridElement<Props, State> {
 
     protected startPos: number | null = null;
 
     constructor(props: Props) {
         super(props);
 
+        this.state = {
+            width: props.width
+        }
+    }
+
+    componentDidMount() {
         document.addEventListener('mouseup', this.handleMouseUp);
         document.addEventListener('mousemove', this.handleMouseMove);
     }
 
+    componentWillUnmount() {
+        document.removeEventListener('mouseup', this.handleMouseUp);
+        document.removeEventListener('mousemove', this.handleMouseMove);
+    }
+
     protected handleMouseDown = (ev: MouseEvent) => {
         this.startPos = ev.clientX;
-        this.refs.resizer.style.borderRightWidth = '4px';
+        this.refs.resizer.current.style.borderRightWidth = '4px';
     }
 
     protected handleMouseUp = (ev: MouseEvent) => {
         if (this.startPos !== null && this.props.onResize) {
-            const width = this.refs.resizer.offsetLeft;
-
-            this.refs.resizer.style.right = '0px';
-            this.refs.resizer.style.borderRightWidth = '0px';
+            const width = this.refs.resizer.current.offsetLeft;
+            this.refs.resizer.current.style.right = '0px';
+            this.refs.resizer.current.style.borderRightWidth = '0px';
 
             this.updateWidth(width);
             this.props.onResize(this.props.field, width);
@@ -43,8 +57,8 @@ class Column extends Component<Props> {
     }
 
     protected updateResizer = (offset: number) => {
-        if (this.refs.resizer) {
-            this.refs.resizer.style.right = -offset + 'px';
+        if (this.refs.resizer.current) {
+            this.refs.resizer.current.style.right = -offset + 'px';
         }
     }
 
@@ -53,13 +67,13 @@ class Column extends Component<Props> {
             width = this.props.minWidth;
         }
 
-        this.refs.column.style.width = width + 'px';
+        this.setState({ width });
     }
 
     render() {
 
         const cellStyle: { [key: string]: any } = {
-            width: this.props.width
+            width: this.state.width
         }
 
         if (this.props.flex) {
@@ -67,10 +81,10 @@ class Column extends Component<Props> {
         }
 
         return (
-            <div ref={this.createRef("column")} className={styles.headerColumn} style={cellStyle}>
+            <div className={styles.headerColumn} style={cellStyle}>
                 <span>{this.props.headerName}</span>
                 {
-                    this.props.resizable 
+                    !this.props.flex && this.props.resizable
                     && <div ref={this.createRef("resizer")} onMouseDown={this.handleMouseDown} className={styles.columnResize}></div>
                 }
             </div>

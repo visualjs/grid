@@ -4,14 +4,16 @@
         "sourceMap": true,
         "isolatedModules": true,
         "noImplicitAny": true,
-        "module": "es6",
+        "module": "ESNext",
         "target": "es5",
         "lib": [
-            "esnext",
-            "dom"
+            "DOM",
+            "DOM.Iterable",
+            "ESNext"
         ],
-        "jsx": "react",
+        "jsx": "preserve",
         "jsxFactory": "h",
+        "jsxFragmentFactory": "Fragment",
         "allowJs": true,
         "moduleResolution": "node",
         "baseUrl": ".",
@@ -20,5 +22,6 @@
                 "./src/*"
             ]
         }
-    }
+    },
+    "include": ["src"]
 }

@@ -26,4 +26,6 @@ export interface GridOptions {
     headerHeight?: number; // default is 30
     // row
     rowHeight?: number; // default is 28
+    // virtual list
+    preloadRowCount?: number; // default is 10
 }

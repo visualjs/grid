@@ -31,6 +31,11 @@
   },
   "homepage": "https://github.com/visualjs/grid#readme",
   "devDependencies": {
+    "@preact/preset-vite": "^2.1.0",
+    "typescript": "^4.3.5",
     "vite": "^2.5.0"
+  },
+  "dependencies": {
+    "preact": "^10.5.14"
   }
 }

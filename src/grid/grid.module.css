@@ -47,12 +47,7 @@
 .body {
     height: 0;
     flex-grow: 1;
-    display: flex;
     position: relative;
-}
-
-.body-phantom {
-    width: 100%;
 }
 
 /* scroll */

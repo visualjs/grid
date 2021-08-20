@@ -1,7 +1,7 @@
-import { Component } from "@/component";
+import { Component } from "./Component";
 import Grid from "./Grid";
 
-abstract class GridElement<P = {}> extends Component<P & { grid: Grid }> {
+abstract class GridElement<P = {}, S = {}> extends Component<P & { grid: Grid }, S> {
 
     protected grid: Grid;
 
