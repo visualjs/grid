@@ -1,5 +1,5 @@
 import { ComponentType } from ".";
-import { ComponentChildren } from "./types";
+import { ComponentChildren, RefCallback, VNode } from "./types";
 
 /**
  * Create an virtual node
@@ -8,7 +8,7 @@ export function createVNode(
     type: string | ComponentType,
     props: Record<string, any>,
     key?: any,
-    ref?: string) {
+    ref?: RefCallback<any>): VNode<any> {
     const vnode = {
         type,
         props,

@@ -17,7 +17,6 @@ export interface ColumnOptions {
 }
 
 export interface GridOptions {
-    container: HTMLElement;
     width?: string; // default is 100%
     height?: string; // default is 100%
     columns: ColumnOptions[];

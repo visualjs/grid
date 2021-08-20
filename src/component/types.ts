@@ -6,17 +6,23 @@ export interface IntrinsicAttributes {
 	key?: any;
 }
 
-export interface Component<P> {}
+export interface ComponentLifecycle {
+	componentDidMount?(): void;
+	componentWillUnmount?(): void;
+	componentDidUnmount?(): void;
+}
 
-export interface FunctionComponent<P = {}> {
-	(props: P): VNode<any> | null;
+export interface Component<P> extends ComponentLifecycle {
+	_parentDom?: Node,
+	_vnode?: VNode<P>;
+	render(): any;
 }
 
 export interface ComponentClass<P = {}> {
-    new (props: P): Component<P>;
+	new(props: P): Component<P>;
 }
 
-export type ComponentType<P = {}> = ComponentClass<P> | FunctionComponent<P>;
+export type ComponentType<P = {}> = ComponentClass<P>;
 
 export type RefCallback<T> = (instance: T | null) => void;
 
@@ -27,6 +33,7 @@ export interface VNode<P = {}> {
 	ref?: RefCallback<any>;
 	_vnode?: boolean;
 	_dom?: Node;
+	_component?: Component<P>;
 }
 
 export type ComponentChild =

@@ -1,23 +1,17 @@
-import { GridOptions } from '@/types';
-import Column, { ColumnProps } from '@/column';
-import Cell from '@/cell';
-import { Component, h, render } from '@/component';
+import GridElement from "@/grid/GridElement";
+import { h } from '@/component';
+import Column from '@/column';
+import Row from '@/row';
 
 import styles from './grid.module.css';
-
-const defaultGridOptions = {
-    width: '100%',
-    height: '100%',
-    headerHeight: 30,
-    rowHeight: 28,
-}
+import { ColumnOptions, GridOptions } from "@/types";
 
 const defaultColumnOptions = {
     width: 200,
     minWidth: 50,
 };
 
-class Grid extends Component<GridOptions> {
+class GridRoot extends GridElement<GridOptions> {
 
     // save ordered column fields
     protected pinnedLeftColumns: string[] = [];
@@ -27,16 +21,14 @@ class Grid extends Component<GridOptions> {
     protected normalColumns: string[] = [];
 
     // use the column field as the key, and the column option as the value
-    protected columns: Record<string, ColumnProps> = {};
+    protected columns: Record<string, ColumnOptions> = {};
 
     constructor(props: GridOptions) {
         super(props);
 
-        this.props = Object.assign({}, defaultGridOptions, props);
-
         this.props.columns.forEach(col => {
             col = Object.assign({}, defaultColumnOptions, col);
-            
+
             if (col.pinned == 'left') {
                 this.pinnedLeftColumns.push(col.field);
             } else if (col.pinned == 'right') {
@@ -47,17 +39,27 @@ class Grid extends Component<GridOptions> {
 
             this.columns[col.field] = col;
         })
+    }
 
-        this.doRender();
+    public componentDidMount = () => {
         this.resize();
     }
 
-    protected doRender() {
-        render(this.render(), this.props.container);
+    protected handleColumnResize = (field: string, width: number) => {
+        this.resize();
     }
 
-    protected resize() {
+    protected handleHorizontalScroll = (ev: UIEvent) => {
+        const scrollLeft = this.refs.horizontalScrollView.scrollLeft + 'px';
+        this.refs.headerContainer.style.transform = `translateX(-${scrollLeft})`;
+        this.refs.rowsContainer.style.transform = `translateX(-${scrollLeft})`;
+    }
 
+    public getColumnOptions(col: string) {
+        return this.columns[col];
+    }
+
+    public resize() {
         // If a vertical scroll bar appears, the last column will be misaligned
         // a spacer needs to be added
         const spacerX = this.refs.body.offsetWidth - this.refs.body.clientWidth;
@@ -65,6 +67,7 @@ class Grid extends Component<GridOptions> {
 
         // Set the cell container height according to the content height
         const contentHeight = this.props.rows.length * this.props.rowHeight + 'px';
+        // this.refs.phantom.style.height = contentHeight;
         this.refs.pinnedLeftCells.style.height = contentHeight;
         this.refs.normalCells.style.height = contentHeight;
         this.refs.pinnedRightCells.style.height = contentHeight;
@@ -77,23 +80,9 @@ class Grid extends Component<GridOptions> {
             this.refs.horizontalScroll.style.height = '0px';
         }
 
-        this.refs.horizontalLeftSpacer.style.width = this.refs.pinnedLeftCells.offsetWidth + 'px';
-        this.refs.horizontalRightSpacer.style.width = this.refs.pinnedRightCells.offsetWidth + spacerX + 'px';
+        this.refs.horizontalLeftSpacer.style.width = this.refs.pinnedLeftColumns.offsetWidth + 'px';
+        this.refs.horizontalRightSpacer.style.width = this.refs.pinnedRightColumns.offsetWidth + spacerX + 'px';
         this.refs.horizontalScrollContainer.style.width = this.refs.normalColumns.scrollWidth + 'px';
-    }
-
-    protected handleHorizontalScroll = (ev: UIEvent) => {
-        const scrollLeft = this.refs.horizontalScrollView.scrollLeft + 'px';
-        this.refs.headerContainer.style.transform = `translateX(-${scrollLeft})`;
-        this.refs.rowsContainer.style.transform = `translateX(-${scrollLeft})`;
-    }
-
-    protected handleColumnResize = (field: string, width: number) => {
-        for (let i in this.listRefs[field]) {
-            this.listRefs[field][i].style.width = width + 'px';
-        }
-
-        this.resize();
     }
 
     public render() {
@@ -108,16 +97,11 @@ class Grid extends Component<GridOptions> {
             minHeight: this.props.headerHeight,
         };
 
-        const rowStyle = {
-            height: this.props.rowHeight,
-            minHeight: this.props.rowHeight,
-        }
-
         return (
-            <div className={styles.root} style={rootStyle}>
+            <div onClick={this.update} className={styles.root} style={rootStyle}>
                 {/* headers */}
                 <div ref={this.createRef("header")} className={styles.header} style={headerStyle}>
-                    <div className={[styles.pinnedLeftColumns, styles.headerColumns]}>
+                    <div ref={this.createRef("pinnedLeftColumns")} className={[styles.pinnedLeftColumns, styles.headerColumns]}>
                         {
                             this.pinnedLeftColumns.map(col => {
                                 return <Column onResize={this.handleColumnResize} {...this.columns[col]} />
@@ -133,7 +117,7 @@ class Grid extends Component<GridOptions> {
                             }
                         </div>
                     </div>
-                    <div className={[styles.pinnedRightColumns, styles.headerColumns]}>
+                    <div ref={this.createRef("pinnedRightColumns")} className={[styles.pinnedRightColumns, styles.headerColumns]}>
                         {
                             this.pinnedRightColumns.map(col => {
                                 return <Column onResize={this.handleColumnResize} {...this.columns[col]} />
@@ -146,15 +130,7 @@ class Grid extends Component<GridOptions> {
                     <div ref={this.createRef("pinnedLeftCells")} className={styles.pinnedLeftCells}>
                         {
                             this.props.rows.map(row => {
-                                return (
-                                    <div className={styles.rowCells} style={rowStyle}>
-                                        {
-                                            this.pinnedLeftColumns.map(col => {
-                                                return <Cell ref={this.createRef(col + '[]')} data={row[col]} column={this.columns[col]} />;
-                                            })
-                                        }
-                                    </div>
-                                );
+                                return <Row grid={this.grid} data={row} columns={this.pinnedLeftColumns} />
                             })
                         }
                     </div>
@@ -162,15 +138,7 @@ class Grid extends Component<GridOptions> {
                         <div ref={this.createRef("rowsContainer")}>
                             {
                                 this.props.rows.map(row => {
-                                    return (
-                                        <div className={styles.rowCells} style={rowStyle}>
-                                            {
-                                                this.normalColumns.map(col => {
-                                                    return <Cell ref={this.createRef(col + '[]')} data={row[col]} column={this.columns[col]} />;
-                                                })
-                                            }
-                                        </div>
-                                    )
+                                    return <Row grid={this.grid} data={row} columns={this.normalColumns} />
                                 })
                             }
                         </div>
@@ -178,15 +146,7 @@ class Grid extends Component<GridOptions> {
                     <div ref={this.createRef("pinnedRightCells")} className={styles.pinnedRightCells}>
                         {
                             this.props.rows.map(row => {
-                                return (
-                                    <div className={styles.rowCells} style={rowStyle}>
-                                        {
-                                            this.pinnedRightColumns.map(col => {
-                                                return <Cell ref={this.createRef(col + '[]')} data={row[col]} column={this.columns[col]} />;
-                                            })
-                                        }
-                                    </div>
-                                )
+                                return <Row grid={this.grid} data={row} columns={this.pinnedRightColumns} />
                             })
                         }
                     </div>
@@ -202,6 +162,7 @@ class Grid extends Component<GridOptions> {
             </div>
         );
     }
+
 }
 
-export default Grid;
+export default GridRoot;

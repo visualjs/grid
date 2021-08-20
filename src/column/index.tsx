@@ -2,15 +2,15 @@ import Component, { h } from '@/component';
 import { ColumnOptions } from '@/types';
 import styles from './column.module.css';
 
-export interface ColumnProps extends ColumnOptions {
+export interface Props extends ColumnOptions {
     onResize?: (field: string, width: number) => void;
 }
 
-class Column extends Component<ColumnProps> {
+class Column extends Component<Props> {
 
     protected startPos: number | null = null;
 
-    constructor(props: ColumnProps) {
+    constructor(props: Props) {
         super(props);
 
         document.addEventListener('mouseup', this.handleMouseUp);

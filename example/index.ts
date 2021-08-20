@@ -23,8 +23,7 @@ for (let i = 0; i < 100; i++) {
     });
 }
 
-new Grid({
-    container: document.querySelector("#grid"),
+new Grid(document.querySelector("#grid"), {
     columns: [
         { headerName: 'Name', field: 'name', pinned: 'left', width: 120, resizable: true },
         { headerName: 'Language', field: 'language', pinned: 'left', width: 100, },

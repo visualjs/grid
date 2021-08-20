@@ -51,8 +51,8 @@
     position: relative;
 }
 
-.row-cells {
-    display: flex;
+.body-phantom {
+    width: 100%;
 }
 
 /* scroll */
