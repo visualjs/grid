@@ -52,7 +52,7 @@ class GridRoot extends GridElement<GridProps, RootState> {
             horizontalScrollHeight: horizontalScrollHeight,
             horizontalScrollWidth: this.refs.normalColumns.current.scrollWidth,
             horizontalLeftSpacer: this.refs.pinnedLeftColumns.current.offsetWidth,
-            horizontalRightSpacer: this.refs.pinnedRightColumns.current.offsetWidth,
+            horizontalRightSpacer: this.refs.pinnedRightColumns.current.offsetWidth + spacerX,
         })
     }
 
