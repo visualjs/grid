@@ -11,3 +11,7 @@
     border-right: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
 }
+
+.row-cell-active {
+    background: rgba(0, 145, 234, 0.2);
+}

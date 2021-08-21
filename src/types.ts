@@ -2,6 +2,11 @@ export interface Styles {
     [key: string]: string;
 }
 
+export interface Coordinate {
+    x: number;
+    y: number;
+}
+
 export interface RowData {
     id: string;
     [key: string]: any;

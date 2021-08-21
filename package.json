@@ -4,6 +4,7 @@
   "description": "JavaScript Data Table",
   "main": "./dist/visual-grid.umd.js",
   "module": "./dist/visual-grid.es.js",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
       "import": "./dist/visual-grid.es.js",

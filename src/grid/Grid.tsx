@@ -1,5 +1,7 @@
-import { ColumnOptions, GridOptions } from '@/types';
+import { Emitter } from '@/observer/Emitter';
+import { ColumnOptions, GridOptions, Coordinate } from '@/types';
 import { render } from 'preact';
+import { EventsTypes, GridEvents } from './Events';
 import Root from './Root';
 
 const defaultGridOptions = {
@@ -15,7 +17,7 @@ const defaultColumnOptions = {
     minWidth: 50,
 };
 
-class Grid {
+class Grid extends Emitter<EventsTypes> {
 
     // save ordered column fields
     protected pinnedLeftColumns: string[] = [];
@@ -27,7 +29,13 @@ class Grid {
     // use the column field as the key, and the column option as the value
     protected columns: Record<string, ColumnOptions> = {};
 
+    // save row's id and index as map
+    protected rows: Record<string, number> = {};
+
     constructor(protected container: HTMLElement, protected props: GridOptions) {
+
+        super(new GridEvents());
+
         this.props = Object.assign({ grid: this }, defaultGridOptions, props);
 
         this.props.columns.forEach(col => {
@@ -44,6 +52,10 @@ class Grid {
             this.columns[col.field] = col;
         })
 
+        this.props.rows.forEach((r, i) => {
+            this.rows[r.id] = i;
+        })
+
         render(<Root
             grid={this}
             pinnedLeftColumns={this.pinnedLeftColumns}
@@ -53,9 +65,17 @@ class Grid {
         />, container);
     }
 
+    // 
+    // Columns
+    // 
+
     public getColumnOptions(field: string) {
         return this.columns[field];
     }
+
+    // 
+    // Rows
+    // 
 
     public getRows() {
         return this.props.rows;
@@ -63,6 +83,35 @@ class Grid {
 
     public getRowHeight() {
         return this.props.rowHeight;
+    }
+
+    // 
+    // Coordinates and cells
+    // 
+
+    public getCoordinate(row: string, col: string): Coordinate {
+        const pos = { x: -1, y: this.rows[row] };
+        const opt = this.columns[col];
+
+        if (!opt) {
+            return pos;
+        }
+
+        if (opt.pinned === 'left') {
+            pos.x = this.pinnedLeftColumns.findIndex(c => c == col);
+        } else if (opt.pinned === 'right') {
+            pos.x = this.pinnedRightColumns.findIndex(c => c == col);
+            if (pos.x !== -1) {
+                pos.x = pos.x + this.pinnedLeftColumns.length + this.normalColumns.length;
+            }
+        } else if (opt.pinned === undefined) {
+            pos.x = this.normalColumns.findIndex(c => c == col);
+            if (pos.x !== -1) {
+                pos.x = pos.x + this.pinnedLeftColumns.length;
+            }
+        }
+
+        return pos;
     }
 }
 
