@@ -22,6 +22,8 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected coord: Coordinate;
 
+    protected unmounted = false;
+
     constructor(props: CellProps) {
         super(props);
 
@@ -30,6 +32,7 @@ class Cell extends GridElement<CellProps, CellState> {
 
     componentDidMount() {
         this.grid.addListener('selectionChanged', this.handleSelectionChanged);
+        this.handleSelectionChanged(this.grid.getSelectionRanges());
     }
 
     componentWillUnmount() {
@@ -38,6 +41,11 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected handleSelectionChanged = (selections: SelectionRange[]) => {
 
+        if (this.unmounted) {
+            console.log('unmounted');
+            return;
+        }
+        
         for(let i in selections) {
             if (selections[i].contains(this.coord)) {
                 !this.state.active && this.setState({

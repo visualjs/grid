@@ -1,4 +1,5 @@
 import { Emitter } from '@/observer/Emitter';
+import SelectionRange from '@/selection/SelectionRange';
 import { ColumnOptions, GridOptions, Coordinate } from '@/types';
 import { render } from 'preact';
 import { EventsTypes, GridEvents } from './Events';
@@ -32,6 +33,8 @@ class Grid extends Emitter<EventsTypes> {
     // save row's id and index as map
     protected rows: Record<string, number> = {};
 
+    protected selections: SelectionRange[] = [];
+
     constructor(protected container: HTMLElement, protected props: GridOptions) {
 
         super(new GridEvents());
@@ -63,6 +66,10 @@ class Grid extends Emitter<EventsTypes> {
             normalColumns={this.normalColumns}
             {...this.props}
         />, container);
+
+        this.addListener('selectionChanged', (selections) => {
+            this.selections = selections;
+        })
     }
 
     // 
@@ -112,6 +119,14 @@ class Grid extends Emitter<EventsTypes> {
         }
 
         return pos;
+    }
+
+    // 
+    // Selections
+    // 
+
+    public getSelectionRanges() {
+        return this.selections;
     }
 }
 

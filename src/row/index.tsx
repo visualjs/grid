@@ -3,6 +3,7 @@ import Cell from '@/cell';
 import { RowData } from "@/types";
 
 import styles from './row.module.css';
+import SelectionRange from "@/selection/SelectionRange";
 
 interface Props {
     data: RowData;
