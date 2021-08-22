@@ -37,7 +37,7 @@ class Cell extends GridElement<CellProps, CellState> {
     }
 
     protected handleSelectionChanged = (selections: SelectionRange[]) => {
-        
+
         for(let i in selections) {
             if (selections[i].contains(this.coord)) {
                 !this.state.active && this.setState({
@@ -83,7 +83,8 @@ class Cell extends GridElement<CellProps, CellState> {
                 onMouseMove={this.handleMouseMove}
                 onMouseUp={this.handleMouseUp}
             >
-                {this.props.data}
+                {/* {this.props.data} */}
+                {this.props.row}-{this.props.column.field}
             </div>
         );
     }

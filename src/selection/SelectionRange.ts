@@ -2,15 +2,19 @@ import { Coordinate } from "@/types";
 
 class SelectionRange {
 
-    protected minX: number;
+    protected minX: number = 0;
 
-    protected minY: number;
+    protected minY: number = 0;
 
-    protected maxX: number;
+    protected maxX: number = 0;
 
-    protected maxY: number;
+    protected maxY: number = 0;
 
-    constructor(protected start: Coordinate, protected end: Coordinate) {
+    constructor(public start: Coordinate, public end: Coordinate) {
+        if (!start || !end) {
+            return;
+        }
+
         this.minX = this.min(start.x, end.x);
         this.minY = this.min(start.y, end.y);
         this.maxX = this.max(start.x, end.x);

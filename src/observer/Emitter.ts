@@ -1,7 +1,7 @@
 import { Events } from './Events';
 
 export class Emitter<EventTypes> {
-    protected events: { [key: string]: Function[] } = {};
+    public events: { [key: string]: Function[] } = {};
 
     constructor(events: Events | Emitter<EventTypes>) {
         this.events = events instanceof Emitter ? events.events : events.handlers;
@@ -29,9 +29,12 @@ export class Emitter<EventTypes> {
         const events = Array.isArray(names) ? names : (names as string).split(' ');
         (events as string[]).forEach(name => {
             if (!this.events[name]) throw new Error(`The event ${name} does not exist`);
-            const index = this.events[name].findIndex((h) => h == handler);
-            if (index != -1) {
-                this.events[name] = this.events[name].splice(index, 1);
+            while(true) {
+                const index = this.events[name].findIndex((h) => h == handler);
+                if (index == -1) {
+                    break;
+                }
+                this.events[name].splice(index, 1);
             }
         })
 
