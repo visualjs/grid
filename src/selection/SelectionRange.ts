@@ -35,6 +35,22 @@ class SelectionRange {
             && coord.y >= this.minY && coord.y <= this.maxY
         );
     }
+
+    public isLeft(coord: Coordinate) {
+        return coord.x == this.minX;
+    }
+
+    public isRight(coord: Coordinate) {
+        return coord.x == this.maxX;
+    }
+
+    public isTop(coord: Coordinate) {
+        return coord.y == this.minY;
+    }
+
+    public isBottom(coord: Coordinate) {
+        return coord.y == this.maxY;
+    }
 }
 
 export default SelectionRange;

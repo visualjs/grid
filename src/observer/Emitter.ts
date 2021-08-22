@@ -1,7 +1,7 @@
 import { Events } from './Events';
 
 export class Emitter<EventTypes> {
-    public events: { [key: string]: Function[] } = {};
+    protected events: { [key: string]: Function[] } = {};
 
     constructor(events: Events | Emitter<EventTypes>) {
         this.events = events instanceof Emitter ? events.events : events.handlers;

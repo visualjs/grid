@@ -1,4 +1,4 @@
-.row-cell {
+.cell {
     display: flex;
     flex-shrink: 0;
     align-items: center;
@@ -8,10 +8,30 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    border-left: 1px solid transparent;
+    border-top: 1px solid transparent;
     border-right: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
 }
 
-.row-cell-active {
-    background: rgba(0, 145, 234, 0.2);
+.cell-selected {
+    background: var(--cell-selected-background, rgba(0, 145, 234, 0.2));
 }
+
+.cell-left-boundary {
+    border-left: 1px solid var(--cell-selected-boundary-color, #0091ea);
+}
+
+.cell-right-boundary {
+    border-right: 1px solid var(--cell-selected-boundary-color, #0091ea);
+}
+
+.cell-top-boundary {
+    border-top: 1px solid var(--cell-selected-boundary-color, #0091ea);
+}
+
+.cell-bottom-boundary {
+    border-bottom: 1px solid var(--cell-selected-boundary-color, #0091ea);
+}
+
+
