@@ -1,9 +1,9 @@
 import { Emitter } from '@/observer/Emitter';
 import SelectionRange from '@/selection/SelectionRange';
 import { ColumnOptions, GridOptions, Coordinate } from '@/types';
-import { render } from 'preact';
+import Root from '@/grid/root';
 import { EventsTypes, GridEvents } from './Events';
-import Root from './Root';
+import { render } from 'preact';
 
 const defaultGridOptions = {
     width: '100%',

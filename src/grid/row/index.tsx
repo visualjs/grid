@@ -1,9 +1,8 @@
 import GridElement from "@/grid/GridElement";
-import Cell from '@/cell';
+import Cell from '@/grid/cell';
 import { RowData } from "@/types";
 
 import styles from './row.module.css';
-import SelectionRange from "@/selection/SelectionRange";
 
 interface Props {
     data: RowData;

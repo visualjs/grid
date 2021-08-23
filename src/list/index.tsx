@@ -1,5 +1,4 @@
-import Row from "@/row";
-import Component from "./Component";
+import Component from "@/grid/Component";
 
 import styles from './list.module.css';
 

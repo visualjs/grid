@@ -1,9 +1,8 @@
 import GridElement from "@/grid/GridElement";
-import Column from '@/column';
+import Column from '@/grid/column';
 import {  RowData } from "@/types";
 import { classes } from "@/utils";
-
-import List from './List';
+import List from '@/list';
 import Body from './Body';
 
 import styles from './grid.module.css';

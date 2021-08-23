@@ -1,9 +1,9 @@
 import { Coordinate, RowData } from "@/types";
-import Row from "@/row";
-import GridElement from "./GridElement";
+import Row from "@/grid/row";
+import GridElement from "@/grid/GridElement";
+import SelectionRange from "@/selection/SelectionRange";
 
 import styles from './grid.module.css';
-import SelectionRange from "@/selection/SelectionRange";
 
 interface Props {
     items: RowData[];
