@@ -1,4 +1,4 @@
-const games = [
+export const games = [
     "Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
     "Abalone", "Agon", "Backgammon", "Battleship", "Blockade", "Blood Bowl", "Bul", "Camelot", "Checkers",
     "Go", "Gipf", "Guess Who?", "Hare and Hounds", "Hex", "Hijara", "Isola", "Janggi (Korean Chess)", "Le Jeu de la Guerre",
@@ -7,7 +7,7 @@ const games = [
     "Lost Cities", "Mad Gab", "Master Mind", "Nine Men's Morris", "Obsession", "Othello"
 ];
 
-const countries = [
+export const countries = [
     { country: "Ireland", continent: "Europe", language: "English" },
     { country: "Spain", continent: "Europe", language: "Spanish" },
     { country: "United Kingdom", continent: "Europe", language: "English" },
@@ -30,13 +30,13 @@ const countries = [
     { country: "Belgium", continent: "Europe", language: "French" }
 ];
 
-const firstNames = [
+export const firstNames = [
     "Tony", "Andrew", "Kevin", "Bricker", "Dimple", "Gil", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
     "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"
 ];
 
-const lastNames = [
+export const lastNames = [
     "Smith", "Connell", "Flanagan", "McGee", "Unalkat", "Lopes", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
     "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
     "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
@@ -44,7 +44,7 @@ const lastNames = [
     "Keating", "Keegan", "Kingston", "Kobe"
 ];
 
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+export const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 // taken from http://stackoverflow.com/questions/3062746/special-simple-random-number-generator
 var seed = 123456789;

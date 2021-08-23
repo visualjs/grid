@@ -1,3 +1,5 @@
+import { CellRenderer } from "@/grid/cell";
+
 export interface Styles {
     [key: string]: string;
 }
@@ -12,6 +14,10 @@ export interface RowData {
     [key: string]: any;
 }
 
+interface ICellRenderer {
+    new (): CellRenderer<unknown>;
+}
+
 export interface ColumnOptions {
     field: string;
     width?: number; // default is 200
@@ -20,6 +26,8 @@ export interface ColumnOptions {
     headerName?: string;
     resizable?: boolean;
     pinned?: 'left' | 'right';
+    cellRender?: ICellRenderer;
+    cellRendererParams?: any;
 }
 
 export interface GridOptions {

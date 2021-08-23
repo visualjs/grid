@@ -5,6 +5,8 @@ import Root from '@/grid/root';
 import { EventsTypes, GridEvents } from './Events';
 import { render } from 'preact';
 
+import '@/fonts.css';
+
 const defaultGridOptions = {
     width: '100%',
     height: '100%',

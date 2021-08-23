@@ -2,13 +2,13 @@ import { Coordinate } from "@/types";
 
 class SelectionRange {
 
-    protected minX: number = 0;
+    protected minX: number;
 
-    protected minY: number = 0;
+    protected minY: number;
 
-    protected maxX: number = 0;
+    protected maxX: number;
 
-    protected maxY: number = 0;
+    protected maxY: number;
 
     constructor(public start: Coordinate, public end: Coordinate) {
         if (!start || !end) {
@@ -30,6 +30,10 @@ class SelectionRange {
     }
 
     public contains(coord: Coordinate): boolean {
+        if (!this.start || !this.end) {
+            return false;
+        }
+
         return (
             coord.x >= this.minX && coord.x <= this.maxX
             && coord.y >= this.minY && coord.y <= this.maxY
@@ -37,18 +41,34 @@ class SelectionRange {
     }
 
     public isLeft(coord: Coordinate) {
+        if (!this.start || !this.end) {
+            return false;
+        }
+
         return coord.x == this.minX;
     }
 
     public isRight(coord: Coordinate) {
+        if (!this.start || !this.end) {
+            return false;
+        }
+
         return coord.x == this.maxX;
     }
 
     public isTop(coord: Coordinate) {
+        if (!this.start || !this.end) {
+            return false;
+        }
+
         return coord.y == this.minY;
     }
 
     public isBottom(coord: Coordinate) {
+        if (!this.start || !this.end) {
+            return false;
+        }
+
         return coord.y == this.maxY;
     }
 }
