@@ -1,6 +1,13 @@
 body, html {
     padding: 0;
     margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;;
+}
+
+h3 {
+    width: 100%;
+    display: block;
+    text-align: center;
 }
 
 .example-grid-wrapper {

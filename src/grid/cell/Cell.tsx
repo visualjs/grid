@@ -34,6 +34,8 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected coord: Coordinate;
 
+    protected timer: number = null;
+
     constructor(props: CellProps) {
         super(props);
 
@@ -54,25 +56,32 @@ class Cell extends GridElement<CellProps, CellState> {
 
     componentWillUnmount() {
         this.grid.removeListener('selectionChanged', this.handleSelectionChanged);
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
     }
 
     protected doRender() {
         let result: HTMLElement | string = this.props.data;
 
         if (this.props.column.cellRender) {
-            const render = new this.props.column.cellRender();
-            new Promise<HTMLElement>((resolve) => {
+            this.timer = setTimeout(() => {
+                const render = new this.props.column.cellRender();
                 render.init && render.init({
                     props: this.props.column.cellRendererParams,
                     value: this.props.data,
                     column: this.props.column,
                 });
-                return resolve(render.gui());
-            }).then((el) => {
-                this.cell.current.appendChild(el);
-            }).finally(() => {
+
+                this.timer = null;
+
+                if (!this.cell.current) {
+                    return;
+                }
+                this.cell.current.appendChild(render.gui());
                 render.afterAttached && render.afterAttached();
-            })
+            }, 0)
         } else {
             this.cell.current.textContent = result.toString();
         }

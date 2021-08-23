@@ -1,6 +1,6 @@
 import { Emitter } from '@/observer/Emitter';
 import SelectionRange from '@/selection/SelectionRange';
-import { ColumnOptions, GridOptions, Coordinate } from '@/types';
+import { ColumnOptions, GridOptions, Coordinate, BaseColumnOptions } from '@/types';
 import Root from '@/grid/root';
 import { EventsTypes, GridEvents } from './Events';
 import { render } from 'preact';
@@ -15,7 +15,7 @@ const defaultGridOptions = {
     preloadRowCount: 10,
 }
 
-const defaultColumnOptions = {
+const defaultColumnOptions: BaseColumnOptions = {
     width: 200,
     minWidth: 50,
 };
@@ -44,7 +44,7 @@ class Grid extends Emitter<EventsTypes> {
         this.props = Object.assign({ grid: this }, defaultGridOptions, props);
 
         this.props.columns.forEach(col => {
-            col = Object.assign({}, defaultColumnOptions, col);
+            col = Object.assign({}, defaultColumnOptions, props.defaultColumnOption, col);
 
             if (col.pinned == 'left') {
                 this.pinnedLeftColumns.push(col.field);

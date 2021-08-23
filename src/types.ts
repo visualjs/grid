@@ -18,22 +18,26 @@ interface ICellRenderer {
     new (): CellRenderer<unknown>;
 }
 
-export interface ColumnOptions {
-    field: string;
+export interface BaseColumnOptions {
     width?: number; // default is 200
     minWidth?: number; // default is 50
     flex?: number;
-    headerName?: string;
     resizable?: boolean;
     pinned?: 'left' | 'right';
     cellRender?: ICellRenderer;
     cellRendererParams?: any;
 }
 
+export interface ColumnOptions extends BaseColumnOptions {
+    field: string;
+    headerName?: string;
+}
+
 export interface GridOptions {
     width?: string; // default is 100%
     height?: string; // default is 100%
     columns: ColumnOptions[];
+    defaultColumnOption?: BaseColumnOptions;
     rows: RowData[];
     // headers
     headerHeight?: number; // default is 30
