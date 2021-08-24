@@ -46,6 +46,21 @@ export const lastNames = [
 
 export const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+export const monthOptions = {
+    "Jan": {name: "January", bgColor: "#c9e6fc"},
+    "Feb": {name: "February", bgColor: "#c3f2f2"},
+    "Mar": {name: "March", bgColor: "#c3f1d2"},
+    "Apr": {name: "April", bgColor: "#fdf6c6"},
+    "May": {name: "May", bgColor: "#ffe5c2"},
+    "Jun": {name: "June", bgColor: "#fdcaca"},
+    "Jul": {name: "July", bgColor: "#facde6"},
+    "Aug": {name: "August", bgColor: "#dec2fa"},
+    "Sep": {name: "September", bgColor: "#ccd2f1"},
+    "Oct": {name: "October", bgColor: "#ffd2a8"},
+    "Nov": {name: "November", bgColor: "#dcd6ff"},
+    "Dec": {name: "December", bgColor: "#c7f5b1"}
+}
+
 // taken from http://stackoverflow.com/questions/3062746/special-simple-random-number-generator
 var seed = 123456789;
 var m = Math.pow(2, 32);

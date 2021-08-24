@@ -1,7 +1,8 @@
 import { Grid } from '@/index';
 import { RowData } from '@/types';
-import { RatingRender } from './renders';
-import { name, country, game, date, numeric } from './fake';
+import { CheckboxRender, RatingRender, SelectionRender } from '@/renders';
+import { name, country, game, date, numeric, month } from './fake';
+import { monthOptions } from './fake';
 
 ; (() => {
 
@@ -14,6 +15,8 @@ import { name, country, game, date, numeric } from './fake';
         rows.push({
             id: 'row_' + i,
             name: name(i),
+            status: i % 2 == 0,
+            month: [month(), month()],
             language: countryData.language,
             country: countryData.country,
             continent: countryData.continent,
@@ -30,10 +33,12 @@ import { name, country, game, date, numeric } from './fake';
         columns: [
             { headerName: 'ID', field: 'id', pinned: 'left', width: 100 },
             { headerName: 'Name', field: 'name', width: 120, resizable: true },
+            { headerName: 'Status', field: 'status', width: 80, cellRender: CheckboxRender },
+            { headerName: 'Month', field: 'month', cellRender: SelectionRender, cellRendererParams: { options: monthOptions } },
             { headerName: 'Language', field: 'language', width: 100, },
             { headerName: 'Country', field: 'country', resizable: true },
             { headerName: 'Continent', field: 'continent' },
-            { headerName: 'Game Name', field: 'game', pinned: 'left' },
+            { headerName: 'Game Name', field: 'game' },
             { headerName: 'Bought', field: 'bought' },
             { headerName: 'Bank Balance', field: 'balance' },
             { headerName: 'Rating', field: 'rating', pinned: 'left', cellRender: RatingRender },
@@ -42,7 +47,6 @@ import { name, country, game, date, numeric } from './fake';
         ],
         rows: rows,
         rowHeight: 30,
-        headerHeight: 38,
     });
 
 })();

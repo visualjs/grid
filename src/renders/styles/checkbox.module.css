@@ -1,0 +1,10 @@
+.inline-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #bdbdbd;
+    line-height: 18px;
+    text-align: center;
+    color: #fff;
+    font-size: 10px;
+    border-radius: 2px;
+}

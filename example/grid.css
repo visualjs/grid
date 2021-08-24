@@ -4,6 +4,10 @@ body, html {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;;
 }
 
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
 h3 {
     width: 100%;
     display: block;
@@ -11,7 +15,8 @@ h3 {
 }
 
 .example-grid-wrapper {
-    width: 960px;
+    width: 80%;
+    max-width: 1200px;
     height: 480px;
     margin: 50px auto;
 }

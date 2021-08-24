@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'vgrid';
   src:
-    url('fonts/vgrid.ttf?2quua0') format('truetype'),
-    url('fonts/vgrid.woff?2quua0') format('woff'),
-    url('fonts/vgrid.svg?2quua0#vgrid') format('svg');
+    url('fonts/vgrid.ttf?mof7ye') format('truetype'),
+    url('fonts/vgrid.woff?mof7ye') format('woff'),
+    url('fonts/vgrid.svg?mof7ye#vgrid') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -77,6 +77,21 @@
 }
 .vg-star-full:before {
   content: "\e9d9";
+}
+.vg-checkmark:before {
+  content: "\ea10";
+}
+.vg-checkbox-checked:before {
+  content: "\ea52";
+}
+.vg-checkbox-unchecked:before {
+  content: "\ea53";
+}
+.vg-radio-checked:before {
+  content: "\ea54";
+}
+.vg-radio-unchecked:before {
+  content: "\ea56";
 }
 .vg-filter:before {
   content: "\ea5b";

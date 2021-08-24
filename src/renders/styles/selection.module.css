@@ -1,0 +1,16 @@
+.inline-selections {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+}
+.inline-selection-option {
+    display: inline-block;
+    max-width: 120px;
+    border-radius: 100px;
+    padding: 3px 12px;
+    margin-right: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+}

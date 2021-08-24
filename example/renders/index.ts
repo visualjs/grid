@@ -1,1 +1,0 @@
-export { RatingRender } from './RatingRender';
