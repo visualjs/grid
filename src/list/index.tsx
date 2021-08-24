@@ -18,6 +18,10 @@ interface State {
 
 class List extends Component<Props, State> {
 
+    protected io: IntersectionObserver;
+
+    protected timer: number = null;
+
     constructor(props: Props) {
         super(props);
 
@@ -27,10 +31,20 @@ class List extends Component<Props, State> {
             // Set the cell container height according to the content height
             contentHeight: this.props.items.length * this.props.itemHeight
         }
+
+        this.io = new IntersectionObserver((entries) => {
+            this.update();
+        })
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
         this.update();
+        this.io.observe(this.refs.start.current);
+        this.io.observe(this.refs.end.current);
+    }
+
+    componentWillUnmount = () => {
+        this.io.disconnect();
     }
 
     protected update = () => {
@@ -52,12 +66,19 @@ class List extends Component<Props, State> {
         });
     }
 
+    protected handleScroll = () => {
+        clearTimeout(this.timer);
+        setTimeout(this.update, 100);
+    }
+
     render() {
         return (
-            <div ref={this.createRef("container")} className={styles.listContainer} onScroll={this.update}>
+            <div ref={this.createRef("container")} className={styles.listContainer} onScroll={this.handleScroll}>
                 <div style={{ height: this.state.contentHeight }}></div>
                 <div style={{ top: this.state.viewOffset }} className={styles.listView}>
+                    <div ref={this.createRef("start")}></div>
                     {this.props.render(this.props.items.slice(this.state.startIndex, this.state.endIndex))}
+                    <div ref={this.createRef("end")}></div>
                 </div>
             </div>
         );

@@ -36,6 +36,8 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected timer: number = null;
 
+    protected io: IntersectionObserver;
+
     constructor(props: CellProps) {
         super(props);
 
@@ -46,18 +48,24 @@ class Cell extends GridElement<CellProps, CellState> {
         }
 
         this.coord = this.grid.getCoordinate(this.props.row, this.props.column.field);
+        this.io = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                this.doRender();
+                this.io.disconnect();
+            }
+        })
     }
 
     componentDidMount() {
         this.grid.addListener('selectionChanged', this.handleSelectionChanged);
         this.handleSelectionChanged(this.grid.getSelectionRanges());
-        this.doRender();
+        this.io.observe(this.cell.current);
     }
 
     componentWillUnmount() {
         this.grid.removeListener('selectionChanged', this.handleSelectionChanged);
         if (this.timer) {
-            clearInterval(this.timer);
+            clearTimeout(this.timer);
             this.timer = null;
         }
     }
@@ -81,7 +89,7 @@ class Cell extends GridElement<CellProps, CellState> {
                 }
                 this.cell.current.appendChild(render.gui());
                 render.afterAttached && render.afterAttached();
-            }, 0)
+            }, 0);
         } else {
             this.cell.current.textContent = result.toString();
         }
