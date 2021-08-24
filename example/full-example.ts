@@ -1,6 +1,6 @@
 import { Grid } from '@/index';
 import { RowData } from '@/types';
-import { CheckboxRender, RatingRender, SelectionRender } from '@/renders';
+import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/index';
 import { name, country, game, date, numeric, month } from './fake';
 import { monthOptions } from './fake';
 
@@ -20,7 +20,7 @@ import { monthOptions } from './fake';
             language: countryData.language,
             country: countryData.country,
             continent: countryData.continent,
-            game: game(i),
+            game: {title: game(i), link: "https://www.example.com"},
             bought: numeric(100) > 50,
             balance: numeric(10000),
             rating: numeric(10),
@@ -35,11 +35,11 @@ import { monthOptions } from './fake';
             { headerName: 'Name', field: 'name', width: 120, resizable: true },
             { headerName: 'Status', field: 'status', width: 80, cellRender: CheckboxRender },
             { headerName: 'Month', field: 'month', cellRender: SelectionRender, cellRendererParams: { options: monthOptions } },
+            { headerName: 'Game Name', field: 'game', cellRender: HyperlinkRender },
             { headerName: 'Language', field: 'language', width: 100, },
             { headerName: 'Country', field: 'country', resizable: true },
             { headerName: 'Continent', field: 'continent' },
-            { headerName: 'Game Name', field: 'game' },
-            { headerName: 'Bought', field: 'bought' },
+            { headerName: 'Bought', field: 'bought', cellRender: CheckboxRender },
             { headerName: 'Bank Balance', field: 'balance' },
             { headerName: 'Rating', field: 'rating', pinned: 'left', cellRender: RatingRender },
             { headerName: 'Total Winnings', field: 'winnings' },

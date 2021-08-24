@@ -8,6 +8,10 @@ body, html {
     box-sizing: border-box;
 }
 
+a {
+    color: #2196f3;
+}
+
 h3 {
     width: 100%;
     display: block;
