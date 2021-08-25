@@ -1,7 +1,12 @@
-import { CellRenderer } from "@/grid/cell";
+import { CellRenderer, CellEditor } from "@/grid/cell";
 
 export interface Styles {
     [key: string]: string;
+}
+
+export interface CellPosition {
+    row: string;
+    column: string;
 }
 
 export interface Coordinate {
@@ -18,6 +23,10 @@ interface ICellRenderer {
     new (): CellRenderer<unknown>;
 }
 
+interface ICellEditor {
+    new (): CellEditor<unknown>;
+}
+
 export interface BaseColumnOptions {
     width?: number; // default is 200
     minWidth?: number; // default is 50
@@ -25,7 +34,9 @@ export interface BaseColumnOptions {
     resizable?: boolean;
     pinned?: 'left' | 'right';
     cellRender?: ICellRenderer;
-    cellRendererParams?: any;
+    CellRendererParams?: any;
+    cellEditor?: ICellEditor;
+    cellEditorParams?: any;
 }
 
 export interface ColumnOptions extends BaseColumnOptions {

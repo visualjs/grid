@@ -1,8 +1,9 @@
 import { Grid } from '@/index';
 import { RowData } from '@/types';
-import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/index';
+import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/renders';
 import { name, country, game, date, numeric, month } from './fake';
 import { monthOptions } from './fake';
+import { StringEditor } from '@/editors';
 
 ; (() => {
 
@@ -32,9 +33,9 @@ import { monthOptions } from './fake';
     const grid = new Grid(document.querySelector("#full-example"), {
         columns: [
             { headerName: 'ID', field: 'id', pinned: 'left', width: 100 },
-            { headerName: 'Name', field: 'name', width: 120, resizable: true },
+            { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: StringEditor },
             { headerName: 'Status', field: 'status', width: 80, cellRender: CheckboxRender },
-            { headerName: 'Month', field: 'month', cellRender: SelectionRender, cellRendererParams: { options: monthOptions } },
+            { headerName: 'Month', field: 'month', cellRender: SelectionRender, CellRendererParams: { options: monthOptions } },
             { headerName: 'Game Name', field: 'game', cellRender: HyperlinkRender },
             { headerName: 'Language', field: 'language', width: 100, },
             { headerName: 'Country', field: 'country', resizable: true },
@@ -49,4 +50,7 @@ import { monthOptions } from './fake';
         rowHeight: 30,
     });
 
+    grid.addListener('cellValueChanged', (ev) => {
+        console.log(ev);
+    })
 })();

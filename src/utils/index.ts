@@ -1,3 +1,5 @@
+export * from './enums';
+export * from './dom';
 
 export function classes(value: string | string[] | { [key: string]: boolean }) {
 

@@ -1,5 +1,6 @@
 import { EventsTypes as DefaultEventsTypes, Events } from '@/observer/Events';
 import SelectionRange from '@/selection/SelectionRange';
+import { CellPosition } from '@/types';
 
 export interface CellValueChangedEvent {
     row: string;
@@ -15,6 +16,8 @@ export class GridEvents extends Events {
         super({
             selectionChanged: [],
             cellValueChanged: [],
+            startCellEditing: [],
+            stopEditing: [],
             ...handlers
         })
     }
@@ -23,5 +26,7 @@ export class GridEvents extends Events {
 export interface EventsTypes extends DefaultEventsTypes {
     selectionChanged: SelectionChangedEvent;
     cellValueChanged: CellValueChangedEvent;
+    startCellEditing: CellPosition;
+    stopEditing: void;
 }
 

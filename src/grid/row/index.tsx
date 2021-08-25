@@ -6,9 +6,10 @@ import styles from './row.module.css';
 interface Props {
     value: string;
     columns: string[];
-    onCellMouseDown?: (row: string, col: string) => void
-    onCellMouseMove?: (row: string, col: string) => void
-    onCellMouseUp?: (row: string, col: string) => void
+    onCellDbClick?: (ev: MouseEvent, row: string, col: string) => void
+    onCellMouseDown?: (ev: MouseEvent, row: string, col: string) => void
+    onCellMouseMove?: (ev: MouseEvent, row: string, col: string) => void
+    onCellMouseUp?: (ev: MouseEvent, row: string, col: string) => void
 }
 
 class Row extends GridElement<Props> {
@@ -27,6 +28,7 @@ class Row extends GridElement<Props> {
                     this.props.columns.map(col => {
                         return (
                             <Cell
+                                onDbClick={this.props.onCellDbClick}
                                 onMouseDown={this.props.onCellMouseDown}
                                 onMouseMove={this.props.onCellMouseMove}
                                 onMouseUp={this.props.onCellMouseUp}

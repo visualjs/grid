@@ -1,18 +1,21 @@
 import GridElement from "@/grid/GridElement";
 import SelectionRange from "@/selection/SelectionRange";
-import { ColumnOptions, Coordinate } from "@/types";
+import { CellPosition, ColumnOptions, Coordinate } from "@/types";
 import { classes, isObjectEqual } from "@/utils";
+import { DOM } from "@/utils";
 import { createRef } from "preact";
 import { CellValueChangedEvent } from "../Events";
 
 import styles from './cell.module.css';
+import CellEditor from "./CellEditor";
 
 interface CellProps {
     row: string;
     column: ColumnOptions;
-    onMouseDown?: (row: string, col: string) => void
-    onMouseMove?: (row: string, col: string) => void
-    onMouseUp?: (row: string, col: string) => void
+    onDbClick?: (ev: MouseEvent, row: string, col: string) => void;
+    onMouseDown?: (ev: MouseEvent, row: string, col: string) => void
+    onMouseMove?: (ev: MouseEvent, row: string, col: string) => void
+    onMouseUp?: (ev: MouseEvent, row: string, col: string) => void
 }
 
 interface Boundary {
@@ -38,7 +41,9 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected io: IntersectionObserver;
 
-    protected gui: HTMLElement;
+    protected isEditing: boolean;
+
+    protected editor: CellEditor<any>;
 
     constructor(props: CellProps) {
         super(props);
@@ -61,6 +66,8 @@ class Cell extends GridElement<CellProps, CellState> {
     componentDidMount() {
         this.grid.addListener('selectionChanged', this.handleSelectionChanged);
         this.grid.addListener('cellValueChanged', this.handleCellValueChanged);
+        this.grid.addListener('startCellEditing', this.handleStartCellEditing);
+        this.grid.addListener('stopEditing', this.handleStopEditing);
         this.handleSelectionChanged(this.grid.getSelectionRanges());
         this.io.observe(this.cell.current);
     }
@@ -68,21 +75,32 @@ class Cell extends GridElement<CellProps, CellState> {
     componentWillUnmount() {
         this.grid.removeListener('selectionChanged', this.handleSelectionChanged);
         this.grid.removeListener('cellValueChanged', this.handleCellValueChanged);
+        this.grid.removeListener('startCellEditing', this.handleStartCellEditing);
+        this.grid.removeListener('stopEditing', this.handleStopEditing);
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = null;
         }
     }
 
+    protected getValue(): any {
+        return this.grid.getCellValue(this.props.row, this.props.column.field);
+    }
+
+    public setValue(value: string) {
+        this.grid.setCellValue(this.props.row, this.props.column.field, value);
+    }
+
+    // render cell component
     protected doRender() {
-        const value = this.grid.getCellValue(this.props.row, this.props.column.field);
+        const value = this.getValue();
         let result: HTMLElement | string = value;
 
         if (this.props.column.cellRender) {
             this.timer = setTimeout(() => {
                 const render = new this.props.column.cellRender();
                 render.init && render.init({
-                    props: this.props.column.cellRendererParams,
+                    props: this.props.column.CellRendererParams,
                     value: value,
                     column: this.props.column,
                 });
@@ -93,12 +111,8 @@ class Cell extends GridElement<CellProps, CellState> {
                     return;
                 }
 
-                if (this.gui) {
-                    this.cell.current.removeChild(this.gui);
-                }
-
-                this.gui = render.gui();
-                this.cell.current.appendChild(this.gui);
+                DOM.clean(this.cell.current);
+                this.cell.current.appendChild(render.gui());
                 render.afterAttached && render.afterAttached();
             }, 0);
         } else {
@@ -106,6 +120,7 @@ class Cell extends GridElement<CellProps, CellState> {
         }
     }
 
+    // If the current cell is selected, modify the cell to be selected style
     protected handleSelectionChanged = (selections: SelectionRange[]) => {
 
         let selected = false;
@@ -133,22 +148,72 @@ class Cell extends GridElement<CellProps, CellState> {
         }
     }
 
+    // Re-render the cell when the value changes
     protected handleCellValueChanged = (ev: CellValueChangedEvent) => {
         if (ev.row === this.props.row && ev.column === this.props.column.field) {
             this.doRender();
         }
     }
 
-    protected handleMouseDown = () => {
-        this.props.onMouseDown && this.props.onMouseDown(this.props.row, this.props.column.field);
+    // 
+    // Editing
+    // 
+
+    protected handleStartCellEditing = (pos: CellPosition) => {
+        if (pos.row !== this.props.row || pos.column !== this.props.column.field || !this.props.column.cellEditor) {
+            return;
+        }
+
+        this.isEditing = true;
+        const popup = document.createElement('div');
+        popup.className = styles.cellEditingPopup;
+        DOM.clean(this.cell.current);
+        DOM.appendClassName(this.cell.current, styles.cellEditing);
+
+        if (!this.editor) {
+            this.editor = new this.props.column.cellEditor();
+        }
+
+        this.editor.init && this.editor.init({
+            props: this.props.column.CellRendererParams,
+            value: this.getValue(),
+            column: this.props.column,
+        });
+
+        popup.appendChild(this.editor.gui());
+        this.cell.current.appendChild(popup);
+        this.editor.afterAttached();
     }
 
-    protected handleMouseMove = () => {
-        this.props.onMouseMove && this.props.onMouseMove(this.props.row, this.props.column.field);
+    protected handleStopEditing = () => {
+        if (!this.isEditing) {
+            return;
+        }
+
+        this.isEditing = false;
+        DOM.setClassNames(this.cell.current, [styles.cell]);
+        this.setValue(this.editor.getValue());
     }
 
-    protected handleMouseUp = () => {
-        this.props.onMouseUp && this.props.onMouseUp(this.props.row, this.props.column.field);
+    // Event handlers
+    protected handleMouseDown = (ev: MouseEvent) => {
+        if (this.isEditing) return;
+        this.props.onMouseDown && this.props.onMouseDown(ev, this.props.row, this.props.column.field);
+    }
+
+    protected handleMouseMove = (ev: MouseEvent) => {
+        if (this.isEditing) return;
+        this.props.onMouseMove && this.props.onMouseMove(ev, this.props.row, this.props.column.field);
+    }
+
+    protected handleMouseUp = (ev: MouseEvent) => {
+        if (this.isEditing) return;
+        this.props.onMouseUp && this.props.onMouseUp(ev, this.props.row, this.props.column.field);
+    }
+
+    protected handleDbClick = (ev: MouseEvent) => {
+        if (this.isEditing) return;
+        this.props.onDbClick && this.props.onDbClick(ev, this.props.row, this.props.column.field);
     }
 
     render() {
@@ -178,6 +243,7 @@ class Cell extends GridElement<CellProps, CellState> {
                 onMouseDown={this.handleMouseDown}
                 onMouseMove={this.handleMouseMove}
                 onMouseUp={this.handleMouseUp}
+                onDblClick={this.handleDbClick}
             />
         );
     }

@@ -14,6 +14,11 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+.cell-editing {
+    padding: 0;
+    overflow: visible;
+}
+
 .cell-selected {
     background: var(--cell-selected-background, rgba(0, 145, 234, 0.2));
 }
@@ -34,4 +39,13 @@
     border-bottom: 1px solid var(--cell-selected-boundary-color, #0091ea);
 }
 
-
+.cell-editing-popup {
+    position: absolute;
+    height: 0;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    min-width: 100%;
+    min-height: 100%;
+    background: var(--cell-editing-popup-background, #ffffff);
+}

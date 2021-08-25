@@ -4,6 +4,7 @@ import GridElement from "@/grid/GridElement";
 import SelectionRange from "@/selection/SelectionRange";
 
 import styles from './grid.module.css';
+import { Button } from "@/utils";
 
 interface Props {
     items: string[];
@@ -29,13 +30,22 @@ class Body extends GridElement<Props> {
         document.removeEventListener('mouseup', this.handleMouseUp);
     }
 
-    protected handleCellMouseDown = (row: string, col: string) => {
+    protected handleCellDbClick = (ev: MouseEvent, row: string, column: string) => {
+        this.grid.startEditingCell({ row, column });
+    }
+
+    protected handleCellMouseDown = (ev: MouseEvent, row: string, col: string) => {
+        if (!(ev.button === Button.Left)) {
+            return;
+        }
+
         this.selectionStart = this.selectionEnd = this.grid.getCoordinate(row, col);
         this.isSelecting = true;
         this.handleSelectionChanged();
+        this.grid.stopEditing();
     }
 
-    protected handleCellMouseMove = (row: string, col: string) => {
+    protected handleCellMouseMove = (ev: MouseEvent, row: string, col: string) => {
         if (!this.isSelecting) {
             return;
         }
@@ -68,6 +78,7 @@ class Body extends GridElement<Props> {
                     grid={this.grid}
                     value={row}
                     columns={columns}
+                    onCellDbClick={this.handleCellDbClick}
                     onCellMouseDown={this.handleCellMouseDown}
                     onCellMouseMove={this.handleCellMouseMove}
                 />

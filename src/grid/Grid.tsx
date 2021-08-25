@@ -1,6 +1,6 @@
 import { Emitter } from '@/observer/Emitter';
 import SelectionRange from '@/selection/SelectionRange';
-import { ColumnOptions, GridOptions, Coordinate, BaseColumnOptions } from '@/types';
+import { ColumnOptions, GridOptions, Coordinate, BaseColumnOptions, CellPosition } from '@/types';
 import Root from '@/grid/root';
 import { EventsTypes, GridEvents } from './Events';
 import { render } from 'preact';
@@ -149,6 +149,18 @@ class Grid extends Emitter<EventsTypes> {
         }
 
         return this.props.rows[index][column];
+    }
+
+    // 
+    // Editing
+    // 
+
+    public startEditingCell(pos: CellPosition) {
+        this.trigger('startCellEditing', pos);
+    }
+
+    public stopEditing() {
+        this.trigger('stopEditing');
     }
 
     // 
