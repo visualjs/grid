@@ -1,11 +1,10 @@
 import GridElement from "@/grid/GridElement";
 import Cell from '@/grid/cell';
-import { RowData } from "@/types";
 
 import styles from './row.module.css';
 
 interface Props {
-    data: RowData;
+    value: string;
     columns: string[];
     onCellMouseDown?: (row: string, col: string) => void
     onCellMouseMove?: (row: string, col: string) => void
@@ -22,6 +21,7 @@ class Row extends GridElement<Props> {
         }
 
         return (
+
             <div className={styles.rowCells} style={style}>
                 {
                     this.props.columns.map(col => {
@@ -31,8 +31,7 @@ class Row extends GridElement<Props> {
                                 onMouseMove={this.props.onCellMouseMove}
                                 onMouseUp={this.props.onCellMouseUp}
                                 grid={this.grid}
-                                data={this.props.data[col]}
-                                row={this.props.data.id}
+                                row={this.props.value}
                                 column={this.grid.getColumnOptions(col)}
                             />
                         )

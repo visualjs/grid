@@ -69,7 +69,7 @@ class GridRoot extends GridElement<GridProps, RootState> {
         })
     }
 
-    protected listRender = (items: RowData[]) => {
+    protected listRender = (items: string[]) => {
         return (
             <Body
                 grid={this.grid}
@@ -131,7 +131,7 @@ class GridRoot extends GridElement<GridProps, RootState> {
                 <div className={styles.body}>
                     <List
                         ref={this.createRef("list")}
-                        items={this.grid.getRows()}
+                        items={this.grid.getRowKeys()}
                         itemHeight={this.grid.getRowHeight()}
                         preLoadCount={this.props.preloadRowCount}
                         render={this.listRender}

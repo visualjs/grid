@@ -3,11 +3,11 @@ import SelectionRange from "@/selection/SelectionRange";
 import { ColumnOptions, Coordinate } from "@/types";
 import { classes, isObjectEqual } from "@/utils";
 import { createRef } from "preact";
+import { CellValueChangedEvent } from "../Events";
 
 import styles from './cell.module.css';
 
 interface CellProps {
-    data: any;
     row: string;
     column: ColumnOptions;
     onMouseDown?: (row: string, col: string) => void
@@ -38,6 +38,8 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected io: IntersectionObserver;
 
+    protected gui: HTMLElement;
+
     constructor(props: CellProps) {
         super(props);
 
@@ -58,12 +60,14 @@ class Cell extends GridElement<CellProps, CellState> {
 
     componentDidMount() {
         this.grid.addListener('selectionChanged', this.handleSelectionChanged);
+        this.grid.addListener('cellValueChanged', this.handleCellValueChanged);
         this.handleSelectionChanged(this.grid.getSelectionRanges());
         this.io.observe(this.cell.current);
     }
 
     componentWillUnmount() {
         this.grid.removeListener('selectionChanged', this.handleSelectionChanged);
+        this.grid.removeListener('cellValueChanged', this.handleCellValueChanged);
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = null;
@@ -71,14 +75,15 @@ class Cell extends GridElement<CellProps, CellState> {
     }
 
     protected doRender() {
-        let result: HTMLElement | string = this.props.data;
+        const value = this.grid.getCellValue(this.props.row, this.props.column.field);
+        let result: HTMLElement | string = value;
 
         if (this.props.column.cellRender) {
             this.timer = setTimeout(() => {
                 const render = new this.props.column.cellRender();
                 render.init && render.init({
                     props: this.props.column.cellRendererParams,
-                    value: this.props.data,
+                    value: value,
                     column: this.props.column,
                 });
 
@@ -87,11 +92,17 @@ class Cell extends GridElement<CellProps, CellState> {
                 if (!this.cell.current) {
                     return;
                 }
-                this.cell.current.appendChild(render.gui());
+
+                if (this.gui) {
+                    this.cell.current.removeChild(this.gui);
+                }
+
+                this.gui = render.gui();
+                this.cell.current.appendChild(this.gui);
                 render.afterAttached && render.afterAttached();
             }, 0);
         } else {
-            this.cell.current.textContent = result.toString();
+            this.cell.current && (this.cell.current.textContent = result.toString());
         }
     }
 
@@ -118,7 +129,13 @@ class Cell extends GridElement<CellProps, CellState> {
             this.setState({
                 selected: selected,
                 boundary: boundary
-            })
+            });
+        }
+    }
+
+    protected handleCellValueChanged = (ev: CellValueChangedEvent) => {
+        if (ev.row === this.props.row && ev.column === this.props.column.field) {
+            this.doRender();
         }
     }
 

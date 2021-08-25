@@ -1,4 +1,4 @@
-import { Coordinate, RowData } from "@/types";
+import { Coordinate } from "@/types";
 import Row from "@/grid/row";
 import GridElement from "@/grid/GridElement";
 import SelectionRange from "@/selection/SelectionRange";
@@ -6,7 +6,7 @@ import SelectionRange from "@/selection/SelectionRange";
 import styles from './grid.module.css';
 
 interface Props {
-    items: RowData[];
+    items: string[];
     pinnedLeftColumns: string[];
     pinnedRightColumns: string[];
     normalColumns: string[];
@@ -64,9 +64,9 @@ class Body extends GridElement<Props> {
         return this.props.items.map(row => {
             return (
                 <Row
-                    key={row.id}
+                    key={row}
                     grid={this.grid}
-                    data={row}
+                    value={row}
                     columns={columns}
                     onCellMouseDown={this.handleCellMouseDown}
                     onCellMouseMove={this.handleCellMouseMove}

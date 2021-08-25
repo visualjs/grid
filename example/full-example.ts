@@ -20,7 +20,7 @@ import { monthOptions } from './fake';
             language: countryData.language,
             country: countryData.country,
             continent: countryData.continent,
-            game: {title: game(i), link: "https://www.example.com"},
+            game: { title: game(i), link: "https://www.example.com" },
             bought: numeric(100) > 50,
             balance: numeric(10000),
             rating: numeric(10),
@@ -29,7 +29,7 @@ import { monthOptions } from './fake';
         });
     }
 
-    new Grid(document.querySelector("#full-example"), {
+    const grid = new Grid(document.querySelector("#full-example"), {
         columns: [
             { headerName: 'ID', field: 'id', pinned: 'left', width: 100 },
             { headerName: 'Name', field: 'name', width: 120, resizable: true },

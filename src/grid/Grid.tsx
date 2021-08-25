@@ -12,7 +12,7 @@ const defaultGridOptions = {
     height: '100%',
     headerHeight: 30,
     rowHeight: 28,
-    preloadRowCount: 10,
+    preloadRowCount: 20,
 }
 
 const defaultColumnOptions: BaseColumnOptions = {
@@ -90,6 +90,10 @@ class Grid extends Emitter<EventsTypes> {
         return this.props.rows;
     }
 
+    public getRowKeys() {
+        return Object.keys(this.rows);
+    }
+
     public getRowHeight() {
         return this.props.rowHeight;
     }
@@ -121,6 +125,30 @@ class Grid extends Emitter<EventsTypes> {
         }
 
         return pos;
+    }
+
+    public setCellValue(row: string, column: string, value: any) {
+        const index = this.rows[row];
+        if (index === undefined) {
+            return;
+        }
+
+        if (!this.props.rows[index][column]) {
+            return;
+        }
+
+        const oldValue = this.props.rows[index][column];
+        this.props.rows[index][column] = value;
+        this.trigger('cellValueChanged', { row, column, value, oldValue });
+    }
+
+    public getCellValue(row: string, column: string): any {
+        const index = this.rows[row];
+        if (index === undefined) {
+            return undefined;
+        }
+
+        return this.props.rows[index][column];
     }
 
     // 

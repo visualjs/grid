@@ -19,8 +19,8 @@ h3 {
 }
 
 .example-grid-wrapper {
-    width: 80%;
-    max-width: 1200px;
+    width: 95%;
+    /* max-width: 1200px; */
     height: 480px;
     margin: 50px auto;
 }

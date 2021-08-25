@@ -44,5 +44,5 @@ export interface GridOptions {
     // row
     rowHeight?: number; // default is 28
     // virtual list
-    preloadRowCount?: number; // default is 10
+    preloadRowCount?: number; // default is 20
 }
