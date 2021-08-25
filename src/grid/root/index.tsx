@@ -1,6 +1,5 @@
 import GridElement from "@/grid/GridElement";
 import Column from '@/grid/column';
-import {  RowData } from "@/types";
 import { classes } from "@/utils";
 import List from '@/list';
 import Body from './Body';

@@ -2,6 +2,8 @@ import GridElement from "@/grid/GridElement";
 import Cell from '@/grid/cell';
 
 import styles from './row.module.css';
+import { createRef } from "preact";
+import { DOM } from "@/utils";
 
 interface Props {
     value: string;
@@ -14,6 +16,35 @@ interface Props {
 
 class Row extends GridElement<Props> {
 
+    protected row = createRef<HTMLDivElement>();
+
+    componentDidMount = () => {
+        this.grid.addListener('hoveredRowChanged', this.handleRowHoverd);
+        this.grid.addListener('selectedRowsChanged', this.handleRowSelected);
+    }
+
+    componentWillUnmount = () => {
+        this.grid.removeListener('hoveredRowChanged', this.handleRowHoverd);
+        this.grid.removeListener('selectedRowsChanged', this.handleRowSelected);
+    }
+
+    protected handleRowSelected = (rows: string[]) => {
+        const index = rows.findIndex(r => r === this.props.value);
+        if (index !== -1) {
+            DOM.appendClassName(this.row.current, styles.rowCellsSelect);
+        } else {
+            DOM.removeClassName(this.row.current, styles.rowCellsSelect);
+        }
+    }
+
+    protected handleRowHoverd = (row?: string) => {
+        if (row === this.props.value) {
+            DOM.appendClassName(this.row.current, styles.rowCellsHover);
+        } else {
+            DOM.removeClassName(this.row.current, styles.rowCellsHover);
+        }
+    }
+
     render() {
 
         const style = {
@@ -23,7 +54,7 @@ class Row extends GridElement<Props> {
 
         return (
 
-            <div className={styles.rowCells} style={style}>
+            <div ref={this.row} className={styles.rowCells} style={style}>
                 {
                     this.props.columns.map(col => {
                         return (

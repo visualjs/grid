@@ -39,6 +39,7 @@ class Body extends GridElement<Props> {
             return;
         }
 
+        this.grid.selectRows([row]);
         this.selectionStart = this.selectionEnd = this.grid.getCoordinate(row, col);
         this.isSelecting = true;
         this.handleSelectionChanged();
@@ -46,6 +47,8 @@ class Body extends GridElement<Props> {
     }
 
     protected handleCellMouseMove = (ev: MouseEvent, row: string, col: string) => {
+        this.grid.setHoveredRow(row);
+
         if (!this.isSelecting) {
             return;
         }
@@ -88,7 +91,7 @@ class Body extends GridElement<Props> {
 
     render() {
         return (
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex' }} onMouseLeave={() => this.grid.setHoveredRow()}>
                 <div className={styles.pinnedLeftCells}>
                     {this.renderRows(this.props.pinnedLeftColumns)}
                 </div>

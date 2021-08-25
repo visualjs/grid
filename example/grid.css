@@ -9,7 +9,7 @@ body, html {
 }
 
 a {
-    color: #2196f3;
+    color: var(--primary-color, #2196f3);
 }
 
 h3 {

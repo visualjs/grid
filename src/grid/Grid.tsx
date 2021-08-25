@@ -37,6 +37,10 @@ class Grid extends Emitter<EventsTypes> {
 
     protected selections: SelectionRange[] = [];
 
+    protected selectedRows: string[] = [];
+
+    protected hoveredRow?: string;
+
     constructor(protected container: HTMLElement, protected props: GridOptions) {
 
         super(new GridEvents());
@@ -96,6 +100,22 @@ class Grid extends Emitter<EventsTypes> {
 
     public getRowHeight() {
         return this.props.rowHeight;
+    }
+
+    public setHoveredRow(row?: string) {
+        if (this.hoveredRow !== row) {
+            this.hoveredRow = row;
+            this.trigger('hoveredRowChanged', row);
+        }
+    }
+
+    public selectRows(rows: string[]) {
+        this.selectedRows = rows;
+        this.trigger('selectedRowsChanged', rows);
+    }
+
+    public getSelectedRows(): string[] {
+        return this.selectedRows;
     }
 
     // 

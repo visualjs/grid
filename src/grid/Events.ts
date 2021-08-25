@@ -18,6 +18,8 @@ export class GridEvents extends Events {
             cellValueChanged: [],
             startCellEditing: [],
             stopEditing: [],
+            hoveredRowChanged: [],
+            selectedRowsChanged: [],
             ...handlers
         })
     }
@@ -28,5 +30,7 @@ export interface EventsTypes extends DefaultEventsTypes {
     cellValueChanged: CellValueChangedEvent;
     startCellEditing: CellPosition;
     stopEditing: void;
+    hoveredRowChanged: string | undefined,
+    selectedRowsChanged: string[],
 }
 
