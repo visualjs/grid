@@ -3,13 +3,13 @@ import { CellRenderer, CellRendererParams } from '@/grid/cell';
 interface Props {
     max?: number;
     size?: number;
-    color?: string;
+    activeColor?: string;
 }
 
 const defaultProps = {
     max: 10,
     size: 14,
-    color: '#fadb13',
+    activeColor: '#fadb13',
 }
 
 export class RatingRender extends CellRenderer<Props> {
@@ -24,7 +24,7 @@ export class RatingRender extends CellRenderer<Props> {
             return;
         }
 
-        const style = `color: ${props.color}; font-size: ${props.size}px;`;
+        const style = `color: ${props.activeColor}; font-size: ${props.size}px;`;
         let html = '';
 
         for (let i = 0; i < value; i++) {

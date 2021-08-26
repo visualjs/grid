@@ -3,7 +3,7 @@ import { RowData } from '@/types';
 import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/renders';
 import { name, country, game, date, numeric, month } from './fake';
 import { monthOptions } from './fake';
-import { StringEditor } from '@/editors';
+import { RatingEditor, StringEditor } from '@/editors';
 
 ; (() => {
 
@@ -42,7 +42,7 @@ import { StringEditor } from '@/editors';
             { headerName: 'Continent', field: 'continent' },
             { headerName: 'Bought', field: 'bought', cellRender: CheckboxRender },
             { headerName: 'Bank Balance', field: 'balance' },
-            { headerName: 'Rating', field: 'rating', pinned: 'left', cellRender: RatingRender },
+            { headerName: 'Rating', field: 'rating', pinned: 'left', cellRender: RatingRender, cellEditor: RatingEditor },
             { headerName: 'Total Winnings', field: 'winnings' },
             { headerName: 'Date', field: 'date', pinned: 'right' },
         ],

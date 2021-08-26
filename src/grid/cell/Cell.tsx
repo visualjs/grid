@@ -182,7 +182,7 @@ class Cell extends GridElement<CellProps, CellState> {
 
         popup.appendChild(this.editor.gui());
         this.cell.current.appendChild(popup);
-        this.editor.afterAttached();
+        this.editor.afterAttached && this.editor.afterAttached();
     }
 
     protected handleStopEditing = () => {
