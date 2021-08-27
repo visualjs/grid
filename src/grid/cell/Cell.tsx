@@ -166,12 +166,17 @@ class Cell extends GridElement<CellProps, CellState> {
 
         this.isEditing = true;
         const popup = document.createElement('div');
-        popup.className = styles.cellEditingPopup;
         DOM.clean(this.cell.current);
         DOM.appendClassName(this.cell.current, styles.cellEditing);
 
         if (!this.editor) {
             this.editor = new this.props.column.cellEditor();
+        }
+
+        if (this.editor.isPopup()) {
+            popup.className = `${styles.cellEditingWrapper} ${styles.cellEditingPopup}`;
+        } else {
+            popup.className = styles.cellEditingWrapper;
         }
 
         this.editor.init && this.editor.init({

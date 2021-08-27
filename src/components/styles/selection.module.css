@@ -14,3 +14,26 @@
     white-space: nowrap;
     font-size: 12px;
 }
+
+.inline-selections-editor {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #ffffff;
+    box-shadow: 0px 0px 16px 0px #cfcfcf;
+}
+
+.inline-selection-editing-option {
+    cursor: pointer;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    /* border-bottom: 1px solid var(--border-color, #dedede); */
+}
+
+.inline-selection-editing-option:hover {
+    background-color: var(--row-hover-background, #f8f8f8);
+}
+
+.inline-selection-editing-option.inline-selection-active-option {
+    background-color: var(--row-select-background, #dedede);
+}

@@ -3,7 +3,7 @@ import { CellEditor, CellEditorParams } from "@/grid/cell";
 import styles from '@/components/styles/checkbox.module.css';
 import { DOM } from "@/utils";
 
-export class CheckboxEditor extends CellEditor<CellEditorParams<{}>> {
+export class CheckboxEditor extends CellEditor<{}> {
 
     protected wrapper: HTMLDivElement;
 

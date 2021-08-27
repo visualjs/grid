@@ -3,7 +3,7 @@ import { RowData } from '@/types';
 import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/components';
 import { name, country, game, date, numeric, month } from './fake';
 import { monthOptions } from './fake';
-import { RatingEditor, StringEditor, CheckboxEditor } from '@/components';
+import { RatingEditor, StringEditor, CheckboxEditor, SelectionEditor } from '@/components';
 
 ; (() => {
 
@@ -35,7 +35,11 @@ import { RatingEditor, StringEditor, CheckboxEditor } from '@/components';
             { headerName: 'ID', field: 'id', pinned: 'left', width: 100 },
             { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: StringEditor },
             { headerName: 'Status', field: 'status', width: 80, cellRender: CheckboxRender, cellEditor: CheckboxEditor },
-            { headerName: 'Month', field: 'month', cellRender: SelectionRender, CellRendererParams: { options: monthOptions } },
+            {
+                headerName: 'Month', field: 'month',
+                cellRender: SelectionRender, CellRendererParams: { options: monthOptions },
+                cellEditor: SelectionEditor, cellEditorParams: { options: monthOptions, multiple: true }
+            },
             { headerName: 'Game Name', field: 'game', cellRender: HyperlinkRender },
             { headerName: 'Language', field: 'language', width: 100, },
             { headerName: 'Country', field: 'country', resizable: true },

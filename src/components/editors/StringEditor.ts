@@ -1,18 +1,18 @@
 import { CellEditor, CellEditorParams } from "@/grid/cell";
 import styles from '@/components/styles/input.module.css';
 
-export class StringEditor extends CellEditor<CellEditorParams<{}>> {
+export class StringEditor extends CellEditor<{}> {
 
     protected input: HTMLInputElement;
 
-    public init(param: CellEditorParams<{}>) {
+    public init(params: CellEditorParams<{}>) {
         if (!this.input) {
             this.input = document.createElement('input');
             this.input.type = 'text';
             this.input.className = styles.inlineInput;
         }
 
-        this.input.value = param.value;
+        this.input.value = params.value;
     }
 
     public gui(): HTMLElement {

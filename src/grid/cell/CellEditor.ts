@@ -10,6 +10,10 @@ export interface CellEditorParams<T> {
 export abstract class CellEditor<T> extends Component<CellEditorParams<T>> {
     // get current editor's value
     public abstract getValue(): any;
+
+    public isPopup(): boolean {
+        return false;
+    }
 }
 
 export default CellEditor;
