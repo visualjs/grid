@@ -31,6 +31,7 @@ class Body extends GridElement<Props> {
     }
 
     protected handleCellDbClick = (ev: MouseEvent, row: string, column: string) => {
+        this.grid.stopEditing();
         this.grid.startEditingCell({ row, column });
     }
 

@@ -1,5 +1,5 @@
 import { CellEditor, CellEditorParams } from "@/grid/cell";
-import styles from './styles/input.module.css';
+import styles from '@/components/styles/input.module.css';
 
 export class StringEditor extends CellEditor<CellEditorParams<{}>> {
 

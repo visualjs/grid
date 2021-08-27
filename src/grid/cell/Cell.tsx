@@ -87,7 +87,7 @@ class Cell extends GridElement<CellProps, CellState> {
         return this.grid.getCellValue(this.props.row, this.props.column.field);
     }
 
-    public setValue(value: string) {
+    public setValue(value: any) {
         this.grid.setCellValue(this.props.row, this.props.column.field, value);
     }
 

@@ -1,6 +1,6 @@
 import { CellRenderer, CellRendererParams } from '@/grid/cell';
 
-import styles from './styles/selection.module.css';
+import styles from '@/components/styles/selection.module.css';
 
 export interface BaseOption {
     fgColor?: string;

@@ -153,7 +153,7 @@ class Grid extends Emitter<EventsTypes> {
             return;
         }
 
-        if (!this.props.rows[index][column]) {
+        if (this.props.rows[index][column] === undefined) {
             return;
         }
 

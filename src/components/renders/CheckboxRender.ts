@@ -1,6 +1,6 @@
 import { CellRenderer, CellRendererParams } from '@/grid/cell';
 
-import styles from './styles/checkbox.module.css';
+import styles from '@/components/styles/checkbox.module.css';
 
 export class CheckboxRender extends CellRenderer<{}> {
 

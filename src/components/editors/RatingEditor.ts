@@ -1,6 +1,6 @@
 import { CellEditor, CellEditorParams } from "@/grid/cell";
 
-import styles from './styles/rating.module.css';
+import styles from '@/components/styles/rating.module.css';
 
 interface Props {
     max?: number;
