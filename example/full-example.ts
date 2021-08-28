@@ -2,8 +2,8 @@ import { Grid } from '@/index';
 import { RowData } from '@/types';
 import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/components';
 import { name, country, game, date, numeric, month } from './fake';
-import { monthOptions } from './fake';
-import { RatingEditor, StringEditor, CheckboxEditor, SelectionEditor } from '@/components';
+import { monthOptions, languageOptions } from './fake';
+import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
 
 ; (() => {
 
@@ -18,7 +18,7 @@ import { RatingEditor, StringEditor, CheckboxEditor, SelectionEditor } from '@/c
             name: name(i),
             status: i % 2 == 0,
             month: [month(), month()],
-            language: countryData.language,
+            language: [countryData.language],
             country: countryData.country,
             continent: countryData.continent,
             game: { title: game(i), link: "https://www.example.com" },
@@ -33,7 +33,7 @@ import { RatingEditor, StringEditor, CheckboxEditor, SelectionEditor } from '@/c
     const grid = new Grid(document.querySelector("#full-example"), {
         columns: [
             { headerName: 'ID', field: 'id', pinned: 'left', width: 100 },
-            { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: StringEditor },
+            { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: InputEditor },
             { headerName: 'Status', field: 'status', width: 80, cellRender: CheckboxRender, cellEditor: CheckboxEditor },
             {
                 headerName: 'Month', field: 'month',
@@ -41,13 +41,17 @@ import { RatingEditor, StringEditor, CheckboxEditor, SelectionEditor } from '@/c
                 cellEditor: SelectionEditor, cellEditorParams: { options: monthOptions, multiple: true }
             },
             { headerName: 'Game Name', field: 'game', cellRender: HyperlinkRender },
-            { headerName: 'Language', field: 'language', width: 100, },
+            {
+                headerName: 'Language', field: 'language', width: 100,
+                cellRender: SelectionRender, CellRendererParams: { options: languageOptions },
+                cellEditor: SelectionEditor, cellEditorParams: { options: languageOptions },
+            },
             { headerName: 'Country', field: 'country', resizable: true },
             { headerName: 'Continent', field: 'continent' },
             { headerName: 'Bought', field: 'bought', cellRender: CheckboxRender },
-            { headerName: 'Bank Balance', field: 'balance' },
+            { headerName: 'Bank Balance', field: 'balance', cellEditor: InputEditor, cellEditorParams: { type: 'number' } },
             { headerName: 'Rating', field: 'rating', pinned: 'left', cellRender: RatingRender, cellEditor: RatingEditor },
-            { headerName: 'Total Winnings', field: 'winnings' },
+            { headerName: 'Total Winnings', field: 'winnings', cellEditor: InputEditor, cellEditorParams: { type: 'number' } },
             { headerName: 'Date', field: 'date', pinned: 'right' },
         ],
         rows: rows,

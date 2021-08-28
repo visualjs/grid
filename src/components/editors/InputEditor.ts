@@ -1,14 +1,24 @@
 import { CellEditor, CellEditorParams } from "@/grid/cell";
 import styles from '@/components/styles/input.module.css';
 
-export class StringEditor extends CellEditor<{}> {
+interface Props {
+    type?: string;
+}
+
+const defaultProps = {
+    type: 'text',
+}
+
+export class InputEditor extends CellEditor<Props> {
 
     protected input: HTMLInputElement;
 
-    public init(params: CellEditorParams<{}>) {
+    public init(params: CellEditorParams<Props>) {
+        const props = Object.assign({}, defaultProps, params.props);
+
         if (!this.input) {
             this.input = document.createElement('input');
-            this.input.type = 'text';
+            this.input.type = props.type;
             this.input.className = styles.inlineInput;
         }
 
@@ -33,4 +43,4 @@ export class StringEditor extends CellEditor<{}> {
     }
 }
 
-export default StringEditor;
+export default InputEditor;

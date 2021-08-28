@@ -30,6 +30,20 @@ export const countries = [
     { country: "Belgium", continent: "Europe", language: "French" }
 ];
 
+export const languageOptions = {
+    "English": {bgColor: "#2096f3", fgColor: "#ffffff"},
+    "Spanish": {bgColor: "#0dc9c9", fgColor: "#ffffff"},
+    "French": {bgColor: "#00c345", fgColor: "#ffffff"},
+    "German": {bgColor: "#fad714", fgColor: "#ffffff"},
+    "Swedish": {bgColor: "#ff9301", fgColor: "#ffffff"},
+    "Norwegian": {bgColor: "#e9594f", fgColor: "#ffffff"},
+    "Italian": {bgColor: "#ff708b", fgColor: "#ffffff"},
+    "Greek": {bgColor: "#8b7af0", fgColor: "#ffffff"},
+    "Icelandic": {bgColor: "#5586ff", fgColor: "#ffffff"},
+    "Portuguese": {bgColor: "#7a67ee", fgColor: "#ffffff"},
+    "Maltese": {bgColor: "#009688", fgColor: "#ffffff"},
+}
+
 export const firstNames = [
     "Tony", "Andrew", "Kevin", "Bricker", "Dimple", "Gil", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
