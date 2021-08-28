@@ -35,6 +35,8 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected cell = createRef<HTMLDivElement>();
 
+    protected cellContent = createRef<HTMLDivElement>();
+
     protected coord: Coordinate;
 
     protected timer: number = null;
@@ -107,16 +109,16 @@ class Cell extends GridElement<CellProps, CellState> {
 
                 this.timer = null;
 
-                if (!this.cell.current) {
+                if (!this.cellContent.current) {
                     return;
                 }
 
-                DOM.clean(this.cell.current);
-                this.cell.current.appendChild(render.gui());
+                DOM.clean(this.cellContent.current);
+                this.cellContent.current.appendChild(render.gui());
                 render.afterAttached && render.afterAttached();
             }, 0);
         } else {
-            this.cell.current && (this.cell.current.textContent = result.toString());
+            this.cellContent.current && (this.cellContent.current.textContent = result.toString());
         }
     }
 
@@ -166,8 +168,8 @@ class Cell extends GridElement<CellProps, CellState> {
 
         this.isEditing = true;
         const popup = document.createElement('div');
-        DOM.clean(this.cell.current);
-        DOM.appendClassName(this.cell.current, styles.cellEditing);
+        DOM.clean(this.cellContent.current);
+        DOM.appendClassName(this.cellContent.current, styles.cellEditing);
 
         if (!this.editor) {
             this.editor = new this.props.column.cellEditor();
@@ -186,7 +188,7 @@ class Cell extends GridElement<CellProps, CellState> {
         });
 
         popup.appendChild(this.editor.gui());
-        this.cell.current.appendChild(popup);
+        this.cellContent.current.appendChild(popup);
         this.editor.afterAttached && this.editor.afterAttached();
     }
 
@@ -196,7 +198,7 @@ class Cell extends GridElement<CellProps, CellState> {
         }
 
         this.isEditing = false;
-        DOM.setClassNames(this.cell.current, [styles.cell]);
+        DOM.setClassNames(this.cellContent.current, [styles.cellContent]);
         this.setValue(this.editor.getValue());
     }
 
@@ -249,7 +251,9 @@ class Cell extends GridElement<CellProps, CellState> {
                 onMouseMove={this.handleMouseMove}
                 onMouseUp={this.handleMouseUp}
                 onDblClick={this.handleDbClick}
-            />
+            >
+                <div ref={this.cellContent} className={styles.cellContent}></div>
+            </div>
         );
     }
 
