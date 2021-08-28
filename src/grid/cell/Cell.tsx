@@ -64,7 +64,7 @@ class Cell extends GridElement<CellProps, CellState> {
                 this.doRender();
                 this.io.disconnect();
             }
-        })
+        }, { threshold: 0.000001 })
     }
 
     componentDidMount() {
@@ -99,11 +99,11 @@ class Cell extends GridElement<CellProps, CellState> {
 
     // render cell component
     protected doRender() {
-        const value = this.getValue();
-        let result: HTMLElement | string = value;
+        this.timer = setTimeout(() => {
+            const value = this.getValue();
+            let result: HTMLElement | string = value;
 
-        if (this.props.column.cellRender) {
-            this.timer = setTimeout(() => {
+            if (this.props.column.cellRender) {
                 const render = new this.props.column.cellRender();
                 render.init && render.init({
                     props: this.props.column.CellRendererParams,
@@ -120,10 +120,10 @@ class Cell extends GridElement<CellProps, CellState> {
                 DOM.clean(this.cellContent.current);
                 this.cellContent.current.appendChild(render.gui());
                 render.afterAttached && render.afterAttached();
-            }, 0);
-        } else {
-            this.cellContent.current && (this.cellContent.current.textContent = result.toString());
-        }
+            } else {
+                this.cellContent.current && (this.cellContent.current.textContent = result.toString());
+            }
+        }, 0);
     }
 
     // If the current cell is selected, modify the cell to be selected style
