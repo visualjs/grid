@@ -76,6 +76,10 @@ class Grid extends Emitter<EventsTypes> {
         this.addListener('selectionChanged', (selections) => {
             this.selections = selections;
         })
+
+        this.addListener('columnWidthChanged', (params) => {
+            this.columns[params.field].width = params.width;
+        })
     }
 
     // 

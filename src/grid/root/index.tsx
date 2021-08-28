@@ -26,7 +26,15 @@ interface RootState {
     horizontalRightSpacer?: number;
 }
 
+interface ResizingColumn {
+    field: string;
+    width: number;
+    pos: number;
+}
+
 class GridRoot extends GridElement<GridProps, RootState> {
+
+    protected resizingColumn: ResizingColumn;
 
     public componentDidMount = () => {
         this.resize();
@@ -58,8 +66,35 @@ class GridRoot extends GridElement<GridProps, RootState> {
      * Event handlers
      */
 
-    protected handleColumnResize = (field: string, width: number) => {
-        this.resize();
+    protected handleColumnResizeStart = (field: string, width: number, ev: MouseEvent) => {
+        document.addEventListener('mouseup', this.handleMouseUp);
+        document.addEventListener('mousemove', this.handleMouseMove);
+
+        const offsetX = ev.pageX - this.refs.root.current.offsetLeft;
+        this.refs.columnResizer.current.style.left = offsetX + 'px';
+        this.refs.columnResizer.current.style.width = '2px';
+        this.resizingColumn = { field, width, pos: ev.clientX };
+    }
+
+    protected handleMouseUp = (ev: MouseEvent) => {
+        document.removeEventListener('mouseup', this.handleMouseUp);
+        document.removeEventListener('mousemove', this.handleMouseMove);
+        this.refs.columnResizer.current.style.left = '0px';
+        this.refs.columnResizer.current.style.width = '0px';
+
+        if (this.resizingColumn) {
+            const width = ev.clientX - this.resizingColumn.pos + this.resizingColumn.width;
+            const minWidth = this.grid.getColumnOptions(this.resizingColumn.field).minWidth
+
+            this.grid.trigger('columnWidthChanged', {
+                field: this.resizingColumn.field, width: Math.max(width, minWidth)
+            });
+        }
+    }
+
+    protected handleMouseMove = (ev: MouseEvent) => {
+        const offsetX = ev.pageX - this.refs.root.current.offsetLeft;
+        this.refs.columnResizer.current.style.left = offsetX + 'px';
     }
 
     protected handleHorizontalScroll = (ev: UIEvent) => {
@@ -95,13 +130,13 @@ class GridRoot extends GridElement<GridProps, RootState> {
         };
 
         return (
-            <div className={styles.root} style={rootStyle}>
+            <div ref={this.createRef("root")} className={styles.root} style={rootStyle}>
                 {/* headers */}
                 <div className={styles.header} style={headerStyle}>
                     <div ref={this.createRef("pinnedLeftColumns")} className={classes([styles.pinnedLeftColumns, styles.headerColumns])}>
                         {
                             this.props.pinnedLeftColumns.map(col => {
-                                return <Column grid={this.grid} onResize={this.handleColumnResize} {...this.grid.getColumnOptions(col)} />
+                                return <Column grid={this.grid} onResize={this.handleColumnResizeStart} {...this.grid.getColumnOptions(col)} />
                             })
                         }
                     </div>
@@ -113,7 +148,7 @@ class GridRoot extends GridElement<GridProps, RootState> {
                         >
                             {
                                 this.props.normalColumns.map(col => {
-                                    return <Column grid={this.grid} onResize={this.handleColumnResize} {...this.grid.getColumnOptions(col)} />
+                                    return <Column grid={this.grid} onResize={this.handleColumnResizeStart} {...this.grid.getColumnOptions(col)} />
                                 })
                             }
                         </div>
@@ -121,7 +156,7 @@ class GridRoot extends GridElement<GridProps, RootState> {
                     <div ref={this.createRef("pinnedRightColumns")} className={classes([styles.pinnedRightColumns, styles.headerColumns])}>
                         {
                             this.props.pinnedRightColumns.map(col => {
-                                return <Column grid={this.grid} onResize={this.handleColumnResize} {...this.grid.getColumnOptions(col)} />
+                                return <Column grid={this.grid} onResize={this.handleColumnResizeStart} {...this.grid.getColumnOptions(col)} />
                             })
                         }
                     </div>
@@ -148,6 +183,8 @@ class GridRoot extends GridElement<GridProps, RootState> {
                     </div>
                     <div style={{ width: this.state.horizontalRightSpacer }} className={styles.horizontalRightSpacer}></div>
                 </div>
+                {/* hidden global elements like column resizer etc. */}
+                <div ref={this.createRef("columnResizer")} className={styles.columnResizer}></div>
             </div>
         );
     }

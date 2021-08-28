@@ -29,6 +29,7 @@ interface CellState {
     active?: boolean;
     selected?: boolean;
     boundary: Boundary;
+    width: number;
 }
 
 class Cell extends GridElement<CellProps, CellState> {
@@ -51,6 +52,7 @@ class Cell extends GridElement<CellProps, CellState> {
         super(props);
 
         this.state = {
+            width: props.column.width,
             selected: false,
             active: false,
             boundary: { left: false, top: false, bottom: false, right: false }
@@ -70,6 +72,7 @@ class Cell extends GridElement<CellProps, CellState> {
         this.grid.addListener('cellValueChanged', this.handleCellValueChanged);
         this.grid.addListener('startCellEditing', this.handleStartCellEditing);
         this.grid.addListener('stopEditing', this.handleStopEditing);
+        this.grid.addListener('columnWidthChanged', this.handleColumnWidthChange);
         this.handleSelectionChanged(this.grid.getSelectionRanges());
         this.io.observe(this.cell.current);
     }
@@ -79,6 +82,7 @@ class Cell extends GridElement<CellProps, CellState> {
         this.grid.removeListener('cellValueChanged', this.handleCellValueChanged);
         this.grid.removeListener('startCellEditing', this.handleStartCellEditing);
         this.grid.removeListener('stopEditing', this.handleStopEditing);
+        this.grid.removeListener('columnWidthChanged', this.handleColumnWidthChange);
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = null;
@@ -158,6 +162,16 @@ class Cell extends GridElement<CellProps, CellState> {
     }
 
     // 
+    // Resize
+    // 
+
+    protected handleColumnWidthChange = ({ field, width }: { field: string, width: number }) => {
+        if (field === this.props.column.field) {
+            this.setState({ width });
+        }
+    }
+
+    // 
     // Editing
     // 
 
@@ -226,7 +240,7 @@ class Cell extends GridElement<CellProps, CellState> {
     render() {
 
         const cellStyle: { [key: string]: any } = {
-            width: this.props.column.width,
+            width: this.state.width,
         }
 
         if (this.props.column.flex) {

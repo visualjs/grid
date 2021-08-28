@@ -32,27 +32,27 @@ import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/co
 
     const grid = new Grid(document.querySelector("#full-example"), {
         columns: [
-            { headerName: 'ID', field: 'id', pinned: 'left', width: 100 },
+            { headerName: 'ID', field: 'id', pinned: 'left', width: 100, resizable: true },
             { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: InputEditor },
-            { headerName: 'Status', field: 'status', width: 80, cellRender: CheckboxRender, cellEditor: CheckboxEditor },
+            { headerName: 'Status', field: 'status', width: 80, resizable: true, cellRender: CheckboxRender, cellEditor: CheckboxEditor },
             {
-                headerName: 'Month', field: 'month',
+                headerName: 'Month', field: 'month', resizable: true,
                 cellRender: SelectionRender, CellRendererParams: { options: monthOptions },
                 cellEditor: SelectionEditor, cellEditorParams: { options: monthOptions, multiple: true }
             },
-            { headerName: 'Game Name', field: 'game', cellRender: HyperlinkRender },
+            { headerName: 'Game Name', field: 'game', resizable: true, cellRender: HyperlinkRender },
             {
-                headerName: 'Language', field: 'language', width: 100,
+                headerName: 'Language', field: 'language', width: 100, resizable: true,
                 cellRender: SelectionRender, CellRendererParams: { options: languageOptions },
                 cellEditor: SelectionEditor, cellEditorParams: { options: languageOptions },
             },
             { headerName: 'Country', field: 'country', resizable: true },
-            { headerName: 'Continent', field: 'continent' },
-            { headerName: 'Bought', field: 'bought', cellRender: CheckboxRender },
-            { headerName: 'Bank Balance', field: 'balance', cellEditor: InputEditor, cellEditorParams: { type: 'number' } },
-            { headerName: 'Rating', field: 'rating', pinned: 'left', cellRender: RatingRender, cellEditor: RatingEditor },
-            { headerName: 'Total Winnings', field: 'winnings', cellEditor: InputEditor, cellEditorParams: { type: 'number' } },
-            { headerName: 'Date', field: 'date', pinned: 'right' },
+            { headerName: 'Continent', field: 'continent', resizable: true },
+            { headerName: 'Bought', field: 'bought', resizable: true, cellRender: CheckboxRender },
+            { headerName: 'Bank Balance', field: 'balance', resizable: true, cellEditor: InputEditor, cellEditorParams: { type: 'number' } },
+            { headerName: 'Rating', field: 'rating', pinned: 'left', resizable: true, cellRender: RatingRender, cellEditor: RatingEditor },
+            { headerName: 'Total Winnings', field: 'winnings', resizable: true, cellEditor: InputEditor, cellEditorParams: { type: 'number' } },
+            { headerName: 'Date', field: 'date', resizable: true, pinned: 'right' },
         ],
         rows: rows,
         rowHeight: 30,

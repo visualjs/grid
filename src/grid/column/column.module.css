@@ -14,13 +14,12 @@
     white-space: nowrap;
 }
 
-.column-resize {
+.column-resize-holder {
     position: absolute;
     right: 0;
     top: 0;
-    width: 10px;
+    width: 4px;
     height: 100%;
-    cursor: ew-resize;
+    cursor: col-resize;
     z-index: 2;
-    border-right: 0px solid var(--header-resizer-active-color, #409eff);
 }

@@ -14,6 +14,7 @@ export type SelectionChangedEvent = SelectionRange[];
 export class GridEvents extends Events {
     constructor(handlers: {} = {}) {
         super({
+            columnWidthChanged: [],
             selectionChanged: [],
             cellValueChanged: [],
             startCellEditing: [],
@@ -26,6 +27,7 @@ export class GridEvents extends Events {
 }
 
 export interface EventsTypes extends DefaultEventsTypes {
+    columnWidthChanged: { field: string, width: number };
     selectionChanged: SelectionChangedEvent;
     cellValueChanged: CellValueChangedEvent;
     startCellEditing: CellPosition;
