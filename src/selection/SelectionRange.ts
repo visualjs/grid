@@ -29,6 +29,16 @@ class SelectionRange {
         return l > r ? l : r;
     }
 
+    public each(callback: (coord: Coordinate) => void | boolean) {
+        for (let y = this.minY; y <= this.maxY; y++) {
+            for (let x = this.minX; x <= this.maxX; x++) {
+                if (callback({ x, y }) === false) {
+                    return;
+                }
+            }
+        }
+    }
+
     public contains(coord: Coordinate): boolean {
         if (!this.start || !this.end) {
             return false;

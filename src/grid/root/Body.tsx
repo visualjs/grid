@@ -1,10 +1,9 @@
 import { Coordinate } from "@/types";
 import Row from "@/grid/row";
 import GridElement from "@/grid/GridElement";
-import SelectionRange from "@/selection/SelectionRange";
+import { Button, readTextFromClipboard, writeTextToClipboard } from "@/utils";
 
 import styles from './grid.module.css';
-import { Button } from "@/utils";
 
 interface Props {
     items: string[];
@@ -28,6 +27,49 @@ class Body extends GridElement<Props> {
 
     componentWillUnmount = () => {
         document.removeEventListener('mouseup', this.handleMouseUp);
+    }
+
+    protected handleKeyDown = (ev: KeyboardEvent) => {
+        if (ev.key === 'c' && (ev.ctrlKey || ev.metaKey)) {
+            return this.copyFromSelection();
+        }
+
+        if (ev.key === 'v' && (ev.ctrlKey || ev.metaKey)) {
+            return this.pasteFromClipboard();
+        }
+    }
+
+    protected copyFromSelection = () => {
+        let text = '';
+        this.grid.getSelectionRanges().forEach((range) => {
+            let lastRow = -1;
+            range.each(coord => {
+                if (lastRow !== -1) {
+                    text += coord.y !== lastRow ? '\n' : '\t';
+                }
+
+                text += this.grid.getCellValueByCoord(coord);
+                lastRow = coord.y;
+            });
+        })
+
+        writeTextToClipboard(text);
+    }
+
+    protected pasteFromClipboard = () => {
+
+        const start = this.grid.getSelectionRanges()[0]?.start;
+        if (!start) return;
+
+        readTextFromClipboard().then(str => {
+            str = str.replace(/(\r\n|\r|\n)/g, '\n');
+            str.split('\n').forEach((rowData, y) => {
+                rowData.split('\t').forEach((value, x) => {
+                    const coord = { x: x + start.x, y: y + start.y };
+                    this.grid.setCellValueByCoord(coord, value);
+                });
+            });
+        });
     }
 
     protected handleCellDbClick = (ev: MouseEvent, row: string, column: string) => {
@@ -69,9 +111,13 @@ class Body extends GridElement<Props> {
     }
 
     protected handleSelectionChanged = () => {
-        this.grid.trigger('selectionChanged', [
-            new SelectionRange(this.selectionStart, this.selectionEnd)
-        ]);
+        this.grid.selectCells(this.selectionStart, this.selectionEnd);
+    }
+
+    protected handleBlur = () => {
+        this.grid.selectRows([]);
+        this.selectionStart = this.selectionEnd = null;
+        this.grid.selectCells(null, null);
     }
 
     protected renderRows = (columns: string[]) => {
@@ -92,7 +138,12 @@ class Body extends GridElement<Props> {
 
     render() {
         return (
-            <div style={{ display: 'flex' }} onMouseLeave={() => this.grid.setHoveredRow()}>
+            <div
+                onKeyDown={this.handleKeyDown}
+                onBlur={this.handleBlur}
+                tabIndex={0} style={{ display: 'flex', outline: 'none' }}
+                onMouseLeave={() => this.grid.setHoveredRow()}
+            >
                 <div className={styles.pinnedLeftCells}>
                     {this.renderRows(this.props.pinnedLeftColumns)}
                 </div>

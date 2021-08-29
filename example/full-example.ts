@@ -4,6 +4,7 @@ import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '
 import { name, country, game, date, numeric, month } from './fake';
 import { monthOptions, languageOptions } from './fake';
 import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
+import { writeTextToClipboard } from '@/utils';
 
 ; (() => {
 
@@ -60,5 +61,5 @@ import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/co
 
     grid.addListener('cellValueChanged', (ev) => {
         console.log(ev);
-    })
+    });
 })();

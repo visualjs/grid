@@ -151,6 +151,24 @@ class Grid extends Emitter<EventsTypes> {
         return pos;
     }
 
+    public getRowIdByIndex(y: number) {
+        return this.props.rows[y].id;
+    }
+
+    public getColumnByIndex(x: number) {
+        if (x < this.pinnedLeftColumns.length) {
+            return this.pinnedLeftColumns[x];
+        }
+
+        x -= this.pinnedLeftColumns.length;
+        if (x < this.normalColumns.length) {
+            return this.normalColumns[x];
+        }
+
+        x -= this.normalColumns.length;
+        return this.pinnedRightColumns[x];
+    }
+
     public setCellValue(row: string, column: string, value: any) {
         const index = this.rows[row];
         if (index === undefined) {
@@ -166,6 +184,14 @@ class Grid extends Emitter<EventsTypes> {
         this.trigger('cellValueChanged', { row, column, value, oldValue });
     }
 
+    public setCellValueByCoord(coord: Coordinate, value: any) {
+        return this.setCellValue(
+            this.getRowIdByIndex(coord.y),
+            this.getColumnByIndex(coord.x),
+            value
+        );
+    }
+
     public getCellValue(row: string, column: string): any {
         const index = this.rows[row];
         if (index === undefined) {
@@ -173,6 +199,13 @@ class Grid extends Emitter<EventsTypes> {
         }
 
         return this.props.rows[index][column];
+    }
+
+    public getCellValueByCoord(coord: Coordinate) {
+        return this.getCellValue(
+            this.getRowIdByIndex(coord.y),
+            this.getColumnByIndex(coord.x)
+        );
     }
 
     // 
@@ -193,6 +226,12 @@ class Grid extends Emitter<EventsTypes> {
 
     public getSelectionRanges() {
         return this.selections;
+    }
+
+    public selectCells(start: Coordinate, end: Coordinate) {
+        this.trigger('selectionChanged', [
+            new SelectionRange(start, end)
+        ]);
     }
 }
 

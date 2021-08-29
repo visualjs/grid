@@ -1,5 +1,6 @@
 export * from './enums';
 export * from './dom';
+export * from './clipboard';
 
 export function classes(value: string | string[] | { [key: string]: boolean }) {
 
