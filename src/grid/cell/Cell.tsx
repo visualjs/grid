@@ -198,7 +198,7 @@ class Cell extends GridElement<CellProps, CellState> {
 
         this.editor.init && this.editor.init({
             props: this.props.column.cellParams,
-            value: this.getValue(),
+            value: this.getValue(true),
             column: this.props.column,
         });
 
