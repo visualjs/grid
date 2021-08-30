@@ -20,11 +20,11 @@ export interface RowData {
 }
 
 interface ICellRenderer {
-    new (): CellRenderer<unknown>;
+    new(): CellRenderer<unknown>;
 }
 
 interface ICellEditor {
-    new (): CellEditor<unknown>;
+    new(): CellEditor<unknown>;
 }
 
 export interface BaseColumnOptions {
@@ -56,4 +56,6 @@ export interface GridOptions {
     rowHeight?: number; // default is 28
     // virtual list
     preloadRowCount?: number; // default is 20
+    // other
+    fillable?: 'x' | 'y' | 'xy';
 }

@@ -33,6 +33,26 @@
     background: var(--cell-selected-background, rgba(0, 145, 234, 0.2));
 }
 
+.cell-filling {
+    background: var(--cell-filling-background, rgba(245, 223, 25, 0.2));
+}
+
+.cell-filling-left-boundary {
+    border-left: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+}
+
+.cell-filling-right-boundary {
+    border-right: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+}
+
+.cell-filling-top-boundary {
+    border-top: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+}
+
+.cell-filling-bottom-boundary {
+    border-bottom: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+}
+
 .cell-left-boundary {
     border-left: 1px solid var(--cell-selected-boundary-color, #0091ea);
 }
@@ -63,4 +83,14 @@
 
 .cell-editing-popup {
     height: auto;
+}
+
+.cell-fill-handler {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: var(--primary-color, #0091ea);
+    right: 0;
+    bottom: 0;
+    cursor: cell;
 }

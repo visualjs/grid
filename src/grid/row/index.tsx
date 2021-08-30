@@ -8,10 +8,11 @@ import { DOM } from "@/utils";
 interface Props {
     value: string;
     columns: string[];
-    onCellDbClick?: (ev: MouseEvent, row: string, col: string) => void
-    onCellMouseDown?: (ev: MouseEvent, row: string, col: string) => void
-    onCellMouseMove?: (ev: MouseEvent, row: string, col: string) => void
-    onCellMouseUp?: (ev: MouseEvent, row: string, col: string) => void
+    onCellDbClick?: (ev: MouseEvent, row: string, col: string) => void;
+    onCellMouseDown?: (ev: MouseEvent, row: string, col: string) => void;
+    onCellMouseMove?: (ev: MouseEvent, row: string, col: string) => void;
+    onCellMouseUp?: (ev: MouseEvent, row: string, col: string) => void;
+    onCellFillerMouseDown?: (ev: MouseEvent, row: string, col: string) => void;
 }
 
 class Row extends GridElement<Props> {
@@ -63,6 +64,7 @@ class Row extends GridElement<Props> {
                                 onMouseDown={this.props.onCellMouseDown}
                                 onMouseMove={this.props.onCellMouseMove}
                                 onMouseUp={this.props.onCellMouseUp}
+                                onFillerMouseDown={this.props.onCellFillerMouseDown}
                                 grid={this.grid}
                                 row={this.props.value}
                                 column={this.grid.getColumnOptions(col)}

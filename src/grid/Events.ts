@@ -1,5 +1,6 @@
 import { EventsTypes as DefaultEventsTypes, Events } from '@/observer/Events';
-import SelectionRange from '@/selection/SelectionRange';
+import CellRange from '@/selection/CellRange';
+import { FillRange } from '@/selection/FillRange';
 import { CellPosition } from '@/types';
 
 export interface CellValueChangedEvent {
@@ -9,13 +10,14 @@ export interface CellValueChangedEvent {
     oldValue: any;
 }
 
-export type SelectionChangedEvent = SelectionRange[];
+export type SelectionChangedEvent = CellRange[];
 
 export class GridEvents extends Events {
     constructor(handlers: {} = {}) {
         super({
             columnWidthChanged: [],
             selectionChanged: [],
+            fillingRangeChanged: [],
             cellValueChanged: [],
             startCellEditing: [],
             stopEditing: [],
@@ -29,6 +31,7 @@ export class GridEvents extends Events {
 export interface EventsTypes extends DefaultEventsTypes {
     columnWidthChanged: { field: string, width: number };
     selectionChanged: SelectionChangedEvent;
+    fillingRangeChanged: FillRange,
     cellValueChanged: CellValueChangedEvent;
     startCellEditing: CellPosition;
     stopEditing: void;

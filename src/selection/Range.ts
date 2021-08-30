@@ -1,6 +1,6 @@
 import { Coordinate } from "@/types";
 
-class SelectionRange {
+export abstract class Range {
 
     protected minX: number;
 
@@ -10,37 +10,32 @@ class SelectionRange {
 
     protected maxY: number;
 
-    constructor(public start: Coordinate, public end: Coordinate) {
-        if (!start || !end) {
-            return;
-        }
+    protected abstract isEmpty(): boolean;
 
-        this.minX = this.min(start.x, end.x);
-        this.minY = this.min(start.y, end.y);
-        this.maxX = this.max(start.x, end.x);
-        this.maxY = this.max(start.y, end.y);
-    }
-
-    protected min(l: number, r: number): number {
-        return l < r ? l : r;
-    }
-
-    protected max(l: number, r: number): number {
-        return l > r ? l : r;
-    }
-
-    public each(callback: (coord: Coordinate) => void | boolean) {
+    public each(callback: (coord: Coordinate, relative?: Coordinate) => void | boolean) {
         for (let y = this.minY; y <= this.maxY; y++) {
             for (let x = this.minX; x <= this.maxX; x++) {
-                if (callback({ x, y }) === false) {
+                if (callback({ x, y }, { x: x - this.minX, y: y - this.minY }) === false) {
                     return;
                 }
             }
         }
     }
 
+    public getStartCoord(): Coordinate {
+        return { x: this.minX, y: this.minY };
+    }
+
+    public getEndCoord(): Coordinate {
+        return { x: this.maxX, y: this.maxY };
+    }
+
+    public getGlobalCoord(relative: Coordinate): Coordinate {
+        return { x: this.minX + relative.x, y: this.minY + relative.y };
+    }
+
     public contains(coord: Coordinate): boolean {
-        if (!this.start || !this.end) {
+        if (this.isEmpty()) {
             return false;
         }
 
@@ -51,7 +46,7 @@ class SelectionRange {
     }
 
     public isLeft(coord: Coordinate) {
-        if (!this.start || !this.end) {
+        if (this.isEmpty()) {
             return false;
         }
 
@@ -59,7 +54,7 @@ class SelectionRange {
     }
 
     public isRight(coord: Coordinate) {
-        if (!this.start || !this.end) {
+        if (this.isEmpty()) {
             return false;
         }
 
@@ -67,7 +62,7 @@ class SelectionRange {
     }
 
     public isTop(coord: Coordinate) {
-        if (!this.start || !this.end) {
+        if (this.isEmpty()) {
             return false;
         }
 
@@ -75,7 +70,7 @@ class SelectionRange {
     }
 
     public isBottom(coord: Coordinate) {
-        if (!this.start || !this.end) {
+        if (this.isEmpty()) {
             return false;
         }
 
@@ -83,4 +78,4 @@ class SelectionRange {
     }
 }
 
-export default SelectionRange;
+export default Range;

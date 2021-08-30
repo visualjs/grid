@@ -81,6 +81,7 @@ import { BooleanTransformer, SelectionTransformer } from '@/components';
         ],
         rows: rows,
         rowHeight: 30,
+        fillable: 'xy',
     });
 
     grid.addListener('cellValueChanged', (ev) => {

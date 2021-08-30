@@ -1,5 +1,5 @@
 import { Emitter } from '@/observer/Emitter';
-import SelectionRange from '@/selection/SelectionRange';
+import CellRange from '@/selection/CellRange';
 import { ColumnOptions, GridOptions, Coordinate, BaseColumnOptions, CellPosition } from '@/types';
 import Root from '@/grid/root';
 import { EventsTypes, GridEvents } from './Events';
@@ -35,7 +35,7 @@ class Grid extends Emitter<EventsTypes> {
     // save row's id and index as map
     protected rows: Record<string, number> = {};
 
-    protected selections: SelectionRange[] = [];
+    protected selections: CellRange[] = [];
 
     protected selectedRows: string[] = [];
 
@@ -80,6 +80,10 @@ class Grid extends Emitter<EventsTypes> {
         this.addListener('columnWidthChanged', (params) => {
             this.columns[params.field].width = params.width;
         })
+    }
+
+    public getOptions(): GridOptions {
+        return this.props;
     }
 
     // 
@@ -251,7 +255,7 @@ class Grid extends Emitter<EventsTypes> {
 
     public selectCells(start: Coordinate, end: Coordinate) {
         this.trigger('selectionChanged', [
-            new SelectionRange(start, end)
+            new CellRange(start, end)
         ]);
     }
 }

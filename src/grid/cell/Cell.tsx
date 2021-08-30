@@ -1,21 +1,23 @@
 import GridElement from "@/grid/GridElement";
-import SelectionRange from "@/selection/SelectionRange";
+import CellRange from "@/selection/CellRange";
 import { CellPosition, ColumnOptions, Coordinate } from "@/types";
 import { classes, isObjectEqual } from "@/utils";
 import { DOM } from "@/utils";
 import { createRef } from "preact";
 import { CellValueChangedEvent } from "../Events";
+import CellEditor from "./CellEditor";
 
 import styles from './cell.module.css';
-import CellEditor from "./CellEditor";
+import { FillRange } from "@/selection/FillRange";
 
 interface CellProps {
     row: string;
     column: ColumnOptions;
     onDbClick?: (ev: MouseEvent, row: string, col: string) => void;
-    onMouseDown?: (ev: MouseEvent, row: string, col: string) => void
-    onMouseMove?: (ev: MouseEvent, row: string, col: string) => void
-    onMouseUp?: (ev: MouseEvent, row: string, col: string) => void
+    onMouseDown?: (ev: MouseEvent, row: string, col: string) => void;
+    onMouseMove?: (ev: MouseEvent, row: string, col: string) => void;
+    onMouseUp?: (ev: MouseEvent, row: string, col: string) => void;
+    onFillerMouseDown?: (ev: MouseEvent, row: string, col: string) => void;
 }
 
 interface Boundary {
@@ -28,7 +30,9 @@ interface Boundary {
 interface CellState {
     active?: boolean;
     selected?: boolean;
-    boundary: Boundary;
+    filling?: boolean;
+    selectedBoundary: Boundary;
+    fillingBoundary: Boundary;
     width: number;
 }
 
@@ -55,7 +59,8 @@ class Cell extends GridElement<CellProps, CellState> {
             width: props.column.width,
             selected: false,
             active: false,
-            boundary: { left: false, top: false, bottom: false, right: false }
+            selectedBoundary: { left: false, top: false, bottom: false, right: false },
+            fillingBoundary: { left: false, top: false, bottom: false, right: false }
         }
 
         this.coord = this.grid.getCoordinate(this.props.row, this.props.column.field);
@@ -69,6 +74,7 @@ class Cell extends GridElement<CellProps, CellState> {
 
     componentDidMount() {
         this.grid.addListener('selectionChanged', this.handleSelectionChanged);
+        this.grid.addListener('fillingRangeChanged', this.handleFillingRangeChanged);
         this.grid.addListener('cellValueChanged', this.handleCellValueChanged);
         this.grid.addListener('startCellEditing', this.handleStartCellEditing);
         this.grid.addListener('stopEditing', this.handleStopEditing);
@@ -79,6 +85,7 @@ class Cell extends GridElement<CellProps, CellState> {
 
     componentWillUnmount() {
         this.grid.removeListener('selectionChanged', this.handleSelectionChanged);
+        this.grid.removeListener('fillingRangeChanged', this.handleFillingRangeChanged);
         this.grid.removeListener('cellValueChanged', this.handleCellValueChanged);
         this.grid.removeListener('startCellEditing', this.handleStartCellEditing);
         this.grid.removeListener('stopEditing', this.handleStopEditing);
@@ -128,29 +135,49 @@ class Cell extends GridElement<CellProps, CellState> {
     }
 
     // If the current cell is selected, modify the cell to be selected style
-    protected handleSelectionChanged = (selections: SelectionRange[]) => {
+    protected handleSelectionChanged = (selections: CellRange[]) => {
 
         let selected = false;
         let boundary = { left: false, top: false, bottom: false, right: false };
 
         for (let i in selections) {
-            const s = selections[i];
-            if (!s.contains(this.coord)) {
+            const range = selections[i];
+            if (!range.contains(this.coord)) {
                 continue;
             }
 
             selected = true;
 
-            s.isLeft(this.coord) && (boundary.left = true);
-            s.isRight(this.coord) && (boundary.right = true);
-            s.isTop(this.coord) && (boundary.top = true);
-            s.isBottom(this.coord) && (boundary.bottom = true);
+            range.isLeft(this.coord) && (boundary.left = true);
+            range.isRight(this.coord) && (boundary.right = true);
+            range.isTop(this.coord) && (boundary.top = true);
+            range.isBottom(this.coord) && (boundary.bottom = true);
         }
 
-        if (selected != this.state.selected || !isObjectEqual(boundary, this.state.boundary)) {
+        if (selected != this.state.selected || !isObjectEqual(boundary, this.state.selectedBoundary)) {
             this.setState({
                 selected: selected,
-                boundary: boundary
+                selectedBoundary: boundary
+            });
+        }
+    }
+
+    protected handleFillingRangeChanged = (range: FillRange) => {
+        let filling = false;
+        let boundary = { left: false, top: false, bottom: false, right: false };
+
+        if (range.contains(this.coord)) {
+            filling = true;
+            range.isLeft(this.coord) && (boundary.left = true);
+            range.isRight(this.coord) && (boundary.right = true);
+            range.isTop(this.coord) && (boundary.top = true);
+            range.isBottom(this.coord) && (boundary.bottom = true);
+        }
+
+        if (filling != this.state.filling || !isObjectEqual(boundary, this.state.fillingBoundary)) {
+            this.setState({
+                filling: filling,
+                fillingBoundary: boundary
             });
         }
     }
@@ -238,6 +265,11 @@ class Cell extends GridElement<CellProps, CellState> {
         this.props.onDbClick && this.props.onDbClick(ev, this.props.row, this.props.column.field);
     }
 
+    protected handleFillerMouseDown = (ev: MouseEvent) => {
+        ev.stopPropagation();
+        this.props.onFillerMouseDown && this.props.onFillerMouseDown(ev, this.props.row, this.props.column.field);
+    }
+
     render() {
 
         const cellStyle: { [key: string]: any } = {
@@ -251,11 +283,20 @@ class Cell extends GridElement<CellProps, CellState> {
         const className = classes({
             [styles.cell]: true,
             [styles.cellSelected]: this.state.selected,
-            [styles.cellLeftBoundary]: this.state.boundary.left,
-            [styles.cellRightBoundary]: this.state.boundary.right,
-            [styles.cellTopBoundary]: this.state.boundary.top,
-            [styles.cellBottomBoundary]: this.state.boundary.bottom,
-        })
+            [styles.cellLeftBoundary]: this.state.selectedBoundary.left,
+            [styles.cellRightBoundary]: this.state.selectedBoundary.right,
+            [styles.cellTopBoundary]: this.state.selectedBoundary.top,
+            [styles.cellBottomBoundary]: this.state.selectedBoundary.bottom,
+            [styles.cellFilling]: this.state.filling,
+            [styles.cellFillingLeftBoundary]: this.state.fillingBoundary.left,
+            [styles.cellFillingRightBoundary]: this.state.fillingBoundary.right,
+            [styles.cellFillingTopBoundary]: this.state.fillingBoundary.top,
+            [styles.cellFillingBottomBoundary]: this.state.fillingBoundary.bottom,
+        });
+
+        const fillable = this.grid.getOptions().fillable !== undefined
+            && this.state.selectedBoundary.bottom
+            && this.state.selectedBoundary.right;
 
         return (
             <div
@@ -268,6 +309,12 @@ class Cell extends GridElement<CellProps, CellState> {
                 onDblClick={this.handleDbClick}
             >
                 <div ref={this.cellContent} className={styles.cellContent}></div>
+                {fillable && (
+                    <div
+                        onMouseDown={this.handleFillerMouseDown}
+                        className={styles.cellFillHandler}
+                    />
+                )}
             </div>
         );
     }
