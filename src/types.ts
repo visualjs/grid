@@ -1,4 +1,4 @@
-import { CellRenderer, CellEditor } from "@/grid/cell";
+import { CellRenderer, CellEditor, CellTransformer } from "@/grid/cell";
 
 export interface Styles {
     [key: string]: string;
@@ -33,10 +33,10 @@ export interface BaseColumnOptions {
     flex?: number;
     resizable?: boolean;
     pinned?: 'left' | 'right';
+    transformer?: CellTransformer;
     cellRender?: ICellRenderer;
-    CellRendererParams?: any;
+    cellParams?: any;
     cellEditor?: ICellEditor;
-    cellEditorParams?: any;
 }
 
 export interface ColumnOptions extends BaseColumnOptions {

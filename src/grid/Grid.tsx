@@ -179,8 +179,12 @@ class Grid extends Emitter<EventsTypes> {
             return;
         }
 
+        const trans = this.columns[column]?.transformer;
+        value = trans ? trans.parse({ value, column: this.columns[column] }) : value;
+
         const oldValue = this.props.rows[index][column];
         this.props.rows[index][column] = value;
+
         this.trigger('cellValueChanged', { row, column, value, oldValue });
     }
 
@@ -192,13 +196,30 @@ class Grid extends Emitter<EventsTypes> {
         );
     }
 
-    public getCellValue(row: string, column: string): any {
+    // Get the original cell data without applying transformer
+    public getRawCellValue(row: string, column: string): any {
         const index = this.rows[row];
         if (index === undefined) {
             return undefined;
         }
 
         return this.props.rows[index][column];
+    }
+
+    // Get cell data with transformer applied
+    public getCellValue(row: string, column: string): any {
+        const columnOptions = this.columns[column];
+        const trans = columnOptions?.transformer;
+        const value = this.getRawCellValue(row, column);
+
+        return trans ? trans.format({ value, column: columnOptions }) : value;
+    }
+
+    public getRawCellValueByCoord(coord: Coordinate) {
+        return this.getRawCellValue(
+            this.getRowIdByIndex(coord.y),
+            this.getColumnByIndex(coord.x)
+        );
     }
 
     public getCellValueByCoord(coord: Coordinate) {

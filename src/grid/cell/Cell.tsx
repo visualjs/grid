@@ -89,7 +89,11 @@ class Cell extends GridElement<CellProps, CellState> {
         }
     }
 
-    protected getValue(): any {
+    protected getValue(raw: boolean = false): any {
+        if (raw) {
+            return this.grid.getRawCellValue(this.props.row, this.props.column.field);
+        }
+
         return this.grid.getCellValue(this.props.row, this.props.column.field);
     }
 
@@ -100,14 +104,11 @@ class Cell extends GridElement<CellProps, CellState> {
     // render cell component
     protected doRender() {
         this.timer = setTimeout(() => {
-            const value = this.getValue();
-            let result: HTMLElement | string = value;
-
             if (this.props.column.cellRender) {
                 const render = new this.props.column.cellRender();
                 render.init && render.init({
-                    props: this.props.column.CellRendererParams,
-                    value: value,
+                    props: this.props.column.cellParams,
+                    value: this.getValue(true),
                     column: this.props.column,
                 });
 
@@ -121,7 +122,7 @@ class Cell extends GridElement<CellProps, CellState> {
                 this.cellContent.current.appendChild(render.gui());
                 render.afterAttached && render.afterAttached();
             } else {
-                this.cellContent.current && (this.cellContent.current.textContent = result.toString());
+                this.cellContent.current && (this.cellContent.current.textContent = this.getValue());
             }
         }, 0);
     }
@@ -196,7 +197,7 @@ class Cell extends GridElement<CellProps, CellState> {
         }
 
         this.editor.init && this.editor.init({
-            props: this.props.column.cellEditorParams,
+            props: this.props.column.cellParams,
             value: this.getValue(),
             column: this.props.column,
         });
