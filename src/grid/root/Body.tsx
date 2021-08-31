@@ -1,11 +1,12 @@
-import { Coordinate } from "@/types";
-import Row from "@/grid/row";
+import { Coordinate, MenuItem } from "@/types";
 import GridElement from "@/grid/GridElement";
 import { Button, readTextFromClipboard, writeTextToClipboard } from "@/utils";
 import CellRange from "@/selection/CellRange";
+import { FillRange } from "@/selection/FillRange";
+import Row from "@/grid/row";
+import { Menu } from "@/menu";
 
 import styles from './grid.module.css';
-import { FillRange } from "@/selection/FillRange";
 
 interface Props {
     items: string[];
@@ -15,7 +16,13 @@ interface Props {
     horizontalScrollLeft: number;
 }
 
-class Body extends GridElement<Props> {
+interface State {
+    isMenuVisible?: boolean;
+    contextMenuItems?: MenuItem[];
+    contextMenuCoord?: Coordinate;
+}
+
+class Body extends GridElement<Props, State> {
 
     // selection
     protected isSelecting: boolean;
@@ -37,6 +44,10 @@ class Body extends GridElement<Props> {
 
     componentWillUnmount = () => {
         document.removeEventListener('mouseup', this.handleMouseUp);
+    }
+
+    get getContextMenuItems() {
+        return this.grid.getOptions().getContextMenuItems;
     }
 
     // copy and paste
@@ -89,38 +100,61 @@ class Body extends GridElement<Props> {
         this.grid.startEditingCell({ row, column });
     }
 
-    protected handleCellMouseDown = (ev: MouseEvent, row: string, col: string) => {
-        if (!(ev.button === Button.Left)) {
+    protected handleCellMouseDown = (ev: MouseEvent, row: string, column: string) => {
+
+        // stop any editing when click a cell
+        this.grid.stopEditing();
+
+        const coord = this.grid.getCoordinate(row, column);
+
+        // show context menu
+        if (ev.button === Button.Right && this.getContextMenuItems) {
+            const items = this.getContextMenuItems({ row, column, grid: this.grid });
+            this.setState({
+                isMenuVisible: true, contextMenuItems: items,
+                contextMenuCoord: {x: ev.pageX,y: ev.pageY}
+            });
+
+            // Avoid canceling the selection when you right-click in the selection range
+            if (this.grid.getCoordLocatedRange(coord)) {
+                return;
+            }
+        } else {
+            this.hideContextMenu();
+        }
+
+        if (ev.button !== Button.Left && ev.button !== Button.Right) {
             return;
         }
 
         // select current active row
         this.grid.selectRows([row]);
         // set current active cell as selection star position
-        this.selectionStart = this.selectionEnd = this.grid.getCoordinate(row, col);
+        this.selectionStart = this.selectionEnd = coord;
         this.isSelecting = true;
         this.handleSelectionChanged();
-        // stop any editing when click a cell
-        this.grid.stopEditing();
+    }
+
+    protected hideContextMenu = () => {
+        if (this.state.isMenuVisible) {
+            this.setState({ isMenuVisible: false });
+        }
     }
 
     protected handleCellFillerMouseDown = (ev: MouseEvent, row: string, col: string) => {
-        if (!(ev.button === Button.Left)) {
+
+        if (ev.button !== Button.Left) {
             return;
         }
 
         const coord = this.grid.getCoordinate(row, col);
-        const ranges = this.grid.getSelectionRanges();
+        const range = this.grid.getCoordLocatedRange(coord);
+        if (!range) return;
 
-        for (let i = 0; i < ranges.length; i++) {
-            if (ranges[i].contains(coord)) {
-                this.fillingRef = ranges[i];
-                this.fillingEnd = coord;
-                this.isFilling = true;
-                this.handleFillRangeChanged();
-                return;
-            }
-        }
+        this.fillingRef = range;
+        this.fillingEnd = coord;
+        this.isFilling = true;
+        this.handleFillRangeChanged();
     }
 
     protected handleCellMouseMove = (ev: MouseEvent, row: string, col: string) => {
@@ -190,6 +224,7 @@ class Body extends GridElement<Props> {
         this.grid.selectRows([]);
         this.selectionStart = this.selectionEnd = null;
         this.grid.selectCells(null, null);
+        this.hideContextMenu();
     }
 
     protected renderRows = (columns: string[]) => {
@@ -210,13 +245,25 @@ class Body extends GridElement<Props> {
     }
 
     render() {
+
+        const handleContextMenu = this.getContextMenuItems
+            ? (ev: MouseEvent) => { ev.preventDefault(); }
+            : undefined;
+
         return (
             <div
                 onKeyDown={this.handleKeyDown}
                 onBlur={this.handleBlur}
-                tabIndex={0} style={{ display: 'flex', outline: 'none' }}
+                tabIndex={0}
+                style={{ display: 'flex', outline: 'none', position: 'relative' }}
                 onMouseLeave={() => this.grid.setHoveredRow()}
+                onContextMenu={handleContextMenu}
             >
+                {this.state.isMenuVisible && <Menu
+                    onMenuItemClicked={this.hideContextMenu}
+                    coord={this.state.contextMenuCoord}
+                    items={this.state.contextMenuItems}
+                />}
                 <div className={styles.pinnedLeftCells}>
                     {this.renderRows(this.props.pinnedLeftColumns)}
                 </div>

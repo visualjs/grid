@@ -3,21 +3,24 @@
 
     /* global */
     --primary-color: #0091ea;
-    --border-color: rgba(189, 195, 199, 0.4);
+    --border-color: #bdc3c7;
     --default-font-size: 12px;
+    --background-color: #ffffff;
     /* headers */
     --header-background-color: #f8f8f8;
     --header-foreground-color: rgba(0, 0, 0, 0.5);
     --header-resizer-active-color: var(--primary-color);
     /* rows */
     --row-stripe-background: #fcfdfe;
-    --row-hover-background: #f8f8f8;
+    --row-hover-background: #ecf0f1;
     --row-select-background: rgba(0, 145, 234, 0.1);
     /* cells */
     --cell-padding: 0 12px;
     --cell-selected-background: rgba(0, 145, 234, 0.2);
     --cell-selected-boundary-color: var(--primary-color);
     --cell-editing-popup-background: #fafafa;
+    /* menus */
+    --cell-menu-padding: 4px 0;
 
     /* global styles */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;;

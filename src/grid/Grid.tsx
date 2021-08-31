@@ -249,6 +249,14 @@ class Grid extends Emitter<EventsTypes> {
     // Selections
     // 
 
+    public getCoordLocatedRange(coord: Coordinate): CellRange | undefined {
+        for (let i = 0; i < this.selections.length; i++) {
+            if (this.selections[i].contains(coord)) {
+                return this.selections[i];
+            }
+        }
+    }
+
     public getSelectionRanges() {
         return this.selections;
     }

@@ -1,4 +1,19 @@
 import { CellRenderer, CellEditor, CellTransformer } from "@/grid/cell";
+import Grid from "./grid";
+
+export interface MenuItem {
+    separator?: boolean;
+    disabled?: boolean;
+    name?: string;
+    icon?: HTMLElement | string;
+    action?: () => void;
+}
+
+export interface GetContextMenuItemsParams {
+    row: string;
+    column: string; // the column that was clicked
+    grid: Grid;
+}
 
 export interface Styles {
     [key: string]: string;
@@ -58,4 +73,6 @@ export interface GridOptions {
     preloadRowCount?: number; // default is 20
     // other
     fillable?: 'x' | 'y' | 'xy';
+    // context menus
+    getContextMenuItems?: (params: GetContextMenuItemsParams) => MenuItem[];
 }

@@ -82,6 +82,13 @@ import { BooleanTransformer, SelectionTransformer } from '@/components';
         rows: rows,
         rowHeight: 30,
         fillable: 'xy',
+        getContextMenuItems: (params) => {
+            return [
+                { name: 'Copy', icon: 'vg-copy' },
+                { separator: true },
+                { name: 'Paste', icon: 'vg-paste', disabled: true },
+            ];
+        }
     });
 
     grid.addListener('cellValueChanged', (ev) => {
