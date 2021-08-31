@@ -23,6 +23,8 @@
 }
 
 .menu-item, .menu-disabled-item {
+    display: flex;
+    align-items: center;
     padding: 8px 12px;
 }
 .menu-disabled-item {
@@ -33,5 +35,11 @@
 }
 
 .menu-item-icon {
+    display: inline-block;
+    width: 24px;
     padding-right: 8px;
+}
+
+.menu-item-title {
+    flex: 1 1 0%;
 }

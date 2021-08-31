@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'vgrid';
   src:
-    url('fonts/vgrid.ttf?mof7ye') format('truetype'),
-    url('fonts/vgrid.woff?mof7ye') format('woff'),
-    url('fonts/vgrid.svg?mof7ye#vgrid') format('svg');
+    url('fonts/vgrid.ttf?u6uzzc') format('truetype'),
+    url('fonts/vgrid.woff?u6uzzc') format('woff'),
+    url('fonts/vgrid.svg?u6uzzc#vgrid') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -26,6 +26,18 @@
 
 .vg-skin:before {
   content: "\e900";
+}
+.vg-cheveron-down:before {
+  content: "\e903";
+}
+.vg-cheveron-left:before {
+  content: "\e904";
+}
+.vg-cheveron-right:before {
+  content: "\e905";
+}
+.vg-cheveron-up:before {
+  content: "\e906";
 }
 .vg-menu:before {
   content: "\e901";

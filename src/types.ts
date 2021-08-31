@@ -5,8 +5,9 @@ export interface MenuItem {
     separator?: boolean;
     disabled?: boolean;
     name?: string;
-    icon?: HTMLElement | string;
+    icon?: string;
     action?: () => void;
+    subMenus?: MenuItem[];
 }
 
 export interface GetContextMenuItemsParams {

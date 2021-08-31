@@ -5,6 +5,7 @@ import { monthOptions, languageOptions } from './fake';
 import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/components';
 import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
 import { BooleanTransformer, SelectionTransformer } from '@/components';
+import { copySelection, pasteFromClipboard } from '@/actions';
 
 ; (() => {
 
@@ -83,10 +84,24 @@ import { BooleanTransformer, SelectionTransformer } from '@/components';
         rowHeight: 30,
         fillable: 'xy',
         getContextMenuItems: (params) => {
+
+            const pin = params.grid.getColumnOptions(params.column).pinned;
+
             return [
-                { name: 'Copy', icon: 'vg-copy' },
+                { name: 'Enlarge', icon: 'vg-enlarge-simplicit' },
                 { separator: true },
-                { name: 'Paste', icon: 'vg-paste', disabled: true },
+                {
+                    name: 'Pin Column', icon: 'vg-pin', subMenus: [
+                        { name: 'Pin Left', icon: pin === 'left' ? 'vg-checkmark' : undefined },
+                        { name: 'Pin Right', icon: pin === 'right' ? 'vg-checkmark' : undefined },
+                        { name: 'No Pin', icon: pin === undefined ? 'vg-checkmark' : undefined },
+                    ]
+                },
+                { separator: true },
+                { name: 'Copy', icon: 'vg-copy', action: () => copySelection(params.grid) },
+                { name: 'Paste', icon: 'vg-paste', action: () => pasteFromClipboard(params.grid) },
+                { separator: true },
+                { name: 'Download', icon: 'vg-download', disabled: true },
             ];
         }
     });

@@ -5,6 +5,7 @@ import CellRange from "@/selection/CellRange";
 import { FillRange } from "@/selection/FillRange";
 import Row from "@/grid/row";
 import { Menu } from "@/menu";
+import { copySelection, pasteFromClipboard } from "@/actions";
 
 import styles from './grid.module.css';
 
@@ -53,45 +54,12 @@ class Body extends GridElement<Props, State> {
     // copy and paste
     protected handleKeyDown = (ev: KeyboardEvent) => {
         if (ev.key === 'c' && (ev.ctrlKey || ev.metaKey)) {
-            return this.copyFromSelection();
+            return copySelection(this.grid);
         }
 
         if (ev.key === 'v' && (ev.ctrlKey || ev.metaKey)) {
-            return this.pasteFromClipboard();
+            return pasteFromClipboard(this.grid);
         }
-    }
-
-    protected copyFromSelection = () => {
-        let text = '';
-        this.grid.getSelectionRanges().forEach((range) => {
-            let lastRow = -1;
-            range.each(coord => {
-                if (lastRow !== -1) {
-                    text += coord.y !== lastRow ? '\n' : '\t';
-                }
-
-                text += this.grid.getCellValueByCoord(coord);
-                lastRow = coord.y;
-            });
-        })
-
-        writeTextToClipboard(text);
-    }
-
-    protected pasteFromClipboard = () => {
-
-        const start = this.grid.getSelectionRanges()[0]?.start;
-        if (!start) return;
-
-        readTextFromClipboard().then(str => {
-            str = str.replace(/(\r\n|\r|\n)/g, '\n');
-            str.split('\n').forEach((rowData, y) => {
-                rowData.split('\t').forEach((value, x) => {
-                    const coord = { x: x + start.x, y: y + start.y };
-                    this.grid.setCellValueByCoord(coord, value);
-                });
-            });
-        });
     }
 
     // Double-click the cell to enable editing
