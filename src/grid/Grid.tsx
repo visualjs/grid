@@ -228,6 +228,10 @@ class Grid extends Emitter<EventsTypes> {
             return undefined;
         }
 
+        if (column === '#') {
+            return index;
+        }
+
         return this.props.rows[index][column];
     }
 

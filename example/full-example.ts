@@ -2,6 +2,7 @@ import { Grid } from '@/index';
 import { RowData } from '@/types';
 import { name, country, game, date, numeric, month } from './fake';
 import { monthOptions, languageOptions } from './fake';
+import IndexRender from './renders/IndexRender';
 import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/components';
 import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
 import { BooleanTransformer, SelectionTransformer } from '@/components';
@@ -34,6 +35,7 @@ import { copySelection, pasteFromClipboard } from '@/actions';
 
     const grid = new Grid(document.querySelector("#full-example"), {
         columns: [
+            { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: true, cellRender: IndexRender },
             { headerName: 'ID', field: 'id', pinned: 'left', width: 100, resizable: true },
             { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: InputEditor },
             {

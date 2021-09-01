@@ -74,23 +74,28 @@ class Cell extends GridElement<CellProps, CellState> {
     }
 
     componentDidMount() {
-        this.grid.addListener('selectionChanged', this.handleSelectionChanged);
-        this.grid.addListener('fillingRangeChanged', this.handleFillingRangeChanged);
-        this.grid.addListener('cellValueChanged', this.handleCellValueChanged);
-        this.grid.addListener('startCellEditing', this.handleStartCellEditing);
-        this.grid.addListener('stopEditing', this.handleStopEditing);
-        this.grid.addListener('columnWidthChanged', this.handleColumnWidthChange);
-        this.handleSelectionChanged(this.grid.getSelectionRanges());
+        if (!this.props.column.readonly) {
+            this.grid.addListener('selectionChanged', this.handleSelectionChanged);
+            this.grid.addListener('fillingRangeChanged', this.handleFillingRangeChanged);
+            this.grid.addListener('cellValueChanged', this.handleCellValueChanged);
+            this.grid.addListener('startCellEditing', this.handleStartCellEditing);
+            this.grid.addListener('stopEditing', this.handleStopEditing);
+            this.grid.addListener('columnWidthChanged', this.handleColumnWidthChange);
+            this.handleSelectionChanged(this.grid.getSelectionRanges());
+        }
         this.io.observe(this.cell.current);
     }
 
     componentWillUnmount() {
-        this.grid.removeListener('selectionChanged', this.handleSelectionChanged);
-        this.grid.removeListener('fillingRangeChanged', this.handleFillingRangeChanged);
-        this.grid.removeListener('cellValueChanged', this.handleCellValueChanged);
-        this.grid.removeListener('startCellEditing', this.handleStartCellEditing);
-        this.grid.removeListener('stopEditing', this.handleStopEditing);
-        this.grid.removeListener('columnWidthChanged', this.handleColumnWidthChange);
+        if (!this.props.column.readonly) {
+            this.grid.removeListener('selectionChanged', this.handleSelectionChanged);
+            this.grid.removeListener('fillingRangeChanged', this.handleFillingRangeChanged);
+            this.grid.removeListener('cellValueChanged', this.handleCellValueChanged);
+            this.grid.removeListener('startCellEditing', this.handleStartCellEditing);
+            this.grid.removeListener('stopEditing', this.handleStopEditing);
+            this.grid.removeListener('columnWidthChanged', this.handleColumnWidthChange);
+        }
+
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = null;
@@ -118,6 +123,8 @@ class Cell extends GridElement<CellProps, CellState> {
                     props: this.props.column.cellParams,
                     value: this.getValue(true),
                     column: this.props.column,
+                    row: this.props.row,
+                    grid: this.grid,
                 });
 
                 this.timer = null;
@@ -228,6 +235,8 @@ class Cell extends GridElement<CellProps, CellState> {
             props: this.props.column.cellParams,
             value: this.getValue(true),
             column: this.props.column,
+            row: this.props.row,
+            grid: this.grid,
         });
 
         popup.appendChild(this.editor.gui());

@@ -58,6 +58,7 @@ export interface BaseColumnOptions {
 export interface ColumnOptions extends BaseColumnOptions {
     field: string;
     headerName?: string;
+    readonly?: boolean;
 }
 
 export interface GridOptions {
