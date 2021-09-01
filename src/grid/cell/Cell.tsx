@@ -6,9 +6,9 @@ import { DOM } from "@/utils";
 import { createRef } from "preact";
 import { CellValueChangedEvent } from "../Events";
 import CellEditor from "./CellEditor";
+import { FillRange } from "@/selection/FillRange";
 
 import styles from './cell.module.css';
-import { FillRange } from "@/selection/FillRange";
 
 interface CellProps {
     row: string;
@@ -196,7 +196,7 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected handleColumnWidthChange = ({ field, width }: { field: string, width: number }) => {
         if (field === this.props.column.field) {
-            this.setState({ width });
+            this.cell.current.style.width = width + 'px';
         }
     }
 

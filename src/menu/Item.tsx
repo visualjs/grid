@@ -27,8 +27,10 @@ export class Item extends Component<Props, State> {
     protected showSubMenus = () => {
         const self = this.refs.self.current;
         const react = self.getBoundingClientRect();
+        const coord = { x: react.x + self.offsetWidth - 2, y: react.y };
+
         this.setState({
-            subMenuCoord: { x: react.x + self.offsetWidth - 2, y: react.y },
+            subMenuCoord: coord,
             subMenuVisible: true,
         });
     }

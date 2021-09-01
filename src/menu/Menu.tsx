@@ -21,7 +21,7 @@ export class Menu extends Component<Props> {
 
     render() {
         return (
-            <div style={{ left: this.coord.x, top: this.coord.y }} className={styles.menu}>
+            <div ref={this.createRef('self')} style={{ left: this.coord.x, top: this.coord.y }} className={styles.menu}>
                 {this.props.items.map(item => {
                     return <Item onClick={this.props.onMenuItemClicked} {...item} />;
                 })}

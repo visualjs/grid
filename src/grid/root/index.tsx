@@ -57,7 +57,7 @@ class GridRoot extends GridElement<GridProps, RootState> {
         this.setState({
             headerPadding: spacerX,
             horizontalScrollHeight: horizontalScrollHeight,
-            horizontalScrollWidth: this.refs.normalColumns?.current?.scrollWidth || 0,
+            horizontalScrollWidth: this.refs.headerContainer?.current?.scrollWidth || 0,
             horizontalLeftSpacer: this.refs.pinnedLeftColumns?.current?.offsetWidth || 0,
             horizontalRightSpacer: (this.refs.pinnedRightColumns?.current?.offsetWidth || 0) + spacerX,
         })
@@ -90,6 +90,10 @@ class GridRoot extends GridElement<GridProps, RootState> {
             this.grid.trigger('columnWidthChanged', {
                 field: this.resizingColumn.field, width: Math.max(width, minWidth)
             });
+
+            setTimeout(() => {
+                this.resize();
+            }, 0);
         }
     }
 
