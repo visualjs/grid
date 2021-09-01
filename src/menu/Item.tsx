@@ -15,6 +15,10 @@ interface State {
 
 export class Item extends Component<Props, State> {
 
+    protected get hasSubMenus() {
+        return this.props.subMenus && !this.props.disabled;
+    }
+
     protected handleClick = () => {
         if (this.props.disabled || this.props.subMenus) {
             return;
@@ -48,15 +52,15 @@ export class Item extends Component<Props, State> {
             <div
                 className={this.props.disabled ? styles.menuDisabledItem : styles.menuItem}
                 onClick={this.handleClick}
-                onMouseOver={this.props.subMenus ? this.showSubMenus : undefined}
-                onMouseLeave={this.props.subMenus ? this.hideSubMenus : undefined}
+                onMouseOver={this.hasSubMenus ? this.showSubMenus : undefined}
+                onMouseLeave={this.hasSubMenus ? this.hideSubMenus : undefined}
                 ref={this.createRef('self')}
             >
                 <span className={styles.menuItemIcon}>
                     <span className={this.props.icon}></span>
                 </span>
                 <span className={styles.menuItemTitle}>{this.props.name}</span>
-                {this.props.subMenus && <span className="vg-cheveron-right"></span>}
+                {this.hasSubMenus && <span className="vg-cheveron-right"></span>}
                 {this.state.subMenuVisible && <Menu
                     onMenuItemClicked={this.props.onClick}
                     coord={this.state.subMenuCoord}

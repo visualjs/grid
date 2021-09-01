@@ -13,7 +13,7 @@ export class IndexRender extends CellRenderer {
     public init(params: CellRendererParams<{}>) {
         this.wrapper.className = styles.indexWrapper;
 
-        this.index.innerText = String(Number(params.value) + 1);
+        this.index.innerText = params.value;
         this.enlarge.className = `vg-enlarge-simplicit ${styles.indexEnlarge}`;
         this.enlarge.addEventListener('click', () => {
             console.log('enlarge - ' + params.row);

@@ -104,7 +104,7 @@ import { copySelection, pasteFromClipboard } from '@/actions';
                 { name: 'Enlarge', icon: 'vg-enlarge-simplicit' },
                 { separator: true },
                 {
-                    name: 'Pin Current Column', icon: 'vg-pin', subMenus: [
+                    name: 'Pin Current Column', icon: 'vg-pin', disabled: options.readonly, subMenus: [
                         { name: 'Pin Left', action: () => setColumnPinned('left'), icon: pinnedIcon('left') },
                         { name: 'Pin Right', action: () => setColumnPinned('right'), icon: pinnedIcon('right') },
                         { name: 'No Pin', action: () => setColumnPinned(), icon: pinnedIcon() },
@@ -112,7 +112,7 @@ import { copySelection, pasteFromClipboard } from '@/actions';
                 },
                 { separator: true },
                 { name: 'Copy', icon: 'vg-copy', action: () => copySelection(params.grid) },
-                { name: 'Paste', icon: 'vg-paste', action: () => pasteFromClipboard(params.grid) },
+                { name: 'Paste', disabled: options.readonly, icon: 'vg-paste', action: () => pasteFromClipboard(params.grid) },
                 { separator: true },
                 { name: 'Download', icon: 'vg-download', disabled: true },
             ];
