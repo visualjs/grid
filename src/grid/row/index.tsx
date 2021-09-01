@@ -57,9 +57,10 @@ class Row extends GridElement<Props> {
 
             <div ref={this.row} className={styles.rowCells} style={style}>
                 {
-                    this.props.columns.map(col => {
+                    this.props.columns.map((col) => {
                         return (
                             <Cell
+                                key={col}
                                 onDbClick={this.props.onCellDbClick}
                                 onMouseDown={this.props.onCellMouseDown}
                                 onMouseMove={this.props.onCellMouseMove}

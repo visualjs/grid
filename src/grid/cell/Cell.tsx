@@ -42,8 +42,6 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected cellContent = createRef<HTMLDivElement>();
 
-    protected coord: Coordinate;
-
     protected timer: number = null;
 
     protected io: IntersectionObserver;
@@ -63,13 +61,16 @@ class Cell extends GridElement<CellProps, CellState> {
             fillingBoundary: { left: false, top: false, bottom: false, right: false }
         }
 
-        this.coord = this.grid.getCoordinate(this.props.row, this.props.column.field);
         this.io = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 this.doRender();
                 this.io.disconnect();
             }
         }, { threshold: 0.000001 })
+    }
+
+    protected get coord(): Coordinate {
+        return this.grid.getCoordinate(this.props.row, this.props.column.field);
     }
 
     componentDidMount() {

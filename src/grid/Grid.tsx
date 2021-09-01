@@ -47,31 +47,13 @@ class Grid extends Emitter<EventsTypes> {
 
         this.props = Object.assign({ grid: this }, defaultGridOptions, props);
 
-        this.props.columns.forEach(col => {
-            col = Object.assign({}, defaultColumnOptions, props.defaultColumnOption, col);
-
-            if (col.pinned == 'left') {
-                this.pinnedLeftColumns.push(col.field);
-            } else if (col.pinned == 'right') {
-                this.pinnedRightColumns.push(col.field);
-            } else {
-                this.normalColumns.push(col.field);
-            }
-
-            this.columns[col.field] = col;
-        })
-
         this.props.rows.forEach((r, i) => {
             this.rows[r.id] = i;
         })
 
-        render(<Root
-            grid={this}
-            pinnedLeftColumns={this.pinnedLeftColumns}
-            pinnedRightColumns={this.pinnedRightColumns}
-            normalColumns={this.normalColumns}
-            {...this.props}
-        />, container);
+        this.updateColumnsPinned(this.props.columns);
+
+        render(<Root grid={this} {...this.props} />, container);
 
         this.addListener('selectionChanged', (selections) => {
             this.selections = selections;
@@ -90,8 +72,47 @@ class Grid extends Emitter<EventsTypes> {
     // Columns
     // 
 
-    public getColumnOptions(field: string) {
-        return this.columns[field];
+    protected updateColumnsPinned = (columns: ColumnOptions[]) => {
+        this.pinnedLeftColumns = [];
+        this.pinnedRightColumns = [];
+        this.normalColumns = [];
+
+        columns.forEach(col => {
+            col = Object.assign({}, defaultColumnOptions, this.props.defaultColumnOption, col);
+
+            if (col.pinned == 'left') {
+                this.pinnedLeftColumns.push(col.field);
+            } else if (col.pinned == 'right') {
+                this.pinnedRightColumns.push(col.field);
+            } else {
+                this.normalColumns.push(col.field);
+            }
+
+            this.columns[col.field] = col;
+        })
+
+    }
+
+    public getPinnedLeftColumns(): string[] {
+        return this.pinnedLeftColumns;
+    }
+
+    public getPinnedRightColumns(): string[] {
+        return this.pinnedRightColumns;
+    }
+    
+    public getNormalColumns(): string[] {
+        return this.normalColumns;
+    }
+
+    public getColumnOptions(column: string) {
+        return this.columns[column];
+    }
+
+    public setColumnOptions(column: string, options: ColumnOptions) {
+        this.columns[column] = options;
+        this.updateColumnsPinned(Object.values(this.columns));
+        this.trigger('columnOptionsChanged', column);
     }
 
     // 

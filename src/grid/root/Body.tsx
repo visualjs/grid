@@ -11,9 +11,6 @@ import styles from './grid.module.css';
 
 interface Props {
     items: string[];
-    pinnedLeftColumns: string[];
-    pinnedRightColumns: string[];
-    normalColumns: string[];
     horizontalScrollLeft: number;
 }
 
@@ -80,7 +77,7 @@ class Body extends GridElement<Props, State> {
             const items = this.getContextMenuItems({ row, column, grid: this.grid });
             this.setState({
                 isMenuVisible: true, contextMenuItems: items,
-                contextMenuCoord: {x: ev.pageX,y: ev.pageY}
+                contextMenuCoord: { x: ev.pageX, y: ev.pageY }
             });
 
             // Avoid canceling the selection when you right-click in the selection range
@@ -218,6 +215,10 @@ class Body extends GridElement<Props, State> {
             ? (ev: MouseEvent) => { ev.preventDefault(); }
             : undefined;
 
+        const pinnedLeftColumns = this.grid.getPinnedLeftColumns();
+        const pinnedRightColumns = this.grid.getPinnedRightColumns();
+        const normalColumns = this.grid.getNormalColumns();
+
         return (
             <div
                 onKeyDown={this.handleKeyDown}
@@ -232,17 +233,23 @@ class Body extends GridElement<Props, State> {
                     coord={this.state.contextMenuCoord}
                     items={this.state.contextMenuItems}
                 />}
-                <div className={styles.pinnedLeftCells}>
-                    {this.renderRows(this.props.pinnedLeftColumns)}
-                </div>
-                <div className={styles.normalCells}>
-                    <div style={{ transform: `translateX(-${this.props.horizontalScrollLeft}px)` }}>
-                        {this.renderRows(this.props.normalColumns)}
+                {pinnedLeftColumns.length > 0 && (
+                    <div className={styles.pinnedLeftCells}>
+                        {this.renderRows(pinnedLeftColumns)}
                     </div>
-                </div>
-                <div className={styles.pinnedRightCells}>
-                    {this.renderRows(this.props.pinnedRightColumns)}
-                </div>
+                )}
+                {normalColumns.length > 0 && (
+                    <div className={styles.normalCells}>
+                        <div style={{ transform: `translateX(-${this.props.horizontalScrollLeft}px)` }}>
+                            {this.renderRows(normalColumns)}
+                        </div>
+                    </div>
+                )}
+                {pinnedRightColumns.length > 0 && (
+                    <div className={styles.pinnedRightCells}>
+                        {this.renderRows(pinnedRightColumns)}
+                    </div>
+                )}
             </div>
         );
     }

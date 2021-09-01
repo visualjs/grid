@@ -85,16 +85,27 @@ import { copySelection, pasteFromClipboard } from '@/actions';
         fillable: 'xy',
         getContextMenuItems: (params) => {
 
-            const pin = params.grid.getColumnOptions(params.column).pinned;
+            const options = params.grid.getColumnOptions(params.column);
+
+            const setColumnPinned = (pinned?: 'left'|'right') => {
+                options.pinned = pinned;
+                params.grid.setColumnOptions(options.field, options);
+            }
+
+            const pinnedIcon = (pinned?: 'left'|'right') => {
+                if (pinned === options.pinned) {
+                    return 'vg-checkmark';
+                }
+            }
 
             return [
                 { name: 'Enlarge', icon: 'vg-enlarge-simplicit' },
                 { separator: true },
                 {
-                    name: 'Pin Column', icon: 'vg-pin', subMenus: [
-                        { name: 'Pin Left', icon: pin === 'left' ? 'vg-checkmark' : undefined },
-                        { name: 'Pin Right', icon: pin === 'right' ? 'vg-checkmark' : undefined },
-                        { name: 'No Pin', icon: pin === undefined ? 'vg-checkmark' : undefined },
+                    name: 'Pin Current Column', icon: 'vg-pin', subMenus: [
+                        { name: 'Pin Left', action: () => setColumnPinned('left'), icon: pinnedIcon('left') },
+                        { name: 'Pin Right', action: () => setColumnPinned('right'), icon: pinnedIcon('right') },
+                        { name: 'No Pin', action: () => setColumnPinned(), icon: pinnedIcon() },
                     ]
                 },
                 { separator: true },

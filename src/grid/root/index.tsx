@@ -7,9 +7,6 @@ import Body from './Body';
 import styles from './grid.module.css';
 
 interface GridProps {
-    pinnedLeftColumns: string[];
-    pinnedRightColumns: string[];
-    normalColumns: string[];
     width?: string;
     height?: string;
     headerHeight?: number;
@@ -38,6 +35,10 @@ class GridRoot extends GridElement<GridProps, RootState> {
 
     public componentDidMount = () => {
         this.resize();
+
+        this.grid.addListener('columnOptionsChanged', () => {
+            this.setState({}, this.resize);
+        });
     }
 
     public resize() {
@@ -56,9 +57,9 @@ class GridRoot extends GridElement<GridProps, RootState> {
         this.setState({
             headerPadding: spacerX,
             horizontalScrollHeight: horizontalScrollHeight,
-            horizontalScrollWidth: this.refs.normalColumns.current.scrollWidth,
-            horizontalLeftSpacer: this.refs.pinnedLeftColumns.current.offsetWidth,
-            horizontalRightSpacer: this.refs.pinnedRightColumns.current.offsetWidth + spacerX,
+            horizontalScrollWidth: this.refs.normalColumns?.current?.scrollWidth || 0,
+            horizontalLeftSpacer: this.refs.pinnedLeftColumns?.current?.offsetWidth || 0,
+            horizontalRightSpacer: (this.refs.pinnedRightColumns?.current?.offsetWidth || 0) + spacerX,
         })
     }
 
@@ -108,12 +109,22 @@ class GridRoot extends GridElement<GridProps, RootState> {
             <Body
                 grid={this.grid}
                 items={items}
-                pinnedLeftColumns={this.props.pinnedLeftColumns}
-                pinnedRightColumns={this.props.pinnedRightColumns}
-                normalColumns={this.props.normalColumns}
                 horizontalScrollLeft={this.state.horizontalScrollLeft}
             />
         )
+    }
+
+    protected renderColumns = (columns: string[]) => {
+        return columns.map(col => {
+            return (
+                <Column
+                    key={col}
+                    grid={this.grid}
+                    onResize={this.handleColumnResizeStart}
+                    {...this.grid.getColumnOptions(col)}
+                />
+            );
+        })
     }
 
     public render() {
@@ -129,37 +140,35 @@ class GridRoot extends GridElement<GridProps, RootState> {
             paddingRight: this.state.headerPadding,
         };
 
+        const pinnedLeftColumns = this.grid.getPinnedLeftColumns();
+        const pinnedRightColumns = this.grid.getPinnedRightColumns();
+        const normalColumns = this.grid.getNormalColumns();
+
         return (
             <div ref={this.createRef("root")} className={styles.root} style={rootStyle}>
                 {/* headers */}
                 <div className={styles.header} style={headerStyle}>
-                    <div ref={this.createRef("pinnedLeftColumns")} className={classes([styles.pinnedLeftColumns, styles.headerColumns])}>
-                        {
-                            this.props.pinnedLeftColumns.map(col => {
-                                return <Column grid={this.grid} onResize={this.handleColumnResizeStart} {...this.grid.getColumnOptions(col)} />
-                            })
-                        }
-                    </div>
-                    <div ref={this.createRef("normalColumns")} className={styles.normalColumns}>
-                        <div
-                            ref={this.createRef("headerContainer")}
-                            style={{ transform: `translateX(-${this.state.horizontalScrollLeft}px)` }}
-                            className={classes([styles.headerContainer, styles.headerColumns])}
-                        >
-                            {
-                                this.props.normalColumns.map(col => {
-                                    return <Column grid={this.grid} onResize={this.handleColumnResizeStart} {...this.grid.getColumnOptions(col)} />
-                                })
-                            }
+                    {pinnedLeftColumns.length > 0 && (
+                        <div ref={this.createRef("pinnedLeftColumns")} className={classes([styles.pinnedLeftColumns, styles.headerColumns])}>
+                            {this.renderColumns(pinnedLeftColumns)}
                         </div>
-                    </div>
-                    <div ref={this.createRef("pinnedRightColumns")} className={classes([styles.pinnedRightColumns, styles.headerColumns])}>
-                        {
-                            this.props.pinnedRightColumns.map(col => {
-                                return <Column grid={this.grid} onResize={this.handleColumnResizeStart} {...this.grid.getColumnOptions(col)} />
-                            })
-                        }
-                    </div>
+                    )}
+                    {normalColumns.length > 0 && (
+                        <div ref={this.createRef("normalColumns")} className={styles.normalColumns}>
+                            <div
+                                ref={this.createRef("headerContainer")}
+                                style={{ transform: `translateX(-${this.state.horizontalScrollLeft}px)` }}
+                                className={classes([styles.headerContainer, styles.headerColumns])}
+                            >
+                                {this.renderColumns(normalColumns)}
+                            </div>
+                        </div>
+                    )}
+                    {pinnedRightColumns.length > 0 && (
+                        <div ref={this.createRef("pinnedRightColumns")} className={classes([styles.pinnedRightColumns, styles.headerColumns])}>
+                            {this.renderColumns(pinnedRightColumns)}
+                        </div>
+                    )}
                 </div>
                 {/* body */}
                 <div className={styles.body}>

@@ -10,6 +10,9 @@
     border-right: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
 }
+.cell:last-of-type {
+    border-right: none;
+}
 
 .cell-content {
     width: 100%;

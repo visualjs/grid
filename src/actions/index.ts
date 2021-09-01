@@ -19,7 +19,6 @@ export function copySelection(grid: Grid) {
     writeTextToClipboard(text);
 }
 
-
 // Parse the data from the clipboard and
 // set the selected cell data according to the order
 export function pasteFromClipboard(grid: Grid) {

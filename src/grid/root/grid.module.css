@@ -37,8 +37,13 @@
 
 .pinned-right-cells,
 .pinned-right-columns {
-    border-left: 1px solid var(--border-color);
+    border-left: 1px solid var(--primary-color);
 }
+.pinned-left-cells,
+.pinned-left-columns {
+    border-right: 1px solid var(--primary-color);
+}
+
 .pinned-left-cells,
 .pinned-right-cells {
     position: relative;

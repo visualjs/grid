@@ -16,6 +16,7 @@ export class GridEvents extends Events {
     constructor(handlers: {} = {}) {
         super({
             columnWidthChanged: [],
+            columnOptionsChanged: [],
             selectionChanged: [],
             fillingRangeChanged: [],
             cellValueChanged: [],
@@ -30,6 +31,7 @@ export class GridEvents extends Events {
 
 export interface EventsTypes extends DefaultEventsTypes {
     columnWidthChanged: { field: string, width: number };
+    columnOptionsChanged: string;
     selectionChanged: SelectionChangedEvent;
     fillingRangeChanged: FillRange,
     cellValueChanged: CellValueChangedEvent;

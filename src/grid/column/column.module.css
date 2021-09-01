@@ -7,6 +7,9 @@
     border-right: 1px solid var(--border-color);
     box-sizing: border-box;
 }
+.header-column:last-of-type {
+    border-right: none;
+}
 
 .header-column span {
     overflow: hidden;
