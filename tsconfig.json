@@ -4,6 +4,7 @@
         "sourceMap": true,
         "declaration": true,
         "isolatedModules": true,
+        "esModuleInterop": true,
         "noImplicitAny": true,
         "module": "ESNext",
         "target": "es5",
