@@ -1,16 +1,16 @@
-import { Store } from "./Store";
+import { Store } from ".";
 
-interface Actions {
+export interface Actions {
     updateScore: number;
     updateName: string;
 }
 
-interface State {
+export interface State {
     name: string;
     score: number;
 }
 
-class MockStore extends Store<State, Actions> {
+export class MockStore extends Store<State, Actions> {
     constructor() {
         super({
             updateScore: [],

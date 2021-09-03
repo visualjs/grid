@@ -13,7 +13,7 @@ export class Store<S, A> {
         protected listeners: Record<keyof A, Callback[]>,
         initialState?: S
     ) {
-        this.state = initialState;
+        this.state = initialState || {} as S;
     }
 
     public getState(): S {
