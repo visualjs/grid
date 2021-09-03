@@ -42,7 +42,7 @@ class Cell extends GridElement<CellProps, CellState> {
 
     protected cellContent = createRef<HTMLDivElement>();
 
-    protected timer: number = null;
+    protected timer: any = null;
 
     protected io: IntersectionObserver;
 
