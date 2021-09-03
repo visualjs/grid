@@ -43,12 +43,14 @@ interface ICellEditor {
     new(): CellEditor<unknown>;
 }
 
+export type Pinned = 'left' | 'right' | undefined;
+
 export interface BaseColumnOptions {
     width?: number; // default is 200
     minWidth?: number; // default is 50
     flex?: number;
     resizable?: boolean;
-    pinned?: 'left' | 'right';
+    pinned?: Pinned;
     transformer?: CellTransformer;
     cellRender?: ICellRenderer;
     cellParams?: any;

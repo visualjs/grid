@@ -7,6 +7,8 @@ export class Store<S, A> {
 
     protected actions: Record<keyof A, (state: S, payload: A[keyof A]) => S | undefined> = {} as any;
 
+    protected anyListeners: Function[] = [];
+
     constructor(
         protected listeners: Record<keyof A, Callback[]>,
         initialState?: S
@@ -16,6 +18,16 @@ export class Store<S, A> {
 
     public getState(): S {
         return this.state;
+    }
+
+    public subscribeAny(listener: Callback): Function {
+        this.anyListeners.push(listener);
+
+        return () => {
+            this.anyListeners.splice(
+                this.anyListeners.indexOf(listener), 1
+            );
+        };
     }
 
     public subscribe(actions: keyof A | (keyof A)[], listener: Callback): Callback {
@@ -52,6 +64,9 @@ export class Store<S, A> {
         if (state !== this.state) {
             this.state = state;
             this.listeners[action].forEach(listener => listener());
+            this.anyListeners.forEach(listener => listener());
         }
     }
 }
+
+export default Store;
