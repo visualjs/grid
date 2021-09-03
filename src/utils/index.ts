@@ -1,6 +1,7 @@
 export * from './enums';
 export * from './dom';
 export * from './clipboard';
+export * from './shallowEqual';
 
 export function classes(value: string | string[] | { [key: string]: boolean }) {
 
@@ -21,29 +22,4 @@ export function classes(value: string | string[] | { [key: string]: boolean }) {
     }
 
     return value;
-}
-
-export function isObjectEqual(l: any, r: any) {
-
-    let lProps = Object.getOwnPropertyNames(l);
-    let rProps = Object.getOwnPropertyNames(r);
-
-    if (lProps.length != rProps.length) {
-        return false;
-    }
-
-    for (let i = 0; i < lProps.length; i++) {
-        let propA = l[lProps[i]]
-        let propB = r[lProps[i]]
-
-        if ((typeof propA === 'object')) {
-            return this.isObjectEqual(propA, propB);
-        }
-
-        if (propA !== propB) {
-            return false
-        }
-    }
-
-    return true
 }

@@ -1,7 +1,7 @@
 import GridElement from "@/grid/GridElement";
 import CellRange from "@/selection/CellRange";
 import { CellPosition, ColumnOptions, Coordinate } from "@/types";
-import { classes, isObjectEqual } from "@/utils";
+import { classes, shallowEqual } from "@/utils";
 import { DOM } from "@/utils";
 import { createRef } from "preact";
 import { CellValueChangedEvent } from "../Events";
@@ -162,7 +162,7 @@ class Cell extends GridElement<CellProps, CellState> {
             range.isBottom(this.coord) && (boundary.bottom = true);
         }
 
-        if (selected != this.state.selected || !isObjectEqual(boundary, this.state.selectedBoundary)) {
+        if (selected != this.state.selected || !shallowEqual(boundary, this.state.selectedBoundary)) {
             this.setState({
                 selected: selected,
                 selectedBoundary: boundary
@@ -182,7 +182,7 @@ class Cell extends GridElement<CellProps, CellState> {
             range.isBottom(this.coord) && (boundary.bottom = true);
         }
 
-        if (filling != this.state.filling || !isObjectEqual(boundary, this.state.fillingBoundary)) {
+        if (filling != this.state.filling || !shallowEqual(boundary, this.state.fillingBoundary)) {
             this.setState({
                 filling: filling,
                 fillingBoundary: boundary
