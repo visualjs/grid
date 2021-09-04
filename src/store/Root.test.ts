@@ -1,21 +1,50 @@
 import Root from './Root';
-import { MockStore, State as MockState, Actions as MockActions } from './Store.test';
+import Store from './Store';
 
-interface State {
-    s1: MockState;
-    s2: MockState;
+export interface S1Actions {
+    updateName: string;
 }
 
-interface Actions {
-    s1: MockActions;
-    s2: MockActions;
+export interface S1State {
+    name: string;
+}
+
+export class MockStore1 extends Store<S1State, S1Actions> {
+    constructor() {
+        super({ updateName: [] });
+        this.handle('updateName', (state, payload) => {
+            return { ...state, name: payload };
+        });
+    }
+}
+
+export interface S2Actions {
+    updateScore: number;
+}
+
+export interface S2State {
+    score: number;
+}
+
+export class MockStore2 extends Store<S2State, S2Actions> {
+    constructor() {
+        super({ updateScore: [] });
+        this.handle('updateScore', (state, payload) => {
+            return { ...state, score: payload };
+        });
+    }
+}
+
+interface Stores {
+    s1: MockStore1;
+    s2: MockStore2;
 }
 
 test('root', () => {
 
-    const root = new Root<State, Actions>({
-        s1: new MockStore(),
-        s2: new MockStore(),
+    const root = new Root<Stores>({
+        s1: new MockStore1(),
+        s2: new MockStore2(),
     });
 
     const cbS1 = jest.fn();
@@ -25,8 +54,8 @@ test('root', () => {
     root.subscribeAny(cb);
 
     root.store('s1').dispatch('updateName', 'Donna');
-    root.store('s1').dispatch('updateScore', 20);
-    root.store('s2').dispatch('updateName', 'Donna');
+    root.store('s1').dispatch('updateName', 'Anna');
+    root.store('s2').dispatch('updateScore', 10);
     root.store('s2').dispatch('updateScore', 20);
 
     expect(cbS1).toBeCalledTimes(2);

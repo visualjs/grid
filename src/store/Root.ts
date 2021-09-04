@@ -1,32 +1,34 @@
 import { Callback, Store } from ".";
 
+type StateOfStore<S extends Store<any, any>> = S extends Store<infer State, any> ? State : never;
+type ActionOfStore<S extends Store<any, any>> = S extends Store<any, infer Action> ? Action : never;
+
 type Actions<T> = {
     [P in keyof T]: undefined;
 };
 
-type Stores<S, A> = {
-    [K in keyof S]: K extends keyof A ? Store<S[K], A[K]> : never;
+type State<S extends { [K in keyof S]: Store<any, any> }> = {
+    [K in keyof S]: StateOfStore<S[K]>;
+}
+
+type Stores<S extends { [K in keyof S]: Store<any, any> }> = {
+    [K in keyof S]: Store<StateOfStore<S[K]>, ActionOfStore<S[K]>>;
 };
 
-class Root<S, A> extends Store<S, Actions<S>> {
+export class Root<S extends { [K in keyof S]: Store<any, any> }> extends Store<State<S>, Actions<S>> {
 
-    protected stores: Stores<S, A>;
+    constructor(protected stores: Stores<S>) {
 
-    constructor(stores: Stores<S, A>) {
-
-        const listeners = Object.keys(stores).reduce((obj, key) => {
-            (obj as any)[key] = [];
-            return obj;
-        }, {} as Record<keyof S, Callback[]>);
-
-        const state = Object.keys(stores).reduce((s, key) => {
-            (s as any)[key] = stores[key as keyof S].getState();
-            return s;
-        }, {} as S);
-
-        super(listeners, state);
-
-        this.stores = stores;
+        super(
+            Object.keys(stores).reduce((obj, key) => {
+                (obj as any)[key] = [];
+                return obj;
+            }, {} as Record<keyof S, Callback[]>),
+            Object.keys(stores).reduce((s, key) => {
+                (s as any)[key] = stores[key as keyof S].getState();
+                return s;
+            }, {} as State<S>)
+        );
 
         Object.keys(stores).forEach((s) => {
 
@@ -42,7 +44,7 @@ class Root<S, A> extends Store<S, Actions<S>> {
         });
     }
 
-    public store(s: keyof S) {
+    public store<K extends keyof S>(s: K) {
         return this.stores[s];
     }
 }
