@@ -14,13 +14,16 @@ export interface State {
     normalColumns: string[];
     // column options
     columns: Record<string, ColumnOptions>;
+    // header
+    headerHeight: number;
 }
 
-const initialState: State = {
+const initialState: State= {
     pinnedLeftColumns: [],
     pinnedRightColumns: [],
     normalColumns: [],
     columns: {},
+    headerHeight: 30,
 };
 
 export const defaultColumnOptions: BaseColumnOptions = {
@@ -29,12 +32,12 @@ export const defaultColumnOptions: BaseColumnOptions = {
 };
 
 export class Store extends BaseStore<State, Actions> {
-    constructor() {
+    constructor(initial?: Partial<State>) {
         super({
             updateColumnPinned: [],
             updateColumnWidth: [],
             setColumns: [],
-        }, initialState);
+        }, Object.assign({}, initialState, initial));
 
         this.handle('updateColumnPinned', (state, { field, pinned }) => {
 

@@ -25,13 +25,13 @@ const initialState: State = {
 
 export class Store extends BaseStore<State, Actions> {
 
-    constructor() {
+    constructor(initial?: Partial<State>) {
         super({
             setHoveredRow: [],
             selectRows: [],
             appendRows: [],
             clear: [],
-        }, initialState);
+        }, Object.assign({}, initialState, initial));
 
         this.handle('appendRows', (state, rows) => {
 
