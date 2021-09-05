@@ -1,4 +1,5 @@
 import { Store, defaultColumnOptions } from ".";
+import { useSelector } from "../useSelector";
 
 test('set columns', () => {
 
@@ -45,6 +46,12 @@ test('update column pinned', () => {
         ]
     });
 
+    const cbs = jest.fn();
+
+    useSelector(store, (s) => {
+        return { columns: s.columns }
+    }, cbs)
+
     const cb = jest.fn();
     store.subscribe('updateColumnPinned', cb);
 
@@ -63,6 +70,7 @@ test('update column pinned', () => {
     expect(store.getColumnOptions('c_01').pinned).toBe('left');
 
     expect(cb).toBeCalledTimes(1);
+    expect(cbs).toBeCalledTimes(1);
 });
 
 test('update column width', () => {
@@ -81,6 +89,12 @@ test('update column width', () => {
         defaultOptions: { width: 80 }
     });
 
+    const cbs = jest.fn();
+
+    useSelector(store, (s) => {
+        return { columns: s.columns }
+    }, cbs)
+
     const cb = jest.fn();
     store.subscribe('updateColumnWidth', cb);
 
@@ -89,4 +103,5 @@ test('update column width', () => {
     expect(store.getColumnOptions('c_01').width).toBe(120);
 
     expect(cb).toBeCalledTimes(1);
+    expect(cbs).toBeCalledTimes(1);
 });

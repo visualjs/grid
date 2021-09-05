@@ -1,23 +1,27 @@
 import { Callback, Store } from ".";
 
-type StateOfStore<S extends Store<any, any>> = S extends Store<infer State, any> ? State : never;
-type ActionOfStore<S extends Store<any, any>> = S extends Store<any, infer Action> ? Action : never;
+export type AnyStores<S> = {
+    [K in keyof S]: Store<any, any>
+};
+
+export type StateOfStore<S extends Store<any, any>> = S extends Store<infer State, any> ? State : never;
+export type ActionsOfStore<S extends Store<any, any>> = S extends Store<any, infer Actions> ? Actions : never;
 
 type Actions<T> = {
     [P in keyof T]: undefined;
 };
 
-type State<S extends { [K in keyof S]: Store<any, any> }> = {
+export type State<S extends AnyStores<S>> = {
     [K in keyof S]: StateOfStore<S[K]>;
 }
 
-type Stores<S extends { [K in keyof S]: Store<any, any> }> = {
-    [K in keyof S]: Store<StateOfStore<S[K]>, ActionOfStore<S[K]>>;
+export type Stores<S extends AnyStores<S>> = {
+    [K in keyof S]: Store<StateOfStore<S[K]>, ActionsOfStore<S[K]>>;
 };
 
-export class Root<S extends { [K in keyof S]: Store<any, any> }> extends Store<State<S>, Actions<S>> {
+export class Root<S extends AnyStores<S>> extends Store<State<S>, Actions<S>> {
 
-    constructor(protected stores: Stores<S>) {
+    constructor(public stores: Stores<S>) {
 
         super(
             Object.keys(stores).reduce((obj, key) => {

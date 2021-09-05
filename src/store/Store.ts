@@ -7,7 +7,7 @@ export class Store<S, A> {
 
     protected actions: Record<keyof A, (state: S, payload: A[keyof A]) => S | undefined> = {} as any;
 
-    protected anyListeners: Function[] = [];
+    protected anyListeners: (() => void)[] = [];
 
     constructor(
         protected listeners: Record<keyof A, Callback[]>,
@@ -20,7 +20,7 @@ export class Store<S, A> {
         return this.state;
     }
 
-    public subscribeAny(listener: Callback): Function {
+    public subscribeAny(listener: Callback): (() => void) {
         this.anyListeners.push(listener);
 
         return () => {
@@ -35,7 +35,7 @@ export class Store<S, A> {
             actions = [actions];
         }
 
-        const unsubscribes: Function[] = [];
+        const unsubscribes: (() => void)[] = [];
 
         for (let i = 0; i < actions.length; i++) {
             const action = actions[i];

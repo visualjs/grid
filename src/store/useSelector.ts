@@ -4,7 +4,7 @@ import { Store } from ".";
 export interface Selector<T> {
     state: T;
     getState: () => T;
-    cancel: Function;
+    cancel: () => void;
 }
 
 export function useSelector<State, SelectState>(

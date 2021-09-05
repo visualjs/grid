@@ -18,7 +18,7 @@ export interface State {
     headerHeight: number;
 }
 
-const initialState: State= {
+const initialState: State = {
     pinnedLeftColumns: [],
     pinnedRightColumns: [],
     normalColumns: [],
@@ -52,7 +52,7 @@ export class Store extends BaseStore<State, Actions> {
         this.handle('updateColumnWidth', (state, { field, width }) => {
             state.columns[field].width = width;
 
-            return { ...state };
+            return { ...state, columns: { ...state.columns } };
         });
 
         this.handle('setColumns', (state, { columns, defaultOptions }) => {
