@@ -9,18 +9,19 @@ export interface Selector<T> {
 
 export function useSelector<State, SelectState>(
     store: Store<State, any>,
-    selector: (state: State) => SelectState,
-    callback: (state: SelectState) => void
+    selector: (state: State, props?: any) => SelectState,
+    callback: (state: SelectState) => void,
+    props?: any
 ): Selector<SelectState> {
 
     const s: Selector<SelectState> = {
-        state: selector(store.getState()),
+        state: selector(store.getState(), props),
         getState: () => s.state,
         cancel: () => {},
     };
 
     s.cancel = store.subscribeAny(() => {
-        const selectState = selector(store.getState());
+        const selectState = selector(store.getState(), props);
         if (!shallowEqual(selectState, s.state)) {
             s.state = selectState;
             callback(s.state);

@@ -92,7 +92,7 @@ test('update column width', () => {
     const cbs = jest.fn();
 
     useSelector(store, (s) => {
-        return { columns: s.columns }
+        return { options: s.columns['c_01'] }
     }, cbs)
 
     const cb = jest.fn();

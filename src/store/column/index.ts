@@ -1,5 +1,6 @@
 import { Pinned, ColumnOptions, BaseColumnOptions } from "@/types";
 import { Store as BaseStore } from "@/store";
+import update from 'immutability-helper';
 
 export interface Actions {
     updateColumnPinned: { field: string, pinned: Pinned };
@@ -50,9 +51,11 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         this.handle('updateColumnWidth', (state, { field, width }) => {
-            state.columns[field].width = width;
-
-            return { ...state, columns: { ...state.columns } };
+            return update(state, {
+                columns: {
+                    [field]: { width: { $set: width } }
+                }
+            });
         });
 
         this.handle('setColumns', (state, { columns, defaultOptions }) => {
