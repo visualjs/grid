@@ -1,4 +1,4 @@
-import Grid from "@/index";
+import { Grid } from "@/index";
 import { ColumnOptions } from "@/types";
 import Component from "./Component";
 

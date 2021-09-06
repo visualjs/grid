@@ -1,6 +1,6 @@
 import { ColumnOptions } from "@/types";
 import Component from "./Component";
-import Grid from "@/index";
+import { Grid } from "@/index";
 
 export interface CellEditorParams<T> {
     props: T;

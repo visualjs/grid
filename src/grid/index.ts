@@ -272,7 +272,6 @@ export class Grid {
         return this.store('row').getRawCellValue(row, column);
     }
 
-
     /**
      * Agent for cell store
      */

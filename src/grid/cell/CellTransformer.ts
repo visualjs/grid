@@ -1,5 +1,5 @@
 import { ColumnOptions } from "@/types";
-import Grid from "@/index";
+import { Grid } from "@/index";
 
 export interface CellTransformerParams {
     value: any;
