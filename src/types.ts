@@ -30,6 +30,13 @@ export interface Coordinate {
     y: number;
 }
 
+export interface Boundary {
+    left: boolean;
+    right: boolean;
+    top: boolean;
+    bottom: boolean;
+}
+
 export interface RowData {
     id: string;
     [key: string]: any;
@@ -63,6 +70,8 @@ export interface ColumnOptions extends BaseColumnOptions {
     readonly?: boolean;
 }
 
+export type Fillable = 'x' | 'y' | 'xy' | undefined;
+
 export interface GridOptions {
     width?: string; // default is 100%
     height?: string; // default is 100%
@@ -76,7 +85,7 @@ export interface GridOptions {
     // virtual list
     preloadRowCount?: number; // default is 20
     // other
-    fillable?: 'x' | 'y' | 'xy';
+    fillable?: Fillable;
     // context menus
     getContextMenuItems?: (params: GetContextMenuItemsParams) => MenuItem[];
 }

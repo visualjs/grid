@@ -1,5 +1,4 @@
 import { ColumnOptions } from "@/types";
-import Grid from "../Grid";
 import Component from "./Component";
 
 export interface CellRendererParams<T> {
@@ -7,7 +6,6 @@ export interface CellRendererParams<T> {
     value: any;
     column: ColumnOptions;
     row: string;
-    grid: Grid;
 }
 
 export abstract class CellRenderer<T = {}> extends Component<CellRendererParams<T>> {

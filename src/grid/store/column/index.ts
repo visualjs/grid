@@ -1,5 +1,5 @@
 import { Pinned, ColumnOptions, BaseColumnOptions } from "@/types";
-import { Store as BaseStore } from "@/store";
+import { Store as BaseStore } from "@/grid/store";
 import update from 'immutability-helper';
 
 export interface Actions {
@@ -66,10 +66,6 @@ export class Store extends BaseStore<State, Actions> {
         });
     }
 
-    public getColumnOptions(column: string) {
-        return this.state.columns[column];
-    }
-
     protected setColumns = (columnOptions: ColumnOptions[], defaultColumnOption: BaseColumnOptions = {}) => {
         let pinnedLeftColumns: string[] = [];
         let pinnedRightColumns: string[] = [];
@@ -98,6 +94,31 @@ export class Store extends BaseStore<State, Actions> {
         };
     }
 
+    /**
+     * Actions
+     */
+
+    public getColumnOptions(column: string) {
+        return this._state.columns[column];
+    }
+
+    public getColumnOptionsByIndex(x: number) {
+        return this._state.columns[this.getColumnByIndex(x)];
+    }
+
+    public getColumnByIndex(x: number) {
+        if (x < this._state.pinnedLeftColumns.length) {
+            return this._state.pinnedLeftColumns[x];
+        }
+
+        x -= this._state.pinnedLeftColumns.length;
+        if (x < this._state.normalColumns.length) {
+            return this._state.normalColumns[x];
+        }
+
+        x -= this._state.normalColumns.length;
+        return this._state.pinnedRightColumns[x];
+    }
 }
 
 export default Store;

@@ -1,4 +1,5 @@
-import { Store as BaseStore } from "@/store";
+import { Store as BaseStore } from "@/grid/store";
+import { Fillable } from "@/types";
 
 export interface Actions {
     setHorizontalScrollLeft: number;
@@ -10,6 +11,7 @@ export interface State {
     headerHeight: number;
     preloadRowCount: number;
     horizontalScrollLeft?: number;
+    fillable?: Fillable;
 }
 
 const initialState: State = {
