@@ -5,7 +5,6 @@ export { CellRenderer, CellEditor, CellTransformer } from "@/grid/cell";
 
 export * from './grid';
 export * from './components';
-export * from './actions';
 export * from './types';
 
 export default Grid;

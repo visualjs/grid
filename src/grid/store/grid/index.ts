@@ -1,5 +1,5 @@
 import { Store as BaseStore } from "@/grid/store";
-import { Fillable } from "@/types";
+import { Fillable, GetContextMenuItemsParams, MenuItem } from "@/types";
 
 export interface Actions {
     setHorizontalScrollLeft: number;
@@ -12,6 +12,8 @@ export interface State {
     preloadRowCount: number;
     horizontalScrollLeft?: number;
     fillable?: Fillable;
+    // context menus
+    getContextMenuItems?: (params: GetContextMenuItemsParams) => MenuItem[];
 }
 
 const initialState: State = {

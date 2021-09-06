@@ -1,0 +1,107 @@
+.root {
+    border: 1px solid var(--border-color);
+    font-size: var(--default-font-size);
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    position: relative;
+}
+
+/* headers and cells */
+
+.header {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    background-color: var(--header-background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-columns {
+    display: flex;
+    color: var(--header-foreground-color);
+    font-weight: 600;
+}
+
+.header-container {
+    height: 100%;
+    width: auto;
+    overflow-x: visible;
+}
+
+.normal-cells,
+.normal-columns {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.pinned-right-cells,
+.pinned-right-columns {
+    z-index: var(--pinned-z-index, 1);
+    box-shadow: rgba(0, 0, 0, 0.05) -4px 0px 4px, rgb(230 230 229) 0px 0px 0px;
+    border-left: 1px solid var(--border-color);
+    /* border-left: 1px solid var(--primary-color); */
+}
+.pinned-left-cells,
+.pinned-left-columns {
+    z-index: var(--pinned-z-index, 1);
+    box-shadow: rgba(0, 0, 0, 0.05) 4px 0px 4px, rgb(230 230 229) 0px 0px 0px;
+    /* border-right: 1px solid var(--primary-color); */
+}
+
+.pinned-left-cells,
+.pinned-right-cells {
+    position: relative;
+}
+
+/* body */
+.body {
+    height: 0;
+    flex-grow: 1;
+    position: relative;
+}
+
+/* scroll */
+.horizontal-scroll {
+    width: 100%;
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    border-top: 1px solid var(--border-color);
+    z-index: var(--horizontal-z-index, 1);
+}
+
+.horizontal-right-spacer,
+.horizontal-left-spacer,
+.horizontal-scroll-view {
+    overflow: hidden;
+    background: var(--header-background-color);
+}
+.horizontal-scroll-view {
+    overflow-x: scroll;
+}
+.horizontal-scroll-container {
+    overflow: scroll;
+}
+.horizontal-right-spacer,
+.horizontal-left-spacer {
+    flex-shrink: 0;
+}
+.horizontal-left-spacer {
+    border-right: 1px solid var(--border-color);
+}
+.horizontal-right-spacer {
+    border-left: 1px solid var(--border-color);
+}
+
+/* hiddens */
+.column-resizer {
+    width: 0;
+    height: 100%;
+    background-color: var(--header-resizer-active-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: col-resize;
+    z-index: var(--column-resizer-z-index, 2);
+}

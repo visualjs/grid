@@ -1,0 +1,28 @@
+.header-column {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    position: relative;
+    padding: 0 12px;
+    border-right: 1px solid var(--border-color);
+    box-sizing: border-box;
+}
+/* .header-column:last-of-type {
+    border-right: none;
+} */
+
+.header-column span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.column-resize-holder {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: var(--column-z-index, 2);
+}

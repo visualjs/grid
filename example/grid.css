@@ -14,7 +14,7 @@ a {
 
 h3 {
     width: 100%;
-    display: block;
+    display: none;
     text-align: center;
 }
 
@@ -23,4 +23,5 @@ h3 {
     /* max-width: 1200px; */
     height: 480px;
     margin: 50px auto;
+    display: none;
 }

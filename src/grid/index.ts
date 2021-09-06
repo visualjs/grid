@@ -1,4 +1,4 @@
-import { Boundary, CellPosition, Coordinate, GridOptions } from '@/types';
+import { Boundary, CellPosition, Coordinate, GridOptions, MenuItem } from '@/types';
 import defaultRender from '@/views';
 import { Listener, Root, RootState } from '@/grid/store';
 import { Store as GridStore } from '@/grid/store/grid';
@@ -6,6 +6,7 @@ import { Store as RowStore } from '@/grid/store/row';
 import { Store as CellStore } from '@/grid/store/cell';
 import { Store as ColumnStore } from '@/grid/store/column';
 import CellRange from '@/selection/CellRange';
+import { readTextFromClipboard, writeTextToClipboard } from '@/utils';
 
 const defaultGridOptions = {
     width: '100%',
@@ -40,6 +41,7 @@ export class Grid {
                 headerHeight: props.headerHeight,
                 preloadRowCount: props.preloadRowCount,
                 fillable: props.fillable,
+                getContextMenuItems: props.getContextMenuItems,
             }),
             row: new RowStore({ height: props.rowHeight }),
             cell: new CellStore(),
@@ -55,9 +57,14 @@ export class Grid {
         render(this, container);
     }
 
+    public api() {
+        return this.root;
+    }
+
     /**
      * Agent for root store
      */
+
     public getState(): State {
         return this.root.getState();
     }
@@ -124,7 +131,7 @@ export class Grid {
         const trans = columnOptions?.transformer;
         const value = this.getRawCellValue(row, column);
 
-        return trans ? trans.format({ value, column: columnOptions }) : value;
+        return trans ? trans.format({ value, column: columnOptions, gird: this }) : value;
     }
 
     public getCellValueByCoord(coord: Coordinate) {
@@ -143,7 +150,7 @@ export class Grid {
         }
 
         const trans = columnOptions.transformer;
-        value = trans ? trans.parse({ value, column: columnOptions }) : value;
+        value = trans ? trans.parse({ value, column: columnOptions, gird: this }) : value;
         this.store('row').dispatch('setCellValue', { row, column, value });
     }
 
@@ -188,6 +195,49 @@ export class Grid {
         range.isBottom(coord) && (boundary.bottom = true);
 
         return boundary;
+    }
+
+    public getContextMenuItems(pos: CellPosition): MenuItem[] {
+        if (this.state('grid').getContextMenuItems) {
+            return this.state('grid').getContextMenuItems({ ...pos, grid: this });
+        }
+
+        return [];
+    }
+
+    // Copy the currently selected cell data to the clipboard
+    public copySelection() {
+        let text = '';
+        this.state('cell').selections.forEach((range) => {
+            let lastRow = -1;
+            range.each(coord => {
+                if (lastRow !== -1) {
+                    text += coord.y !== lastRow ? '\n' : '\t';
+                }
+
+                text += this.getCellValueByCoord(coord);
+                lastRow = coord.y;
+            });
+        })
+
+        writeTextToClipboard(text);
+    }
+
+    // Parse the data from the clipboard and
+    // set the selected cell data according to the order
+    public pasteFromClipboard() {
+        const start = this.state('cell').selections[0]?.start;
+        if (!start) return;
+
+        readTextFromClipboard().then(str => {
+            str = str.replace(/(\r\n|\r|\n)/g, '\n');
+            str.split('\n').forEach((rowData, y) => {
+                rowData.split('\t').forEach((value, x) => {
+                    const coord = { x: x + start.x, y: y + start.y };
+                    this.setCellValueByCoord(coord, value);
+                });
+            });
+        });
     }
 
     /**

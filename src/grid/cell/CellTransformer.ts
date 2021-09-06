@@ -1,8 +1,10 @@
 import { ColumnOptions } from "@/types";
+import Grid from "@/index";
 
 export interface CellTransformerParams {
     value: any;
     column: ColumnOptions;
+    gird: Grid;
 }
 
 export abstract class CellTransformer {

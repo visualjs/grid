@@ -1,0 +1,17 @@
+.row-cells {
+    /* display: flex; */
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.row-stripe-cells {
+    background-color: var(--row-stripe-background, transparent);
+}
+
+.row-cells.row-cells-hover  {
+    background-color: var(--row-hover-background, transparent);
+}
+
+.row-cells.row-cells-select  {
+    background-color: var(--row-select-background, transparent);
+}

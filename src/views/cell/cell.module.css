@@ -1,0 +1,99 @@
+.cell {
+    display: inline-block;
+    height: 100%;
+    vertical-align: bottom;
+    /* flex-shrink: 0; */
+    position: relative;
+    box-sizing: border-box;
+    border-left: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+/* .cell:last-of-type {
+    border-right: none;
+} */
+
+.cell-content {
+    width: 100%;
+    height: 100%;
+    padding: var(--cell-padding, 0 12px);
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cell-editing {
+    padding: 0;
+    overflow: visible;
+}
+
+.cell-selected {
+    background: var(--cell-selected-background, rgba(0, 145, 234, 0.2));
+}
+
+.cell-filling {
+    background: var(--cell-filling-background, rgba(245, 223, 25, 0.2));
+}
+
+.cell-filling-left-boundary {
+    border-left: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+}
+
+.cell-filling-right-boundary {
+    border-right: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+}
+
+.cell-filling-top-boundary {
+    border-top: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+}
+
+.cell-filling-bottom-boundary {
+    border-bottom: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+}
+
+.cell-left-boundary {
+    border-left: 1px solid var(--cell-selected-boundary-color, #0091ea);
+}
+
+.cell-right-boundary {
+    border-right: 1px solid var(--cell-selected-boundary-color, #0091ea);
+}
+
+.cell-top-boundary {
+    border-top: 1px solid var(--cell-selected-boundary-color, #0091ea);
+}
+
+.cell-bottom-boundary {
+    border-bottom: 1px solid var(--cell-selected-boundary-color, #0091ea);
+}
+
+.cell-editing-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: var(--cell-editing-z-index, 2);
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    background: var(--cell-editing-popup-background, #ffffff);
+    border: var(--cell-editing-popup-border, none);
+}
+
+.cell-editing-popup {
+    height: auto;
+}
+
+.cell-fill-handler {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: var(--primary-color, #0091ea);
+    right: 0;
+    bottom: 0;
+    cursor: cell;
+}

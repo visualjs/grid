@@ -6,7 +6,6 @@ import IndexRender from './renders/IndexRender';
 import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/components';
 import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
 import { BooleanTransformer, SelectionTransformer } from '@/components';
-import { copySelection, pasteFromClipboard } from '@/actions';
 
 ; (() => {
 
@@ -33,6 +32,8 @@ import { copySelection, pasteFromClipboard } from '@/actions';
         });
     }
 
+    document.querySelector<HTMLHeadElement>("#full-example-title").style.display = 'block';
+    document.querySelector<HTMLDivElement>("#full-example").style.display = 'block';
     const grid = new Grid(document.querySelector("#full-example"), {
         columns: [
             { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: true, cellRender: IndexRender },
@@ -89,12 +90,14 @@ import { copySelection, pasteFromClipboard } from '@/actions';
 
             const options = params.grid.getColumnOptions(params.column);
 
-            const setColumnPinned = (pinned?: 'left'|'right') => {
-                options.pinned = pinned;
-                params.grid.setColumnOptions(options.field, options);
+            const setColumnPinned = (pinned?: 'left' | 'right') => {
+                params.grid.store('column').dispatch('updateColumnPinned', {
+                    field: params.column,
+                    pinned: pinned
+                });
             }
 
-            const pinnedIcon = (pinned?: 'left'|'right') => {
+            const pinnedIcon = (pinned?: 'left' | 'right') => {
                 if (pinned === options.pinned) {
                     return 'vg-checkmark';
                 }
@@ -111,15 +114,15 @@ import { copySelection, pasteFromClipboard } from '@/actions';
                     ]
                 },
                 { separator: true },
-                { name: 'Copy', icon: 'vg-copy', action: () => copySelection(params.grid) },
-                { name: 'Paste', disabled: options.readonly, icon: 'vg-paste', action: () => pasteFromClipboard(params.grid) },
+                { name: 'Copy', icon: 'vg-copy', action: () => params.grid.copySelection() },
+                { name: 'Paste', disabled: options.readonly, icon: 'vg-paste', action: () => params.grid.pasteFromClipboard() },
                 { separator: true },
                 { name: 'Download', icon: 'vg-download', disabled: true },
             ];
         }
     });
 
-    grid.addListener('cellValueChanged', (ev) => {
-        console.log(ev);
+    grid.store('row').subscribe('setCellValue', (payload) => {
+        console.log(payload.row, payload.column, payload.value);
     });
 })();

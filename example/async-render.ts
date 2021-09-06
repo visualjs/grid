@@ -18,14 +18,12 @@ import { RowData } from '@/types';
         rows.push(data);
     }
 
-    var count = 0;
-
     class CustomCellRender extends CellRenderer<{}> {
 
         protected element: HTMLDivElement = document.createElement('div');
 
         public init(params: CellRendererParams<{}>) {
-            this.element.innerHTML = String(++count);
+            this.element.innerHTML = params.value;
             var start = new Date();
             while ((new Date()).getTime() - start.getTime() < 3) { }
         }
@@ -36,6 +34,8 @@ import { RowData } from '@/types';
 
     }
 
+    document.querySelector<HTMLHeadElement>("#async-render-title").style.display = 'block';
+    document.querySelector<HTMLDivElement>("#async-render").style.display = 'block';
     new Grid(document.querySelector("#async-render"), {
         columns: [
             { field: '1', headerName: '1' },
