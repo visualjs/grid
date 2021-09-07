@@ -187,7 +187,7 @@ class Grid extends Component<Props> {
                 <div className={styles.body}>
                     <List
                         ref={this.createRef("list")}
-                        items={Object.keys(this.props.rows)}
+                        items={this.props.grid.store('row').getRowIds()}
                         itemHeight={this.props.rowHeight}
                         preLoadCount={this.props.preloadRowCount}
                         render={this.listRender}

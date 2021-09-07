@@ -1,5 +1,5 @@
 import { Store as BaseStore } from "@/grid/store";
-import { CellPosition, RowData } from "@/types";
+import { RowData } from "@/types";
 import update from 'immutability-helper';
 
 export interface Actions {
@@ -11,6 +11,7 @@ export interface Actions {
     setHoveredRow: string | undefined;
     selectRows: string[];
     appendRows: RowData[];
+    appendRowsBefore: { index: number, rows: RowData[] };
     clear: undefined;
 }
 
@@ -37,6 +38,7 @@ export class Store extends BaseStore<State, Actions> {
             setHoveredRow: [],
             selectRows: [],
             appendRows: [],
+            appendRowsBefore: [],
             clear: [],
         }, Object.assign({}, initialState, initial));
 
@@ -52,27 +54,11 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         this.handle('appendRows', (state, rows) => {
+            return this.appendRowsBefore(state, state.rows.length, rows);
+        });
 
-            // If the newly added row already exists,
-            // use the new data to overwrite the old data
-            // and do not add a new one
-            rows = rows.filter((row) => {
-                const i = state.rowIndexes[row.id];
-                if (i !== undefined) {
-                    state.rows[i] = row;
-                    return false;
-                }
-                return true;
-            });
-
-            // Reset row indexes
-            const rowIndexes: Record<string, number> = {};
-            rows = [...state.rows, ...rows];
-            rows.forEach((r, i) => {
-                rowIndexes[r.id] = i;
-            })
-
-            return { ...state, rows, rowIndexes };
+        this.handle('appendRowsBefore', (state, { index, rows }) => {
+            return this.appendRowsBefore(state, index, rows);
         });
 
         this.handle('setHoveredRow', (state, row) => {
@@ -94,6 +80,41 @@ export class Store extends BaseStore<State, Actions> {
         this.handle('clear', (state) => {
             return { ...state, rowIndexes: {}, rows: [], hoveredRow: undefined, selectedRows: [] };
         });
+    }
+
+    protected appendRowsBefore(state: State, index: number, rows: RowData[]) {
+
+        // If the newly added row already exists,
+        // use the new data to overwrite the old data
+        // and do not add a new one
+        rows = rows.filter((row) => {
+            const i = state.rowIndexes[row.id];
+            if (i !== undefined) {
+                state.rows[i] = row;
+                return false;
+            }
+            return true;
+        });
+
+        // Reset row indexes
+        const rowIndexes: Record<string, number> = {};
+
+        index = Math.max(index, 0);
+        rows = [
+            ...state.rows.slice(0, index),
+            ...rows,
+            ...state.rows.slice(index, state.rows.length)
+        ];
+
+        rows.forEach((r, i) => {
+            rowIndexes[r.id] = i;
+        });
+
+        return { ...state, rows, rowIndexes };
+    }
+
+    public getRowIds() {
+        return this._state.rows.map(r => r.id);
     }
 
     public getRowIdByIndex(y: number) {

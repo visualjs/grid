@@ -66,6 +66,60 @@ describe('dispatchers for row', () => {
         expect(cb).toBeCalledTimes(3);
     });
 
+    test('appendRowsBefore', () => {
+        const store = new Store();
+        expect(store.getState().rows.length).toBe(0);
+
+        const cb = jest.fn();
+        store.subscribeAny(cb);
+
+        store.dispatch('appendRowsBefore', {
+            index: 10, rows: [
+                { id: '01', value: 'goodbye' },
+                { id: '02' },
+            ]
+        });
+
+        store.dispatch('appendRowsBefore', {
+            index: 1, rows: [
+                { id: '03' },
+                { id: '04' },
+            ]
+        });
+
+        expect(store.getState().rows.length).toBe(4);
+        expect(store.getState().rowIndexes['01']).toBe(0);
+        expect(store.getState().rowIndexes['03']).toBe(1);
+        expect(store.getState().rowIndexes['04']).toBe(2);
+        expect(store.getState().rowIndexes['02']).toBe(3);
+        expect(store.getState().rows[0].value).toBe('goodbye');
+
+        expect(store.getRowIds()).toStrictEqual([
+            '01', '03', '04', '02'
+        ]);
+
+        store.dispatch('appendRowsBefore', {
+            index: -1, rows: [
+                { id: '05' },
+                { id: '01', value: 'joe' },
+            ]
+        });
+
+        expect(store.getState().rows.length).toBe(5);
+        expect(store.getState().rowIndexes['05']).toBe(0);
+        expect(store.getState().rowIndexes['01']).toBe(1);
+        expect(store.getState().rowIndexes['03']).toBe(2);
+        expect(store.getState().rowIndexes['04']).toBe(3);
+        expect(store.getState().rowIndexes['02']).toBe(4);
+        expect(store.getState().rows[1].value).toBe('joe');
+
+        expect(store.getRowIds()).toStrictEqual([
+            '05', '01', '03', '04', '02'
+        ]);
+
+        expect(cb).toBeCalledTimes(3);
+    });
+
     test('setHoveredRow', () => {
         const store = new Store();
         expect(store.getState().rows.length).toBe(0);
