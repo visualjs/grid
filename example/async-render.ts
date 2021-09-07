@@ -1,6 +1,7 @@
 import { CellRenderer, CellRendererParams } from '@/grid/cell';
 import { Grid } from '@/index';
 import { RowData } from '@/types';
+import { showContainer } from './utils';
 
 ; (() => {
 
@@ -34,8 +35,7 @@ import { RowData } from '@/types';
 
     }
 
-    document.querySelector<HTMLHeadElement>("#async-render-title").style.display = 'block';
-    document.querySelector<HTMLDivElement>("#async-render").style.display = 'block';
+    showContainer('#async-render-container', 'Async Render');
     new Grid(document.querySelector("#async-render"), {
         columns: [
             { field: '1', headerName: '1' },

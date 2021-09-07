@@ -6,6 +6,7 @@ import IndexRender from './renders/IndexRender';
 import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '@/components';
 import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
 import { BooleanTransformer, SelectionTransformer } from '@/components';
+import { showContainer } from './utils';
 
 ; (() => {
 
@@ -32,8 +33,7 @@ import { BooleanTransformer, SelectionTransformer } from '@/components';
         });
     }
 
-    document.querySelector<HTMLHeadElement>("#full-example-title").style.display = 'block';
-    document.querySelector<HTMLDivElement>("#full-example").style.display = 'block';
+    showContainer('#full-example-container', 'Full Example');
     const grid = new Grid(document.querySelector("#full-example"), {
         columns: [
             { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: true, cellRender: IndexRender },
@@ -116,6 +116,12 @@ import { BooleanTransformer, SelectionTransformer } from '@/components';
                 { separator: true },
                 { name: 'Copy', icon: 'vg-copy', action: () => params.grid.copySelection() },
                 { name: 'Paste', disabled: options.readonly, icon: 'vg-paste', action: () => params.grid.pasteFromClipboard() },
+                { separator: true },
+                {
+                    name: 'Delete', disabled: options.readonly, icon: 'vg-trash-bin', action: () => {
+                        params.grid.store('row').dispatch('takeRows', [params.row]);
+                    }
+                },
                 { separator: true },
                 { name: 'Download', icon: 'vg-download', disabled: true },
             ];
