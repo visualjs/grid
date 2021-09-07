@@ -8,15 +8,18 @@
         <a href="https://github.com/visualjs/grid/actions/workflows/publish.yml" title="Release Status">
             <img src="https://github.com/visualjs/grid/actions/workflows/publish.yml/badge.svg">
         </a>
+        <a href="https://www.npmjs.com/package/visual-grid" title="version">
+            <img src="https://img.shields.io/npm/v/visual-grid.svg?style=flat">
+        </a>
         <a href="https://github.com/visualjs/grid/issues" title="issues">
             <img src="https://img.shields.io/github/issues/visualjs/grid">
         </a>
-        <a href="https://github.com/visualjs/grid" title="stars">
+        <!-- <a href="https://github.com/visualjs/grid" title="stars">
             <img src="https://img.shields.io/github/stars/visualjs/grid">
         </a>
         <a href="https://github.com/visualjs/grid" title="forks">
             <img src="https://img.shields.io/github/forks/visualjs/grid">
-        </a>
+        </a> -->
         <a href="./LICENSE" title="license">
             <img src="https://img.shields.io/github/license/visualjs/grid">
         </a>
