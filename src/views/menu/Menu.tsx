@@ -7,7 +7,8 @@ import styles from './menu.module.css';
 interface Props {
     items?: MenuItem[];
     coord?: Coordinate;
-    onMenuItemClicked?: () => void;
+    onMenuItemClicked?: (ev?: MouseEvent) => void;
+    onClickOutside?: () => void;
 }
 
 export class Menu extends Component<Props> {
@@ -17,6 +18,20 @@ export class Menu extends Component<Props> {
             return this.props.coord;
         }
         return { x: 0, y: 0 };
+    }
+
+    componentDidMount = () => {
+        document.addEventListener('click', this.handleClickoutside);
+    }
+
+    componentWillUnmount = () => {
+        document.removeEventListener('click', this.handleClickoutside);
+    }
+
+    protected handleClickoutside = (ev: MouseEvent) => {
+        if (this.props.onClickOutside && !this.refs.self.current.contains(ev.target as Node)) {
+            this.props.onClickOutside();
+        }
     }
 
     render() {

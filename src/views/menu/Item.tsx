@@ -5,7 +5,7 @@ import Menu from "./Menu";
 import styles from './menu.module.css';
 
 interface Props extends MenuItem {
-    onClick?: () => void;
+    onClick?: (ev?: MouseEvent) => void;
 }
 
 interface State {
@@ -19,13 +19,13 @@ export class Item extends Component<Props, State> {
         return this.props.subMenus && !this.props.disabled;
     }
 
-    protected handleClick = () => {
+    protected handleClick = (ev: MouseEvent) => {
         if (this.props.disabled || this.props.subMenus) {
             return;
         }
 
         this.props.action && this.props.action();
-        this.props.onClick && this.props.onClick();
+        this.props.onClick && this.props.onClick(ev);
     }
 
     protected showSubMenus = () => {

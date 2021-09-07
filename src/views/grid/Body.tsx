@@ -86,6 +86,8 @@ class Body extends Component<Props, State> {
     }
 
     protected handleCellMouseDown = (ev: MouseEvent, row: string, column: string) => {
+        ev.stopPropagation();
+
         // stop any editing when click a cell
         this.props.setEditing();
 
@@ -246,12 +248,13 @@ class Body extends Component<Props, State> {
                 onKeyDown={this.handleKeyDown}
                 onBlur={this.handleBlur}
                 tabIndex={0}
-                style={{ display: 'flex', outline: 'none', position: 'relative' }}
+                style={{ display: 'flex', outline: 'none', position: 'relative', minHeight: '100%' }}
                 onMouseLeave={() => this.props.hoverRow(undefined)}
                 onContextMenu={handleContextMenu}
             >
                 {this.state.isMenuVisible && <Menu
                     onMenuItemClicked={this.hideContextMenu}
+                    onClickOutside={this.hideContextMenu}
                     coord={this.state.contextMenuCoord}
                     items={this.state.contextMenuItems}
                 />}
