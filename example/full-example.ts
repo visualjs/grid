@@ -83,7 +83,7 @@ import { BooleanTransformer, SelectionTransformer } from '@/components';
             },
             { headerName: 'Date', field: 'date', resizable: true, pinned: 'right' },
         ],
-        rows: rows,
+        rows: [],
         rowHeight: 30,
         fillable: 'xy',
         getContextMenuItems: (params) => {
@@ -125,4 +125,6 @@ import { BooleanTransformer, SelectionTransformer } from '@/components';
     grid.store('row').subscribe('setCellValue', (payload) => {
         console.log(payload.row, payload.column, payload.value);
     });
+
+    grid.store('row').dispatch('appendRows', rows);
 })();

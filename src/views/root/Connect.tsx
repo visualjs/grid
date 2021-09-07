@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "preact/hooks";
+import { useContext, useLayoutEffect, useState } from "preact/hooks";
 import { ComponentType } from "preact";
 import GridContext from "./Context";
 import { useSelector } from "@/grid/store/useSelector";
@@ -13,9 +13,9 @@ export function connect<S, A>(selector: (state: State, props?: any) => S, mapAct
             const [state, setState] = useState(selector(grid.getState(), { grid: grid, props: props }));
             const actions = mapActions ? mapActions(grid) : undefined;
 
-            useEffect(() => {
-                const s = useSelector(grid.api(), selector, () => {
-                    setState(s.getState());
+            useLayoutEffect(() => {
+                const s = useSelector(grid.api(), selector, (state) => {
+                    setState(state);
                 }, { grid: grid, props: props });
                 return s.cancel;
             }, []);
