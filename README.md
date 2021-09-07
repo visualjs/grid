@@ -27,7 +27,7 @@
     <img src="./screenshot.png" />
 </p>
 
-### Install
+## Install
 
 ```
 npm i visual-grid
