@@ -33,43 +33,43 @@
 }
 
 .cell-selected {
-    background: var(--cell-selected-background, rgba(0, 145, 234, 0.2));
+    background: var(--cell-selected-background, rgba(0, 145, 234, 0.2)) !important;
 }
 
 .cell-filling {
-    background: var(--cell-filling-background, rgba(245, 223, 25, 0.2));
+    background: var(--cell-filling-background, rgba(245, 223, 25, 0.2)) !important;
 }
 
 .cell-filling-left-boundary {
-    border-left: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+    border-left: 1px dashed var(--cell-filling-boundary-color, #f8b013) !important;
 }
 
 .cell-filling-right-boundary {
-    border-right: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+    border-right: 1px dashed var(--cell-filling-boundary-color, #f8b013) !important;
 }
 
 .cell-filling-top-boundary {
-    border-top: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+    border-top: 1px dashed var(--cell-filling-boundary-color, #f8b013) !important;
 }
 
 .cell-filling-bottom-boundary {
-    border-bottom: 1px dashed var(--cell-filling-boundary-color, #f8b013);
+    border-bottom: 1px dashed var(--cell-filling-boundary-color, #f8b013) !important;
 }
 
 .cell-left-boundary {
-    border-left: 1px solid var(--cell-selected-boundary-color, #0091ea);
+    border-left: 1px solid var(--cell-selected-boundary-color, #0091ea) !important;
 }
 
 .cell-right-boundary {
-    border-right: 1px solid var(--cell-selected-boundary-color, #0091ea);
+    border-right: 1px solid var(--cell-selected-boundary-color, #0091ea) !important;
 }
 
 .cell-top-boundary {
-    border-top: 1px solid var(--cell-selected-boundary-color, #0091ea);
+    border-top: 1px solid var(--cell-selected-boundary-color, #0091ea) !important;
 }
 
 .cell-bottom-boundary {
-    border-bottom: 1px solid var(--cell-selected-boundary-color, #0091ea);
+    border-bottom: 1px solid var(--cell-selected-boundary-color, #0091ea) !important;
 }
 
 .cell-editing-wrapper {

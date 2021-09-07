@@ -49,9 +49,12 @@
     /* border-right: 1px solid var(--primary-color); */
 }
 
+.normal-cells-container,
 .pinned-left-cells,
 .pinned-right-cells {
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 /* body */

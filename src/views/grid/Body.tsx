@@ -262,7 +262,7 @@ class Body extends Component<Props, State> {
                 )}
                 {this.props.normalColumns.length > 0 && (
                     <div className={styles.normalCells}>
-                        <div ref={this.createRef('normalColumns')}>
+                        <div ref={this.createRef('normalColumns')} className={styles.normalCellsContainer}>
                             {this.renderRows(this.props.normalColumns)}
                         </div>
                     </div>
