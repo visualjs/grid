@@ -12,6 +12,7 @@ export interface Actions {
     selectRows: string[];
     appendRows: RowData[];
     appendRowsBefore: { index: number, rows: RowData[] };
+    takeRows: string[];
     clear: undefined;
 }
 
@@ -39,6 +40,7 @@ export class Store extends BaseStore<State, Actions> {
             selectRows: [],
             appendRows: [],
             appendRowsBefore: [],
+            takeRows: [],
             clear: [],
         }, Object.assign({}, initialState, initial));
 
@@ -59,6 +61,25 @@ export class Store extends BaseStore<State, Actions> {
 
         this.handle('appendRowsBefore', (state, { index, rows }) => {
             return this.appendRowsBefore(state, index, rows);
+        });
+
+        this.handle('takeRows', (state, takeRows) => {
+
+            takeRows = takeRows.filter((row) => {
+                return state.rowIndexes[row] !== undefined;
+            });
+
+            const rows = state.rows.filter(r => {
+                return takeRows.indexOf(r.id) === -1;
+            });
+
+            // Reset row indexes
+            const rowIndexes: Record<string, number> = {};
+            rows.forEach((r, i) => {
+                rowIndexes[r.id] = i;
+            });
+
+            return { ...state, rows, rowIndexes };
         });
 
         this.handle('setHoveredRow', (state, row) => {
@@ -96,9 +117,6 @@ export class Store extends BaseStore<State, Actions> {
             return true;
         });
 
-        // Reset row indexes
-        const rowIndexes: Record<string, number> = {};
-
         index = Math.max(index, 0);
         rows = [
             ...state.rows.slice(0, index),
@@ -106,6 +124,8 @@ export class Store extends BaseStore<State, Actions> {
             ...state.rows.slice(index, state.rows.length)
         ];
 
+        // Reset row indexes
+        const rowIndexes: Record<string, number> = {};
         rows.forEach((r, i) => {
             rowIndexes[r.id] = i;
         });

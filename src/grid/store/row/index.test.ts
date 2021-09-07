@@ -1,5 +1,6 @@
 import data from "@/grid/data.mock";
 import Store from ".";
+import { useSelector } from "..";
 
 describe('dispatchers for row', () => {
 
@@ -118,6 +119,46 @@ describe('dispatchers for row', () => {
         ]);
 
         expect(cb).toBeCalledTimes(3);
+    });
+
+    test('take rows', () => {
+        const store = new Store();
+        expect(store.getState().rows.length).toBe(0);
+
+        const rowsChanged = jest.fn();
+        const rowIndexesChanged = jest.fn();
+
+        useSelector(store, (state) => {
+            return { rows: state.rows };
+        }, rowsChanged);
+
+        useSelector(store, (state) => {
+            return { indexes: state.rowIndexes };
+        }, rowIndexesChanged);
+
+        store.dispatch('appendRows', [
+            { id: 'row_01' },
+            { id: 'row_02' },
+            { id: 'row_03' },
+            { id: 'row_04' },
+        ]);
+
+        expect(store.getState().rows.length).toBe(4);
+        expect(store.getState().rowIndexes['row_01']).toBe(0);
+        expect(store.getState().rowIndexes['row_02']).toBe(1);
+        expect(store.getState().rowIndexes['row_03']).toBe(2);
+        expect(store.getState().rowIndexes['row_04']).toBe(3);
+
+        store.dispatch('takeRows', ['row_02', 'row_04', 'row_05']);
+
+        expect(store.getState().rows.length).toBe(2);
+        expect(store.getState().rowIndexes['row_01']).toBe(0);
+        expect(store.getState().rowIndexes['row_02']).toBeUndefined();
+        expect(store.getState().rowIndexes['row_03']).toBe(1);
+        expect(store.getState().rowIndexes['row_04']).toBeUndefined();
+
+        expect(rowsChanged).toBeCalledTimes(2);
+        expect(rowIndexesChanged).toBeCalledTimes(2);
     });
 
     test('setHoveredRow', () => {
