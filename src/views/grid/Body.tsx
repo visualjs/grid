@@ -102,7 +102,7 @@ class Body extends Component<Props, State> {
 
             this.setState({
                 isMenuVisible: true, contextMenuItems: items,
-                contextMenuCoord: { x: ev.pageX, y: ev.pageY }
+                contextMenuCoord: { x: ev.clientX, y: ev.clientY }
             });
 
             // Avoid canceling the selection when you right-click in the selection range
