@@ -65,6 +65,11 @@ import { showContainer } from './utils';
             Name: <input type="text" id="field-name" />
             Age: <input type="number" value="20" id="field-age" />
             <input type="button" id="add-row" value="Add Row" />
+            <br />
+            <br />
+            <button class="small">Small</button>
+            <button class="middle">Middle</button>
+            <button class="large">Large</button>
         </div>
     `;
 
@@ -80,5 +85,17 @@ import { showContainer } from './utils';
                 { id: String(id++), name: name.value, age: age.value },
             ]
         });
+    });
+
+    controls.querySelector<HTMLButtonElement>('.small').addEventListener('click', () => {
+        grid.store('row').dispatch('setBaseHeight', 20);
+    });
+
+    controls.querySelector<HTMLButtonElement>('.middle').addEventListener('click', () => {
+        grid.store('row').dispatch('setBaseHeight', 30);
+    });
+
+    controls.querySelector<HTMLButtonElement>('.large').addEventListener('click', () => {
+        grid.store('row').dispatch('setBaseHeight', 50);
     });
 })();

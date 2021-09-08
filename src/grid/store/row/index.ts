@@ -14,6 +14,7 @@ export interface Actions {
     appendRowsBefore: { index: number, rows: RowData[] };
     takeRows: string[];
     clear: undefined;
+    setBaseHeight: number;
 }
 
 export interface State {
@@ -42,6 +43,7 @@ export class Store extends BaseStore<State, Actions> {
             appendRowsBefore: [],
             takeRows: [],
             clear: [],
+            setBaseHeight: [],
         }, Object.assign({}, initialState, initial));
 
         this.handle('setCellValue', (state, { row, column, value }) => {
@@ -79,12 +81,17 @@ export class Store extends BaseStore<State, Actions> {
                 rowIndexes[r.id] = i;
             });
 
-            return { ...state, rows, rowIndexes };
+            return update(state, {
+                rowIndexes: { $set: rowIndexes },
+                rows: { $set: rows },
+            });
         });
 
         this.handle('setHoveredRow', (state, row) => {
             if (row === undefined || state.rowIndexes[row] !== undefined) {
-                return { ...state, hoveredRow: row };
+                return update(state, {
+                    hoveredRow: { $set: row }
+                });
             }
 
             return state;
@@ -95,11 +102,24 @@ export class Store extends BaseStore<State, Actions> {
                 return state.rowIndexes[r] !== undefined;
             });
 
-            return { ...state, selectedRows: rows };
+            return update(state, {
+                selectedRows: { $set: rows }
+            });
         });
 
         this.handle('clear', (state) => {
-            return { ...state, rowIndexes: {}, rows: [], hoveredRow: undefined, selectedRows: [] };
+            return update(state, {
+                rowIndexes: { $set: {} },
+                rows: { $set: [] },
+                hoveredRow: { $set: undefined },
+                selectedRows: { $set: [] }
+            });
+        });
+
+        this.handle('setBaseHeight', (state, height) => {
+            return update(state, {
+                height: { $set: height }
+            });
         });
     }
 
