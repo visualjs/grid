@@ -8,7 +8,6 @@ export interface Actions {
 export interface State {
     width: string;
     height: string;
-    headerHeight: number;
     preloadRowCount: number;
     horizontalScrollLeft?: number;
     fillable?: Fillable;
@@ -19,7 +18,6 @@ export interface State {
 const initialState: State = {
     width: '100%',
     height: '100%',
-    headerHeight: 30,
     preloadRowCount: 20,
 };
 

@@ -89,13 +89,16 @@ import { showContainer } from './utils';
 
     controls.querySelector<HTMLButtonElement>('.small').addEventListener('click', () => {
         grid.store('row').dispatch('setBaseHeight', 20);
+        grid.store('column').dispatch('setHeight', 20);
     });
 
     controls.querySelector<HTMLButtonElement>('.middle').addEventListener('click', () => {
         grid.store('row').dispatch('setBaseHeight', 30);
+        grid.store('column').dispatch('setHeight', 30);
     });
 
     controls.querySelector<HTMLButtonElement>('.large').addEventListener('click', () => {
         grid.store('row').dispatch('setBaseHeight', 50);
+        grid.store('column').dispatch('setHeight', 50);
     });
 })();

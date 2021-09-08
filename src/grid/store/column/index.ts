@@ -6,6 +6,7 @@ export interface Actions {
     updateColumnPinned: { field: string, pinned: Pinned };
     updateColumnWidth: { field: string, width: number };
     setColumns: { columns: ColumnOptions[], defaultOptions?: BaseColumnOptions };
+    setHeight: number;
 }
 
 export interface State {
@@ -16,7 +17,7 @@ export interface State {
     // column options
     columns: Record<string, ColumnOptions>;
     // header
-    headerHeight: number;
+    height: number;
 }
 
 const initialState: State = {
@@ -24,7 +25,7 @@ const initialState: State = {
     pinnedRightColumns: [],
     normalColumns: [],
     columns: {},
-    headerHeight: 30,
+    height: 30,
 };
 
 export const defaultColumnOptions: BaseColumnOptions = {
@@ -38,15 +39,20 @@ export class Store extends BaseStore<State, Actions> {
             updateColumnPinned: [],
             updateColumnWidth: [],
             setColumns: [],
+            setHeight: [],
         }, Object.assign({}, initialState, initial));
 
         this.handle('updateColumnPinned', (state, { field, pinned }) => {
 
-            state.columns[field].pinned = pinned;
+            const newState = update(state, {
+                columns: {
+                    [field]: { pinned: { $set: pinned } }
+                }
+            });
 
             return {
-                ...state,
-                ...this.setColumns(Object.values(state.columns))
+                ...newState,
+                ...this.setColumns(Object.values(newState.columns))
             };
         });
 
@@ -59,10 +65,21 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         this.handle('setColumns', (state, { columns, defaultOptions }) => {
-            return {
-                ...state,
-                ...this.setColumns(columns, Object.assign({}, defaultColumnOptions, defaultOptions))
-            };
+
+            const result = this.setColumns(columns, Object.assign({}, defaultColumnOptions, defaultOptions))
+
+            return update(state, {
+                pinnedLeftColumns: { $set: result.pinnedLeftColumns },
+                pinnedRightColumns: { $set: result.pinnedRightColumns },
+                normalColumns: { $set: result.normalColumns },
+                columns: { $set: result.columns }
+            });
+        });
+
+        this.handle('setHeight', (state, height) => {
+            return update(state, {
+                height: { $set: height },
+            });
         });
     }
 

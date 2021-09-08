@@ -38,14 +38,15 @@ export class Grid {
             grid: new GridStore({
                 width: props.width,
                 height: props.height,
-                headerHeight: props.headerHeight,
                 preloadRowCount: props.preloadRowCount,
                 fillable: props.fillable,
                 getContextMenuItems: props.getContextMenuItems,
             }),
             row: new RowStore({ height: props.rowHeight }),
             cell: new CellStore(),
-            column: new ColumnStore({ headerHeight: props.headerHeight })
+            column: new ColumnStore({
+                headerHeight: props.headerHeight
+            })
         });
 
         this.store('column').dispatch('setColumns', {

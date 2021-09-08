@@ -215,8 +215,8 @@ const mapStateToProps = (state: RootState) => {
     return {
         width: state.grid.width,
         height: state.grid.height,
-        headerHeight: state.grid.headerHeight,
         preloadRowCount: state.grid.preloadRowCount,
+        headerHeight: state.column.height,
         pinnedLeftColumns: state.column.pinnedLeftColumns,
         pinnedRightColumns: state.column.pinnedRightColumns,
         normalColumns: state.column.normalColumns,
