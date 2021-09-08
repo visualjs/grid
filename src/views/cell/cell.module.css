@@ -2,7 +2,7 @@
     display: inline-block;
     height: 100%;
     vertical-align: bottom;
-    /* flex-shrink: 0; */
+    flex-shrink: 0;
     position: relative;
     box-sizing: border-box;
     border-left: 1px solid transparent;
