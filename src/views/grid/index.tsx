@@ -168,16 +168,14 @@ class Grid extends Component<Props> {
                             {this.renderColumns(this.props.pinnedLeftColumns)}
                         </div>
                     )}
-                    {this.props.normalColumns.length > 0 && (
-                        <div ref={this.createRef("normalColumns")} className={styles.normalColumns}>
-                            <div
-                                ref={this.createRef("headerContainer")}
-                                className={classes([styles.headerContainer, styles.headerColumns])}
-                            >
-                                {this.renderColumns(this.props.normalColumns)}
-                            </div>
+                    <div ref={this.createRef("normalColumns")} className={styles.normalColumns}>
+                        <div
+                            ref={this.createRef("headerContainer")}
+                            className={classes([styles.headerContainer, styles.headerColumns])}
+                        >
+                            {this.renderColumns(this.props.normalColumns)}
                         </div>
-                    )}
+                    </div>
                     {this.props.pinnedRightColumns.length > 0 && (
                         <div ref={this.createRef("pinnedRightColumns")} className={classes([styles.pinnedRightColumns, styles.headerColumns])}>
                             {this.renderColumns(this.props.pinnedRightColumns)}

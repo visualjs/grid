@@ -263,13 +263,11 @@ class Body extends Component<Props, State> {
                         {this.renderRows(this.props.pinnedLeftColumns)}
                     </div>
                 )}
-                {this.props.normalColumns.length > 0 && (
-                    <div className={styles.normalCells}>
-                        <div ref={this.createRef('normalColumns')} className={styles.normalCellsContainer}>
-                            {this.renderRows(this.props.normalColumns)}
-                        </div>
+                <div className={styles.normalCells}>
+                    <div ref={this.createRef('normalColumns')} className={styles.normalCellsContainer}>
+                        {this.renderRows(this.props.normalColumns)}
                     </div>
-                )}
+                </div>
                 {this.props.pinnedRightColumns.length > 0 && (
                     <div className={styles.pinnedRightCells}>
                         {this.renderRows(this.props.pinnedRightColumns)}
