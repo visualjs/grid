@@ -227,7 +227,7 @@ class Cell extends Component<Props> {
         }
 
         if (this.options.flex) {
-            cellStyle.flexGrow = 1;
+            cellStyle.flexGrow = this.options.flex;
         }
 
         const fillable = this.props.fillable !== undefined

@@ -30,14 +30,14 @@ class Column extends Component<Props> {
         }
 
         if (this.options.flex) {
-            cellStyle.flexGrow = 1;
+            cellStyle.flexGrow = this.options.flex;
         }
 
         return (
             <div ref={this.createRef("column")} className={styles.headerColumn} style={cellStyle}>
                 <span>{this.options.headerName}</span>
                 {
-                    !this.options.flex && this.options.resizable
+                    this.options.flex === undefined && this.options.resizable
                     && <div ref={this.createRef("resizer")} onMouseDown={this.handleMouseDown} className={styles.columnResizeHolder}></div>
                 }
             </div>
