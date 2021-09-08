@@ -157,7 +157,6 @@ class Body extends Component<Props, State> {
     protected handleMouseUp = () => {
         if (this.isSelecting) {
             this.isSelecting = false;
-            this.handleSelectionChanged();
         }
 
         if (this.isFilling) {

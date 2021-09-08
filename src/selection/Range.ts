@@ -22,6 +22,14 @@ export abstract class Range {
         }
     }
 
+    public eachRow(callback: (y: number, relative?: number) => void | boolean) {
+        for (let y = this.minY; y <= this.maxY; y++) {
+            if (callback(y, y - this.minY) === false) {
+                return;
+            }
+        }
+    }
+
     public getStartCoord(): Coordinate {
         return { x: this.minX, y: this.minY };
     }

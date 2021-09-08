@@ -7,6 +7,7 @@ import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '
 import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
 import { BooleanTransformer, SelectionTransformer } from '@/components';
 import { showContainer } from './utils';
+import CellRange from '@/selection/CellRange';
 
 ; (() => {
 
@@ -132,5 +133,5 @@ import { showContainer } from './utils';
         console.log(payload.row, payload.column, payload.value);
     });
 
-    grid.store('row').dispatch('appendRows', rows);
+    grid.appendRows(rows);
 })();

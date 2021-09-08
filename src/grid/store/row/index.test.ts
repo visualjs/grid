@@ -6,7 +6,7 @@ describe('dispatchers for row', () => {
 
     test('setCellValue', () => {
         const store = new Store();
-        store.dispatch('appendRows', [
+        store.appendRows([
             { id: 'row', name: 'name' },
         ]);
 
@@ -32,7 +32,7 @@ describe('dispatchers for row', () => {
         const cb = jest.fn();
         store.subscribeAny(cb);
 
-        store.dispatch('appendRows', [
+        store.appendRows([
             { id: 'row_01', value: 'goodbye' },
             { id: 'row_02' },
         ]);
@@ -41,7 +41,7 @@ describe('dispatchers for row', () => {
         expect(store.getState().rowIndexes['row_01']).toBe(0);
         expect(store.getState().rowIndexes['row_02']).toBe(1);
 
-        store.dispatch('appendRows', [
+        store.appendRows([
             { id: 'row_03' },
             { id: 'row_04' },
         ]);
@@ -54,7 +54,7 @@ describe('dispatchers for row', () => {
         expect(store.getState().rows[0].value).toBe('goodbye');
 
 
-        store.dispatch('appendRows', [
+        store.appendRows([
             { id: 'row_05' },
             { id: 'row_01', value: 'joe' },
         ]);
@@ -136,7 +136,7 @@ describe('dispatchers for row', () => {
             return { indexes: state.rowIndexes };
         }, rowIndexesChanged);
 
-        store.dispatch('appendRows', [
+        store.appendRows([
             { id: 'row_01' },
             { id: 'row_02' },
             { id: 'row_03' },
@@ -168,7 +168,7 @@ describe('dispatchers for row', () => {
         const cb = jest.fn();
         store.subscribe('setHoveredRow', cb);
 
-        store.dispatch('appendRows', [
+        store.appendRows([
             { id: 'row_01' },
             { id: 'row_02' },
         ]);
@@ -194,7 +194,7 @@ describe('dispatchers for row', () => {
         const cb = jest.fn();
         store.subscribe('selectRows', cb);
 
-        store.dispatch('appendRows', [
+        store.appendRows([
             { id: 'row_01' },
             { id: 'row_02' },
         ]);
@@ -220,7 +220,7 @@ describe('dispatchers for row', () => {
         const cb = jest.fn();
         store.subscribe('clear', cb);
 
-        store.dispatch('appendRows', [
+        store.appendRows([
             { id: 'row_01' },
             { id: 'row_02' },
         ]);
@@ -245,10 +245,11 @@ describe('dispatchers for row', () => {
 
 describe('actions for row', () => {
 
-    const store = new Store();
-    store.dispatch('appendRows', data.rows);
-
     describe('getRawCellValue', () => {
+
+        const store = new Store();
+        store.appendRows(data.rows);
+
         expect(store.getRawCellValue('r_01', 'name')).toBe('name_01');
         expect(store.getRawCellValue('r_02', 'game')).toBe('game_02');
 
@@ -259,4 +260,43 @@ describe('actions for row', () => {
         expect(store.getRawCellValue('r_02', '#')).toBe(2);
     });
 
+    describe('appendSelectRows', () => {
+
+        const store = new Store();
+        store.appendRows(data.rows);
+
+        const cb = jest.fn();
+        store.subscribe('selectRows', cb);
+
+        store.appendSelectRows(['r_01', 'r_02']);
+        expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02']);
+
+        store.appendSelectRows(['r_02', 'r_03']);
+        expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02', 'r_03']);
+
+        store.appendSelectRows(['r_04', 'r_00']);
+        expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02', 'r_03', 'r_04']);
+
+        expect(cb).toBeCalledTimes(3);
+    });
+
+    describe('takeSelectRow', () => {
+
+        const store = new Store();
+        store.appendRows(data.rows);
+
+        store.appendSelectRows(['r_01', 'r_02', 'r_03']);
+        expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02', 'r_03']);
+
+        const cb = jest.fn();
+        store.subscribe('selectRows', cb);
+
+        store.takeSelectRow('r_04');
+        expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02', 'r_03']);
+
+        store.takeSelectRow('r_02');
+        expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_03']);
+
+        expect(cb).toBeCalledTimes(1);
+    });
 });

@@ -10,7 +10,6 @@ export interface Actions {
     };
     setHoveredRow: string | undefined;
     selectRows: string[];
-    appendRows: RowData[];
     appendRowsBefore: { index: number, rows: RowData[] };
     takeRows: string[];
     clear: undefined;
@@ -39,7 +38,6 @@ export class Store extends BaseStore<State, Actions> {
             setCellValue: [],
             setHoveredRow: [],
             selectRows: [],
-            appendRows: [],
             appendRowsBefore: [],
             takeRows: [],
             clear: [],
@@ -57,12 +55,34 @@ export class Store extends BaseStore<State, Actions> {
             });
         });
 
-        this.handle('appendRows', (state, rows) => {
-            return this.appendRowsBefore(state, state.rows.length, rows);
-        });
-
         this.handle('appendRowsBefore', (state, { index, rows }) => {
-            return this.appendRowsBefore(state, index, rows);
+
+            // If the newly added row already exists,
+            // use the new data to overwrite the old data
+            // and do not add a new one
+            rows = rows.filter((row) => {
+                const i = state.rowIndexes[row.id];
+                if (i !== undefined) {
+                    state.rows[i] = row;
+                    return false;
+                }
+                return true;
+            });
+
+            index = Math.max(index, 0);
+            rows = [
+                ...state.rows.slice(0, index),
+                ...rows,
+                ...state.rows.slice(index, state.rows.length)
+            ];
+
+            // Reset row indexes
+            const rowIndexes: Record<string, number> = {};
+            rows.forEach((r, i) => {
+                rowIndexes[r.id] = i;
+            });
+
+            return { ...state, rows, rowIndexes };
         });
 
         this.handle('takeRows', (state, takeRows) => {
@@ -98,8 +118,8 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         this.handle('selectRows', (state, rows) => {
-            rows = rows.filter(r => {
-                return state.rowIndexes[r] !== undefined;
+            rows = rows.filter((r, i) => {
+                return state.rowIndexes[r] !== undefined && rows.indexOf(r, 0) === i;
             });
 
             return update(state, {
@@ -123,34 +143,35 @@ export class Store extends BaseStore<State, Actions> {
         });
     }
 
-    protected appendRowsBefore(state: State, index: number, rows: RowData[]) {
+    public appendRowsBefore(index: number, rows: RowData[]) {
+        return this.dispatch('appendRowsBefore', { index, rows });
+    }
 
-        // If the newly added row already exists,
-        // use the new data to overwrite the old data
-        // and do not add a new one
-        rows = rows.filter((row) => {
-            const i = state.rowIndexes[row.id];
-            if (i !== undefined) {
-                state.rows[i] = row;
-                return false;
-            }
-            return true;
+    public appendRows(rows: RowData[]) {
+        return this.dispatch('appendRowsBefore', {
+            index: this._state.rows.length,
+            rows: rows,
         });
+    }
 
-        index = Math.max(index, 0);
-        rows = [
-            ...state.rows.slice(0, index),
-            ...rows,
-            ...state.rows.slice(index, state.rows.length)
-        ];
+    public selectRows(rows: string[]) {
+        return this.dispatch('selectRows', rows);
+    }
 
-        // Reset row indexes
-        const rowIndexes: Record<string, number> = {};
-        rows.forEach((r, i) => {
-            rowIndexes[r.id] = i;
-        });
+    public appendSelectRows(rows: string[]) {
+        rows = [...this._state.selectedRows, ...rows];
+        return this.dispatch('selectRows', rows);
+    }
 
-        return { ...state, rows, rowIndexes };
+    public takeSelectRow(row: string) {
+        const i = this._state.selectedRows.indexOf(row);
+        if (i === -1) {
+            return;
+        }
+
+        return this.dispatch('selectRows', update(this._state.selectedRows, {
+            $splice: [[i, 1]]
+        }));
     }
 
     public getRowIds() {

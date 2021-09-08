@@ -1,4 +1,4 @@
-import { Boundary, CellPosition, Coordinate, GridOptions, MenuItem } from '@/types';
+import { Boundary, CellPosition, Coordinate, GridOptions, MenuItem, RowData } from '@/types';
 import defaultRender from '@/views';
 import { Listener, Root, RootState } from '@/grid/store';
 import { Store as GridStore } from '@/grid/store/grid';
@@ -45,7 +45,7 @@ export class Grid {
             row: new RowStore({ height: props.rowHeight }),
             cell: new CellStore(),
             column: new ColumnStore({
-                headerHeight: props.headerHeight
+                height: props.headerHeight
             })
         });
 
@@ -53,7 +53,7 @@ export class Grid {
             columns: props.columns, defaultOptions: props.defaultColumnOption
         });
 
-        this.store('row').dispatch('appendRows', props.rows);
+        this.appendRows(props.rows);
 
         render(this, container);
     }
@@ -260,6 +260,22 @@ export class Grid {
     /**
      * Agent for row store
      */
+
+    public appendRows(rows: RowData[]) {
+        return this.store('row').appendRows(rows);
+    }
+
+    public appendRowsBefore(index: number, rows: RowData[]) {
+        return this.store('row').appendRowsBefore(index, rows);
+    }
+
+    public appendSelectRows(rows: string[]) {
+        return this.store('row').appendSelectRows(rows);
+    }
+
+    public takeSelectRow(row: string) {
+        return this.store('row').takeSelectRow(row);
+    }
 
     public getRowIdByIndex(y: number) {
         return this.store('row').getRowIdByIndex(y);
