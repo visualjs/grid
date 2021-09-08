@@ -1,7 +1,16 @@
-### v1.0.2 / 2021-0907
+### v1.0.3 / 2021-09-08
 
-- Add takeRows dispatch for row store
-- Add appendRowsBefore dispatch for row store
+- Add column flex layout and adaptive remaining width
+- Add setBaseHeight dispatch to the row
+- Add setHeight dispatch to the column
+- Add appendSelectRows, takeSelectRow, appendRows action to the row
+- Delete appendRows dispatch from row
+- Fix add vendor prefixes to CSS rules by autoprefixer
+
+### v1.0.2 / 2021-09-07
+
+- Add takeRows dispatch to the row store
+- Add appendRowsBefore dispatch to the row store
 - Fix contextmenu position is wrong when the page is scrolled
 - Fix shoule hide context menu when clickoutside
 - Fix layout error
