@@ -76,7 +76,7 @@ class Column extends Component<Props, State> {
                     && <span onClick={this.handleContextMenu} className={`${styles.columnIcon} ${styles.columnIconHiden} vg-menu`}></span>
                 }
                 {
-                    this.options.flex === undefined && this.options.resizable
+                    !this.options.flex && this.options.resizable
                     && <div ref={this.createRef("resizer")} onMouseDown={this.handleMouseDown} className={styles.columnResizeHolder}></div>
                 }
             </div>
