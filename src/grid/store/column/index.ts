@@ -4,7 +4,7 @@ import update from 'immutability-helper';
 
 export interface Actions {
     updateColumnPinned: { field: string, pinned: Pinned };
-    updateColumnWidth: { field: string, width: number };
+    updateColumnWidth: { field: string, width?: number, flex?: number };
     setColumns: { columns: ColumnOptions[], defaultOptions?: BaseColumnOptions };
     setHeight: number;
 }
@@ -58,7 +58,15 @@ export class Store extends BaseStore<State, Actions> {
             };
         });
 
-        this.handle('updateColumnWidth', (state, { field, width }) => {
+        this.handle('updateColumnWidth', (state, { field, width, flex }) => {
+            if (flex !== undefined) {
+                return update(state, {
+                    columns: {
+                        [field]: { flex: { $set: flex } }
+                    }
+                });
+            }
+
             return update(state, {
                 columns: {
                     [field]: { width: { $set: width } }

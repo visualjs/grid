@@ -109,7 +109,12 @@ import CellRange from '@/selection/CellRange';
                         { name: 'Pin Left', action: () => setColumnPinned('left'), icon: pinnedIcon('left') },
                         { name: 'Pin Right', action: () => setColumnPinned('right'), icon: pinnedIcon('right') },
                         { name: 'No Pin', action: () => setColumnPinned(), icon: pinnedIcon() },
-                    ]
+                    ],
+                },
+                {
+                    name: 'Flex', icon: options.flex ? 'vg-checkmark' : '', action: () => {
+                        params.grid.store('column').dispatch('updateColumnWidth', { field: params.column, flex: Number(!options.flex) });
+                    }
                 }
             ];
         },
