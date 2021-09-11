@@ -45,7 +45,8 @@ export class Grid {
             row: new RowStore({ height: props.rowHeight }),
             cell: new CellStore(),
             column: new ColumnStore({
-                height: props.headerHeight
+                height: props.headerHeight,
+                getColumnMenuItems: props.getColumnMenuItems,
             })
         });
 
@@ -201,6 +202,14 @@ export class Grid {
     public getContextMenuItems(pos: CellPosition): MenuItem[] {
         if (this.state('grid').getContextMenuItems) {
             return this.state('grid').getContextMenuItems({ ...pos, grid: this });
+        }
+
+        return [];
+    }
+
+    public getColumnMenuItems(column: string): MenuItem[] {
+        if (this.state('column').getColumnMenuItems) {
+            return this.state('column').getColumnMenuItems({ column: column, grid: this });
         }
 
         return [];

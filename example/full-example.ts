@@ -87,6 +87,32 @@ import CellRange from '@/selection/CellRange';
         rows: [],
         rowHeight: 30,
         fillable: 'xy',
+        getColumnMenuItems: (params) => {
+            const options = params.grid.getColumnOptions(params.column);
+
+            const setColumnPinned = (pinned?: 'left' | 'right') => {
+                params.grid.store('column').dispatch('updateColumnPinned', {
+                    field: params.column,
+                    pinned: pinned
+                });
+            }
+
+            const pinnedIcon = (pinned?: 'left' | 'right') => {
+                if (pinned === options.pinned) {
+                    return 'vg-checkmark';
+                }
+            }
+
+            return [
+                {
+                    name: 'Pin Current Column', icon: 'vg-pin', disabled: options.readonly, subMenus: [
+                        { name: 'Pin Left', action: () => setColumnPinned('left'), icon: pinnedIcon('left') },
+                        { name: 'Pin Right', action: () => setColumnPinned('right'), icon: pinnedIcon('right') },
+                        { name: 'No Pin', action: () => setColumnPinned(), icon: pinnedIcon() },
+                    ]
+                }
+            ];
+        },
         getContextMenuItems: (params) => {
 
             const options = params.grid.getColumnOptions(params.column);

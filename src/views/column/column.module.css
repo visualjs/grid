@@ -2,6 +2,7 @@
     display: flex;
     flex-shrink: 0;
     align-items: center;
+    justify-content: space-between;
     position: relative;
     padding: 0 12px;
     border-right: 1px solid var(--border-color);
@@ -11,10 +12,24 @@
     border-right: none;
 } */
 
-.header-column span {
+.header-column span:first-of-type {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.header-column .column-icon {
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.header-column .column-icon-hiden {
+    opacity: 0;
+    transition: .1s ease;
+}
+
+.header-column .column-icon-hiden:hover {
+    opacity: 1;
 }
 
 .column-resize-holder {

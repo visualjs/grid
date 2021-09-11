@@ -10,10 +10,13 @@ export interface MenuItem {
     subMenus?: MenuItem[];
 }
 
-export interface GetContextMenuItemsParams {
-    row: string;
+export interface GetColumnMenuItemsParams {
     column: string; // the column that was clicked
     grid: Grid;
+}
+
+export interface GetContextMenuItemsParams extends GetColumnMenuItemsParams {
+    row: string;
 }
 
 export interface Styles {
@@ -77,6 +80,8 @@ export interface GridOptions {
     height?: string; // default is 100%
     columns: ColumnOptions[];
     defaultColumnOption?: BaseColumnOptions;
+    // column menus
+    getColumnMenuItems?: (params: GetColumnMenuItemsParams) => MenuItem[];
     rows: RowData[];
     // headers
     headerHeight?: number; // default is 30

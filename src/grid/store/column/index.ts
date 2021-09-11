@@ -1,4 +1,4 @@
-import { Pinned, ColumnOptions, BaseColumnOptions } from "@/types";
+import { Pinned, ColumnOptions, BaseColumnOptions, GetColumnMenuItemsParams, MenuItem } from "@/types";
 import { Store as BaseStore } from "@/grid/store";
 import update from 'immutability-helper';
 
@@ -18,6 +18,8 @@ export interface State {
     columns: Record<string, ColumnOptions>;
     // header
     height: number;
+    // column menus
+    getColumnMenuItems?: (params: GetColumnMenuItemsParams) => MenuItem[];
 }
 
 const initialState: State = {
