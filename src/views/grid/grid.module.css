@@ -9,26 +9,6 @@
 
 /* headers and cells */
 
-.header {
-    position: relative;
-    display: flex;
-    flex-shrink: 0;
-    background-color: var(--header-background-color);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.header-columns {
-    display: flex;
-    color: var(--header-foreground-color);
-    font-weight: 600;
-}
-
-.header-container {
-    height: 100%;
-    width: auto;
-    overflow-x: visible;
-}
-
 .normal-cells,
 .normal-columns {
     flex-grow: 1;

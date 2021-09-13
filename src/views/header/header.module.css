@@ -1,0 +1,36 @@
+
+.header {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    background-color: var(--header-background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-columns {
+    display: flex;
+    color: var(--header-foreground-color);
+    font-weight: 600;
+}
+
+.header-container {
+    height: 100%;
+    width: auto;
+    overflow-x: visible;
+}
+
+.normal-columns {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.pinned-right-columns {
+    z-index: var(--pinned-z-index, 1);
+    box-shadow: rgba(0, 0, 0, 0.05) -4px 0px 4px, rgb(230 230 229) 0px 0px 0px;
+    border-left: 1px solid var(--border-color);
+}
+
+.pinned-left-columns {
+    z-index: var(--pinned-z-index, 1);
+    box-shadow: rgba(0, 0, 0, 0.05) 4px 0px 4px, rgb(230 230 229) 0px 0px 0px;
+}

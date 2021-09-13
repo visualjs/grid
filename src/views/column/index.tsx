@@ -1,7 +1,7 @@
 import Component from "@/views/PureComponent";
 import { connect, withGrid } from "@/views/root";
 import { Grid, State as RootState } from "@/grid";
-import { ColumnOptions, Coordinate, GetColumnMenuItemsParams, MenuItem } from "@/types";
+import { ColumnOptions, Coordinate, MenuItem } from "@/types";
 import { Menu } from "@/views/menu";
 
 import styles from './column.module.css';
