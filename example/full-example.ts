@@ -115,6 +115,11 @@ import CellRange from '@/selection/CellRange';
                     name: 'Flex', icon: options.flex ? 'vg-checkmark' : '', action: () => {
                         params.grid.store('column').dispatch('updateColumnWidth', { field: params.column, flex: Number(!options.flex) });
                     }
+                },
+                {
+                    name: 'Visible', icon: options.visible ? 'vg-checkmark' : '', action: () => {
+                        params.grid.store('column').dispatch('updateColumnVisible', { field: params.column, visible: false });
+                    }
                 }
             ];
         },
