@@ -76,6 +76,52 @@ describe('dispatchers for column', () => {
         expect(cbs).toBeCalledTimes(1);
     });
 
+    test('update column visible', () => {
+
+        const store = new Store();
+
+        store.dispatch('setColumns', {
+            columns: [
+                { field: 'c_01' },
+                { field: 'c_02' },
+                { field: 'cl_01', pinned: 'left' },
+                { field: 'cl_02', pinned: 'left' },
+                { field: 'cr_01', pinned: 'right' },
+                { field: 'cr_02', pinned: 'right' },
+            ]
+        });
+
+        const cbs = jest.fn();
+
+        useSelector(store, (s) => {
+            return { columns: s.columns }
+        }, cbs)
+
+        const cb = jest.fn();
+        store.subscribe('updateColumnVisible', cb);
+
+        expect(store.getState().pinnedLeftColumns.length).toBe(2);
+        expect(store.getState().pinnedRightColumns.length).toBe(2);
+        expect(store.getState().normalColumns.length).toBe(2);
+
+        expect(store.getColumnOptions('c_01').visible).toBeTruthy();
+
+        store.dispatch('updateColumnVisible', { field: 'c_01', visible: false });
+        store.dispatch('updateColumnVisible', { field: 'cl_01', visible: false });
+        store.dispatch('updateColumnVisible', { field: 'cr_01', visible: false });
+
+        expect(store.getState().pinnedLeftColumns.length).toBe(1);
+        expect(store.getState().pinnedRightColumns.length).toBe(1);
+        expect(store.getState().normalColumns.length).toBe(1);
+
+        expect(store.getColumnOptions('c_01').visible).toBeFalsy();
+        expect(store.getColumnOptions('cl_01').visible).toBeFalsy();
+        expect(store.getColumnOptions('cr_01').visible).toBeFalsy();
+
+        expect(cb).toBeCalledTimes(3);
+        expect(cbs).toBeCalledTimes(3);
+    });
+
     test('update column width', () => {
 
         const store = new Store();

@@ -4,6 +4,7 @@ import update from 'immutability-helper';
 
 export interface Actions {
     updateColumnPinned: { field: string, pinned: Pinned };
+    updateColumnVisible: { field: string, visible: boolean };
     updateColumnWidth: { field: string, width?: number, flex?: number };
     setColumns: { columns: ColumnOptions[], defaultOptions?: BaseColumnOptions };
     setHeight: number;
@@ -33,6 +34,7 @@ const initialState: State = {
 export const defaultColumnOptions: BaseColumnOptions = {
     width: 200,
     minWidth: 50,
+    visible: true,
 };
 
 export class Store extends BaseStore<State, Actions> {
@@ -40,6 +42,7 @@ export class Store extends BaseStore<State, Actions> {
         super({
             updateColumnPinned: [],
             updateColumnWidth: [],
+            updateColumnVisible: [],
             setColumns: [],
             setHeight: [],
         }, Object.assign({}, initialState, initial));
@@ -49,6 +52,19 @@ export class Store extends BaseStore<State, Actions> {
             const newState = update(state, {
                 columns: {
                     [field]: { pinned: { $set: pinned } }
+                }
+            });
+
+            return {
+                ...newState,
+                ...this.setColumns(Object.values(newState.columns))
+            };
+        });
+
+        this.handle('updateColumnVisible', (state, { field, visible }) => {
+            const newState = update(state, {
+                columns: {
+                    [field]: { visible: { $set: visible } }
                 }
             });
 
@@ -101,6 +117,11 @@ export class Store extends BaseStore<State, Actions> {
 
         columnOptions.forEach(col => {
             col = Object.assign({}, defaultColumnOption, col);
+            columns[col.field] = col;
+
+            if (!col.visible) {
+                return;
+            }
 
             if (col.pinned == 'left') {
                 pinnedLeftColumns.push(col.field);
@@ -109,8 +130,6 @@ export class Store extends BaseStore<State, Actions> {
             } else {
                 normalColumns.push(col.field);
             }
-
-            columns[col.field] = col;
         })
 
         return {

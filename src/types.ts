@@ -60,6 +60,7 @@ export interface BaseColumnOptions {
     minWidth?: number; // default is 50
     flex?: number;
     resizable?: boolean;
+    visible?: boolean; // default is true
     pinned?: Pinned;
     transformer?: CellTransformer;
     cellRender?: ICellRenderer;
