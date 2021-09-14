@@ -37,6 +37,8 @@ class Grid extends Component<Props> {
 
     protected unsubscribes: (() => void)[] = [];
 
+    protected ignoreScrollEvents = false;
+
     public componentDidMount = () => {
 
         this.unsubscribes.push(this.props.grid.store('grid').subscribeAny(() => {
@@ -124,10 +126,21 @@ class Grid extends Component<Props> {
 
     protected handleHorizontalScroll = (ev: UIEvent) => {
 
+        // Prevent the horizontal scroll bar from flickering when scrolling
+        if (this.ignoreScrollEvents) {
+            this.ignoreScrollEvents = false;
+            return;
+        };
+
+        this.ignoreScrollEvents = true;
         const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
 
-        this.refs.normalCells.current.scrollLeft = scrollLeft;
-        this.refs.horizontalScroll.current.scrollLeft = scrollLeft;
+        if (ev.target != this.refs.normalCells.current) {
+            this.refs.normalCells.current.scrollLeft = scrollLeft;
+        }
+        if (ev.target != this.refs.horizontalScroll.current) {
+            this.refs.horizontalScroll.current.scrollLeft = scrollLeft;
+        }
 
         this.props.grid.store('grid').dispatch(
             'setHorizontalScrollLeft', scrollLeft

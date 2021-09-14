@@ -38,7 +38,8 @@
     left: 0;
     top: 0;
     width: 100%;
-    overflow-x: scroll;
+    overflow: hidden;
+    overflow-x: auto;
 }
 
 .normal-cells,

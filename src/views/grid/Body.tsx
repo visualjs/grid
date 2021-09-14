@@ -58,21 +58,16 @@ class Body extends Component<Props, State> {
 
     protected fillingRef: CellRange;
 
-    protected unsubscribe: () => void;
-
     componentDidMount = () => {
         document.addEventListener('mouseup', this.handleMouseUp);
-
-        this.unsubscribe = this.props.grid.store('grid').subscribeAny(() => {
-            const sl = this.props.grid.state('grid').horizontalScrollLeft;
-            // this.refs.normalColumns.current.style.transform = `translateX(-${sl}px)`;
-        });
     }
 
     componentWillUnmount = () => {
         document.removeEventListener('mouseup', this.handleMouseUp);
+    }
 
-        this.unsubscribe();
+    componentDidUpdate = () => {
+        this.refs.normalCellsWrapper.current.style.height = this.props.normalCellsRef.current.clientHeight + 'px';
     }
 
     // copy and paste
@@ -268,9 +263,7 @@ class Body extends Component<Props, State> {
                         {this.renderRows(this.props.pinnedLeftColumns)}
                     </div>
                 )}
-                <div
-                    className={styles.normalCells}
-                >
+                <div ref={this.createRef('normalCellsWrapper')} className={styles.normalCells}>
                     <div
                         ref={this.props.normalCellsRef}
                         className={styles.normalCellsViewPort}
