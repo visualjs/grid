@@ -8,6 +8,7 @@ import withGrid from "@/views/root/withGrid";
 import CellRange from "@/selection/CellRange";
 import { FillRange } from "@/selection/FillRange";
 import { Menu } from "@/views/menu";
+import { RefObject } from "preact";
 
 import styles from './grid.module.css';
 
@@ -28,6 +29,11 @@ interface Props {
     selectCells: (start: Coordinate, end: Coordinate) => void;
     setEditing: (pos?: CellPosition) => void;
     setFilling: (filling?: FillRange) => void;
+    // refs
+    normalCellsRef: RefObject<HTMLDivElement>;
+    normalCellsContainerRef: RefObject<HTMLDivElement>;
+    // handlers
+    handleHorizontalScroll: (ev: UIEvent) => void;
 }
 
 interface State {
@@ -59,7 +65,7 @@ class Body extends Component<Props, State> {
 
         this.unsubscribe = this.props.grid.store('grid').subscribeAny(() => {
             const sl = this.props.grid.state('grid').horizontalScrollLeft;
-            this.refs.normalColumns.current.style.transform = `translateX(-${sl}px)`;
+            // this.refs.normalColumns.current.style.transform = `translateX(-${sl}px)`;
         });
     }
 
@@ -262,9 +268,20 @@ class Body extends Component<Props, State> {
                         {this.renderRows(this.props.pinnedLeftColumns)}
                     </div>
                 )}
-                <div className={styles.normalCells}>
-                    <div ref={this.createRef('normalColumns')} className={styles.normalCellsContainer}>
-                        {this.renderRows(this.props.normalColumns)}
+                <div
+                    className={styles.normalCells}
+                >
+                    <div
+                        ref={this.props.normalCellsRef}
+                        className={styles.normalCellsViewPort}
+                        onScroll={this.props.handleHorizontalScroll}
+                    >
+                        <div
+                            ref={this.props.normalCellsContainerRef}
+                            className={styles.normalCellsContainer}
+                        >
+                            {this.renderRows(this.props.normalColumns)}
+                        </div>
                     </div>
                 </div>
                 {this.props.pinnedRightColumns.length > 0 && (

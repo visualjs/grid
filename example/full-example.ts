@@ -7,13 +7,12 @@ import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '
 import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
 import { BooleanTransformer, SelectionTransformer } from '@/components';
 import { showContainer } from './utils';
-import CellRange from '@/selection/CellRange';
 
 ; (() => {
 
     let rows: RowData[] = [];
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 100; i++) {
 
         const countryData = country(i);
 
