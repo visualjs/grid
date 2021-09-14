@@ -289,6 +289,14 @@ export class Grid {
         return this.store('row').getRawCellValue(row, column);
     }
 
+    public getRowDataByIndex(y: number) {
+        return this.store('row').getRowDataByIndex(y);
+    }
+
+    public getRowData(row: string) {
+        return this.store('row').getRowData(row);
+    }
+
     /**
      * Agent for cell store
      */

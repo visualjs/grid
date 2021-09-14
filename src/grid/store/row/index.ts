@@ -186,6 +186,14 @@ export class Store extends BaseStore<State, Actions> {
         return this._state.rowIndexes[id];
     }
 
+    public getRowDataByIndex(y: number) {
+        return this._state.rows[y];
+    }
+
+    public getRowData(row: string) {
+        return this.getRowDataByIndex(this.getRowIndex(row));
+    }
+
     // Get the original cell data without applying transformer
     public getRawCellValue(row: string, column: string): any {
         const index = this._state.rowIndexes[row];
