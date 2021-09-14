@@ -1,3 +1,8 @@
+### v1.0.4 / 2021-09-14
+
+- Add getRowData and getRowDataByIndex action
+- Add scroll horizontally through the touchpad in the table body
+
 ### v1.0.3 / 2021-09-08
 
 - Add column flex layout and adaptive remaining width
