@@ -39,7 +39,7 @@ class Grid extends Component<Props> {
 
     public componentDidMount = () => {
 
-        this.unsubscribes.push(this.props.grid.store('grid').subscribeAny( () => {
+        this.unsubscribes.push(this.props.grid.store('grid').subscribeAny(() => {
             const sl = this.props.grid.state('grid').horizontalScrollLeft;
             this.refs.headerContainer.current.style.transform = `translateX(-${sl}px)`;
         }));
@@ -68,9 +68,12 @@ class Grid extends Component<Props> {
             horizontalScrollHeight = this.refs.horizontalScrollContainer.current.offsetHeight;
         }
 
+        const contentWidth = (this.refs.headerContainer?.current?.scrollWidth || 0);
+
         this.refs.header.current.style.paddingRight = spacerX + 'px';
-        this.refs.horizontalScroll.current.style.height = horizontalScrollHeight + 'px';
-        this.refs.horizontalScrollContainer.current.style.width = (this.refs.headerContainer?.current?.scrollWidth || 0) + 'px';
+        this.refs.horizontalScrollWrapper.current.style.height = horizontalScrollHeight + 'px';
+        this.refs.normalCellsContainer.current.style.width = contentWidth + 'px';
+        this.refs.horizontalScrollContainer.current.style.width = contentWidth + 'px';
         this.refs.horizontalLeftSpacer.current.style.width = (this.refs.pinnedLeftColumns?.current?.scrollWidth || 0) + 'px';
         this.refs.horizontalRightSpacer.current.style.width = (this.refs.pinnedRightColumns?.current?.offsetWidth || 0) + spacerX + 'px';
     }
@@ -120,9 +123,14 @@ class Grid extends Component<Props> {
     }
 
     protected handleHorizontalScroll = (ev: UIEvent) => {
+
+        const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
+
+        this.refs.normalCells.current.scrollLeft = scrollLeft;
+        this.refs.horizontalScroll.current.scrollLeft = scrollLeft;
+
         this.props.grid.store('grid').dispatch(
-            'setHorizontalScrollLeft',
-            (ev.target as HTMLDivElement).scrollLeft
+            'setHorizontalScrollLeft', scrollLeft
         );
     }
 
@@ -131,7 +139,12 @@ class Grid extends Component<Props> {
      */
     protected listRender = (items: string[]) => {
         return (
-            <Body items={items} />
+            <Body
+                items={items}
+                handleHorizontalScroll={this.handleHorizontalScroll}
+                normalCellsRef={this.createRef("normalCells")}
+                normalCellsContainerRef={this.createRef("normalCellsContainer")}
+            />
         )
     }
 
@@ -192,9 +205,9 @@ class Grid extends Component<Props> {
                     />
                 </div>
                 {/* fake horizontal scroll bar */}
-                <div ref={this.createRef("horizontalScroll")} className={styles.horizontalScroll}>
+                <div ref={this.createRef("horizontalScrollWrapper")} className={styles.horizontalScroll}>
                     <div ref={this.createRef("horizontalLeftSpacer")} className={styles.horizontalLeftSpacer}></div>
-                    <div className={styles.horizontalScrollView} onScroll={this.handleHorizontalScroll}>
+                    <div ref={this.createRef("horizontalScroll")} className={styles.horizontalScrollView} onScroll={this.handleHorizontalScroll}>
                         <div
                             ref={this.createRef("horizontalScrollContainer")}
                             className={styles.horizontalScrollContainer}

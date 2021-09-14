@@ -29,6 +29,18 @@
     overflow-x: visible;
 }
 
+.normal-cells {
+    position: relative;
+}
+
+.normal-cells-view-port {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow-x: scroll;
+}
+
 .normal-cells,
 .normal-columns {
     flex-grow: 1;
