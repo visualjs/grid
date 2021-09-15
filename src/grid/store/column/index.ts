@@ -1,12 +1,17 @@
-import { Pinned, ColumnOptions, BaseColumnOptions, GetColumnMenuItemsParams, MenuItem } from "@/types";
+import {
+    Pinned, ColumnsDef, ColumnOptions,
+    BaseColumnOptions, GetColumnMenuItemsParams,
+    MenuItem, GroupData
+} from "@/types";
 import { Store as BaseStore } from "@/grid/store";
 import update from 'immutability-helper';
+import { normalizedColumns, paddingColumns } from "./utils";
 
 export interface Actions {
     updateColumnPinned: { field: string, pinned: Pinned };
     updateColumnVisible: { field: string, visible: boolean };
     updateColumnWidth: { field: string, width?: number, flex?: number };
-    setColumns: { columns: ColumnOptions[], defaultOptions?: BaseColumnOptions };
+    setColumns: { columns: ColumnsDef, defaultOptions?: BaseColumnOptions };
     setHeight: number;
 }
 
@@ -17,6 +22,9 @@ export interface State {
     normalColumns: string[];
     // column options
     columns: Record<string, ColumnOptions>;
+    // column groups
+    groups: string[][];
+    groupsData: Record<string, GroupData>;
     // header
     height: number;
     // column menus
@@ -28,6 +36,8 @@ const initialState: State = {
     pinnedRightColumns: [],
     normalColumns: [],
     columns: {},
+    groups: [],
+    groupsData: {},
     height: 30,
 };
 
@@ -92,13 +102,17 @@ export class Store extends BaseStore<State, Actions> {
 
         this.handle('setColumns', (state, { columns, defaultOptions }) => {
 
-            const result = this.setColumns(columns, Object.assign({}, defaultColumnOptions, defaultOptions))
+            const normalized = normalizedColumns(paddingColumns(columns));
+
+            const result = this.setColumns(normalized.columns, Object.assign({}, defaultColumnOptions, defaultOptions))
 
             return update(state, {
                 pinnedLeftColumns: { $set: result.pinnedLeftColumns },
                 pinnedRightColumns: { $set: result.pinnedRightColumns },
                 normalColumns: { $set: result.normalColumns },
-                columns: { $set: result.columns }
+                columns: { $set: result.columns },
+                groups: { $set: normalized.groups },
+                groupsData: { $set: normalized.groupsData }
             });
         });
 
@@ -164,6 +178,30 @@ export class Store extends BaseStore<State, Actions> {
 
         x -= this._state.normalColumns.length;
         return this._state.pinnedRightColumns[x];
+    }
+
+    public getGroupWidth(id: string, columns: string[] = []) {
+        const group = this._state.groupsData[id];
+        if (!group) {
+            return { width: 0, flex: undefined };
+        }
+
+        let width = 0;
+        let flex: number = undefined;
+
+        group.columns.forEach(c => {
+            if (columns.length > 0 && columns.indexOf(c) === -1) {
+                return;
+            }
+
+            const options = this.getColumnOptions(c);
+            width += options?.width || 0;
+            if (options?.flex) {
+                flex = options?.flex;
+            }
+        });
+
+        return { width, flex };
     }
 }
 

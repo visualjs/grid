@@ -3,7 +3,6 @@ import { connect } from "@/views/root";
 import { State as RootState, Grid as GridApi } from "@/grid";
 import { ColumnOptions } from "@/types";
 import List from '@/views/list';
-import Column from '@/views/column';
 import Header from '@/views/header';
 import Body from './Body';
 import { withGrid } from "@/views/root";
@@ -154,18 +153,6 @@ class Grid extends Component<Props> {
                 normalCellsContainerRef={this.createRef("normalCellsContainer")}
             />
         )
-    }
-
-    protected renderColumns = (columns: string[]) => {
-        return columns.map(col => {
-            return (
-                <Column
-                    key={col}
-                    value={col}
-                    onResize={this.handleColumnResizeStart}
-                />
-            );
-        })
     }
 
     render() {

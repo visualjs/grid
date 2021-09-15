@@ -4,13 +4,13 @@
     display: flex;
     flex-shrink: 0;
     background-color: var(--header-background-color);
-    border-bottom: 1px solid var(--border-color);
 }
 
 .header-columns {
     display: flex;
     color: var(--header-foreground-color);
     font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .header-container {

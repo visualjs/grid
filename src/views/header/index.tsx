@@ -2,9 +2,9 @@ import Component from "@/views/PureComponent";
 import { Grid, State as RootState } from "@/grid";
 import { RefObject } from "preact";
 import { connect, withGrid } from "@/views/root";
-import Column from "@/views/column";
+import { Column, Group } from "@/views/column";
 import { classes } from "@/utils";
-import { Coordinate, MenuItem } from "@/types";
+import { Coordinate, GroupData, MenuItem } from "@/types";
 import { Menu } from "@/views/menu";
 
 import styles from './header.module.css';
@@ -12,6 +12,9 @@ import styles from './header.module.css';
 interface Props {
     grid: Grid;
     height: number;
+    // groups
+    groups: string[][];
+    groupsData: Record<string, GroupData>;
     // columns
     pinnedLeftColumns: string[];
     pinnedRightColumns: string[];
@@ -33,8 +36,12 @@ interface State {
 
 class Header extends Component<Props, State> {
 
+    public componentDidUpdate = () => {
+        this.props.headerContainerRef.current.style.width = this.props.headerContainerRef.current.scrollWidth + 'px';
+    }
+
     protected handleColumnContextMenu = (field: string, ev: MouseEvent) => {
-        
+
         const items = this.props.grid.getColumnMenuItems(field);
         if (items.length === 0) {
             return;
@@ -51,17 +58,42 @@ class Header extends Component<Props, State> {
     protected renderColumns = (columns: string[]) => {
 
         const hasContextMenu = this.props.grid.state('column').getColumnMenuItems !== undefined;
+        const style = {
+            height: this.props.height,
+            minHeight: this.props.height,
+        };
 
-        return columns.map(col => {
-            return (
-                <Column
-                    key={col}
-                    value={col}
-                    onResize={this.props.handleColumnResizeStart}
-                    onContextMenu={hasContextMenu ? this.handleColumnContextMenu : undefined}
-                />
-            );
-        })
+        return (
+            <>
+                {
+                    this.props.groups.map(groups => {
+                        return (
+                            <div className={styles.headerColumns} style={style}>
+                                {
+                                    groups.map(group => {
+                                        return <Group value={group} columns={columns} />;
+                                    })
+                                }
+                            </div>
+                        );
+                    })
+                }
+                <div className={styles.headerColumns} style={style}>
+                    {
+                        columns.map(col => {
+                            return (
+                                <Column
+                                    key={col}
+                                    value={col}
+                                    onResize={this.props.handleColumnResizeStart}
+                                    onContextMenu={hasContextMenu ? this.handleColumnContextMenu : undefined}
+                                />
+                            );
+                        })
+                    }
+                </div>
+            </>
+        );
     }
 
     protected hideContextMenu = () => {
@@ -72,28 +104,23 @@ class Header extends Component<Props, State> {
 
     render() {
 
-        const headerStyle = {
-            height: this.props.height,
-            minHeight: this.props.height,
-        };
-
         return (
-            <div ref={this.props.headerRef} className={styles.header} style={headerStyle}>
+            <div ref={this.props.headerRef} className={styles.header}>
                 {this.props.pinnedLeftColumns.length > 0 && (
-                    <div ref={this.props.pinnedLeftColumnsRef} className={classes([styles.pinnedLeftColumns, styles.headerColumns])}>
+                    <div ref={this.props.pinnedLeftColumnsRef} className={classes([styles.pinnedLeftColumns])}>
                         {this.renderColumns(this.props.pinnedLeftColumns)}
                     </div>
                 )}
                 <div ref={this.props.normalColumnsRef} className={styles.normalColumns}>
                     <div
                         ref={this.props.headerContainerRef}
-                        className={classes([styles.headerContainer, styles.headerColumns])}
+                        className={classes([styles.headerContainer])}
                     >
                         {this.renderColumns(this.props.normalColumns)}
                     </div>
                 </div>
                 {this.props.pinnedRightColumns.length > 0 && (
-                    <div ref={this.props.pinnedRightColumnsRef} className={classes([styles.pinnedRightColumns, styles.headerColumns])}>
+                    <div ref={this.props.pinnedRightColumnsRef} className={classes([styles.pinnedRightColumns])}>
                         {this.renderColumns(this.props.pinnedRightColumns)}
                     </div>
                 )}
@@ -113,6 +140,8 @@ class Header extends Component<Props, State> {
 const mapStateToProps = (state: RootState) => {
     return {
         height: state.column.height,
+        groups: state.column.groups,
+        groupsData: state.column.groupsData,
         pinnedLeftColumns: state.column.pinnedLeftColumns,
         pinnedRightColumns: state.column.pinnedRightColumns,
         normalColumns: state.column.normalColumns,

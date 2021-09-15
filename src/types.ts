@@ -55,6 +55,13 @@ interface ICellEditor {
 
 export type Pinned = 'left' | 'right' | undefined;
 
+export interface GroupData {
+    id: string;
+    headerName: string;
+    columns: string[];
+    closed?: boolean; // TODO: Doesn't support closing grouping yet
+}
+
 export interface BaseColumnOptions {
     width?: number; // default is 200
     minWidth?: number; // default is 50
@@ -74,12 +81,21 @@ export interface ColumnOptions extends BaseColumnOptions {
     readonly?: boolean;
 }
 
+export interface ColumnGroup {
+    id?: string;
+    headerName?: string;
+    children: (ColumnGroup | ColumnOptions)[];
+}
+
+export type ColumnDef = (ColumnGroup | ColumnOptions);
+export type ColumnsDef = ColumnDef[];
+
 export type Fillable = 'x' | 'y' | 'xy' | undefined;
 
 export interface GridOptions {
     width?: string; // default is 100%
     height?: string; // default is 100%
-    columns: ColumnOptions[];
+    columns: ColumnsDef;
     defaultColumnOption?: BaseColumnOptions;
     // column menus
     getColumnMenuItems?: (params: GetColumnMenuItemsParams) => MenuItem[];

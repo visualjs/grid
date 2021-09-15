@@ -23,3 +23,10 @@ export function classes(value: string | string[] | { [key: string]: boolean }) {
 
     return value;
 }
+
+export function counter() {
+    var current = 0;
+    return function () {
+        return current++;
+    };
+};
