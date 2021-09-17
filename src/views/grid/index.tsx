@@ -56,7 +56,6 @@ class Grid extends Component<Props> {
     }
 
     public componentWillUnmount = () => {
-        console.log('grid unmount');
         this.unsubscribes.forEach(f => f());
     }
 

@@ -1,3 +1,11 @@
+### v1.0.5 / 2021-09-17
+
+- Add destroy grid interface
+- Add add setEditing and stopEditing actions
+- Add Alobal loading
+- Add menu edge check
+- Fix the grid body does not display when there is no pinned column
+
 ### v1.0.4 / 2021-09-14
 
 - Add getRowData and getRowDataByIndex action
