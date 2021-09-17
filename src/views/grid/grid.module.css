@@ -84,7 +84,7 @@
     flex-shrink: 0;
     display: flex;
     border-top: 1px solid var(--border-color);
-    z-index: var(--horizontal-z-index, 1);
+    z-index: var(--horizontal-scroll-z-index, 1);
 }
 
 .horizontal-right-spacer,
