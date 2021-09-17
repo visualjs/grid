@@ -43,6 +43,14 @@ export class Store extends BaseStore<State, Actions> {
         });
     }
 
+    public setEditing(pos?: CellPosition) {
+        this.dispatch('setEditing', pos);
+    }
+
+    public stopEditing() {
+        this.dispatch('setEditing', undefined);
+    }
+
     public getCoordLocatedRange(coord: Coordinate): CellRange | undefined {
         for (let i = 0; i < this._state.selections.length; i++) {
             if (this._state.selections[i].contains(coord)) {

@@ -312,6 +312,14 @@ export class Grid {
     public getCoordLocatedRange(coord: Coordinate): CellRange | undefined {
         return this.store('cell').getCoordLocatedRange(coord);
     }
+
+    public stopEditing() {
+        this.store('cell').stopEditing();
+    }
+
+    public setEditing(pos?: CellPosition) {
+        this.store('cell').setEditing(pos);
+    }
 }
 
 export default Grid;
