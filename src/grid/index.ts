@@ -62,6 +62,13 @@ export class Grid {
         return this.root;
     }
 
+    public destroy() {
+        this.store('grid').destroy();
+        return new Promise<void>(resolve => {
+            setTimeout(resolve, 0);
+        });
+    }
+
     /**
      * Agent for root store
      */

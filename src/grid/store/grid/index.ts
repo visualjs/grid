@@ -3,6 +3,7 @@ import { Fillable, GetContextMenuItemsParams, MenuItem } from "@/types";
 import update from 'immutability-helper';
 
 export interface Actions {
+    destroy: undefined;
     setLoading: boolean;
     setHorizontalScrollLeft: number;
 }
@@ -14,6 +15,7 @@ export interface State {
     horizontalScrollLeft?: number;
     fillable?: Fillable;
     loading?: boolean;
+    destroyed?: boolean;
     // context menus
     getContextMenuItems?: (params: GetContextMenuItemsParams) => MenuItem[];
 }
@@ -29,6 +31,7 @@ export class Store extends BaseStore<State, Actions> {
         super({
             setHorizontalScrollLeft: [],
             setLoading: [],
+            destroy: [],
         }, Object.assign({}, initialState, initial));
 
         this.handle('setHorizontalScrollLeft', (state, scrollLeft) => {
@@ -40,6 +43,16 @@ export class Store extends BaseStore<State, Actions> {
                 loading: { $set: loading }
             });
         });
+
+        this.handle('destroy', (state) => {
+            return update(state, {
+                destroyed: { $set: true },
+            })
+        });
+    }
+
+    public destroy() {
+        this.dispatch('destroy', undefined);
     }
 }
 
