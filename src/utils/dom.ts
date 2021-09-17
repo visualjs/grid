@@ -31,4 +31,16 @@ export namespace DOM {
     export function setClassNames(e: HTMLElement, value: string | string[] | { [key: string]: boolean }) {
         e.className = classes(value);
     }
+
+    export function isInViewport(el: HTMLElement) {
+        var rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <=
+            (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <=
+            (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
 }

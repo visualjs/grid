@@ -1,6 +1,7 @@
 import Component from "@/views/Component";
 import { Coordinate, MenuItem } from "@/types";
 import Item from './Item';
+import { DOM } from "@/utils";
 
 import styles from './menu.module.css';
 
@@ -22,12 +23,28 @@ export class Menu extends Component<Props> {
 
     componentDidMount = () => {
         document.addEventListener('click', this.handleClickoutside);
+        this.edgeCheck();
     }
 
     componentWillUnmount = () => {
         document.removeEventListener('click', this.handleClickoutside);
     }
 
+    componentDidUpdate = () => {
+        this.edgeCheck();
+    }
+
+    protected edgeCheck() {
+        if (!DOM.isInViewport(this.refs.self.current)) {
+            const left = this.coord.x - this.refs.self.current.offsetWidth + 'px';
+            this.refs.self.current.style.left = left;
+        }
+
+        if (!DOM.isInViewport(this.refs.self.current)) {
+            const top = this.coord.y - this.refs.self.current.offsetHeight + 'px';
+            this.refs.self.current.style.top = top;
+        }
+    }
     protected handleClickoutside = (ev: MouseEvent) => {
         if (this.props.onClickOutside && !this.refs.self.current.contains(ev.target as Node)) {
             this.props.onClickOutside();
