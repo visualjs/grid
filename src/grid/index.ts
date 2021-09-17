@@ -242,6 +242,14 @@ export class Grid {
     }
 
     /**
+     * Agent for grid store
+     */
+
+    public setLoading(loading: boolean) {
+        return this.store('grid').dispatch('setLoading', loading);
+    }
+
+    /**
      * Agent for column store
      */
 
