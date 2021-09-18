@@ -11,7 +11,9 @@ export interface Actions {
     updateColumnPinned: { field: string, pinned: Pinned };
     updateColumnVisible: { field: string, visible: boolean };
     updateColumnWidth: { field: string, width?: number, flex?: number };
+    updateColumnName: { field: string, name: string };
     updateGroupCollapsed: { group: string, collapsed: boolean };
+    updateGroupName: { group: string, name: string };
     setColumns: { columns: ColumnsDef, defaultOptions?: BaseColumnOptions };
     setHeight: number;
 }
@@ -54,7 +56,9 @@ export class Store extends BaseStore<State, Actions> {
             updateColumnPinned: [],
             updateColumnWidth: [],
             updateColumnVisible: [],
+            updateColumnName: [],
             updateGroupCollapsed: [],
+            updateGroupName: [],
             setColumns: [],
             setHeight: [],
         }, Object.assign({}, initialState, initial));
@@ -102,6 +106,14 @@ export class Store extends BaseStore<State, Actions> {
             });
         });
 
+        this.handle('updateColumnName', (state, { field, name }) => {
+            return update(state, {
+                columns: {
+                    [field]: { headerName: { $set: name } }
+                }
+            });
+        });
+
         this.handle('setColumns', (state, { columns, defaultOptions }) => {
 
             const normalized = normalizedColumns(paddingColumns(columns));
@@ -136,6 +148,14 @@ export class Store extends BaseStore<State, Actions> {
                 ...newState,
                 ...this.setColumns(Object.values(newState.columns))
             };
+        });
+
+        this.handle('updateGroupName', (state, { group, name }) => {
+            return update(state, {
+                groupsData: {
+                    [group]: { headerName: { $set: name } }
+                }
+            });
         });
 
         this.handle('setHeight', (state, height) => {
@@ -202,6 +222,10 @@ export class Store extends BaseStore<State, Actions> {
         return this._state.pinnedRightColumns[x];
     }
 
+    public setColumnName(field: string, name: string) {
+        return this.dispatch('updateColumnName', { field, name });
+    }
+
     public getGroupWidth(id: string, columns: string[] = []) {
         const group = this._state.groupsData[id];
         if (!group) {
@@ -228,6 +252,10 @@ export class Store extends BaseStore<State, Actions> {
 
     public setGroupCollapsed(group: string, collapsed: boolean) {
         return this.dispatch('updateGroupCollapsed', { group, collapsed });
+    }
+
+    public setGroupName(group: string, name: string) {
+        return this.dispatch('updateGroupName', { group, name });
     }
 
     public toggleGroupCollapsed(group: string) {
