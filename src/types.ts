@@ -59,7 +59,8 @@ export interface GroupData {
     id: string;
     headerName: string;
     columns: string[];
-    closed?: boolean; // TODO: Doesn't support closing grouping yet
+    collapsed?: boolean;
+    collapsible?: boolean;
 }
 
 export interface BaseColumnOptions {
@@ -84,6 +85,8 @@ export interface ColumnOptions extends BaseColumnOptions {
 export interface ColumnGroup {
     id?: string;
     headerName?: string;
+    collapsed?: boolean; // default is false
+    collapsible?: boolean; // default is false
     children: (ColumnGroup | ColumnOptions)[];
 }
 

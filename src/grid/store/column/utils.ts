@@ -76,7 +76,7 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
     groupsData: Record<string, GroupData>,
 } {
 
-    const groups: string[] = [];
+    let groups: string[] = [];
     let groupsData: Record<string, GroupData> = {};
     let columns: ColumnOptions[] = [];
     let subGroups: string[][] = [];
@@ -88,13 +88,29 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
             return;
         }
 
-        const subResult = normalizedColumns(group.children);
+        if (group.children.length == 0) {
+            return;
+        }
+
         groups.push(group.id);
+
+        const subResult = normalizedColumns(group.children);
+
         groupsData = Object.assign(groupsData, {[group.id]: {
             id: group.id,
             headerName: group.headerName,
             columns: subResult.columns.map(c => c.field),
+            collapsed: group.collapsed,
+            collapsible: group.collapsible,
         }}, subResult.groupsData);
+
+        if (group.collapsed) {
+            subResult.columns.forEach((c, i) => {
+                if (i !== 0) {
+                    c.visible = false;
+                }
+            })
+        }
 
         columns = columns.concat(subResult.columns);
 

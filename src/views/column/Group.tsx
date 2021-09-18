@@ -4,6 +4,7 @@ import Grid, { State as RootState } from "@/grid";
 import { ColumnOptions, GroupData } from "@/types";
 
 import styles from './column.module.css';
+import { classes } from "@/utils";
 
 export interface Props {
     grid: Grid;
@@ -17,6 +18,10 @@ class Group extends Component<Props> {
 
     protected get data() {
         return this.props.data;
+    }
+
+    protected toggleCollapsed = () => {
+        this.props.grid.store('column').toggleGroupCollapsed(this.props.value);
     }
 
     render() {
@@ -33,10 +38,16 @@ class Group extends Component<Props> {
             cellStyle.flexGrow = options.flex;
         }
 
+        const className = classes([styles.columnIcon, this.data.collapsed ? 'vg-cheveron-right' : 'vg-cheveron-left']);
 
         return (
             <div className={styles.headerColumn} style={cellStyle}>
-                {this.data.headerName}
+                <span>{this.data.headerName}</span>
+                {
+                    this.data.collapsible && (
+                        <span onClick={this.toggleCollapsed} className={className}></span>
+                    )
+                }
             </div>
         );
     }

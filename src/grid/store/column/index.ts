@@ -11,6 +11,7 @@ export interface Actions {
     updateColumnPinned: { field: string, pinned: Pinned };
     updateColumnVisible: { field: string, visible: boolean };
     updateColumnWidth: { field: string, width?: number, flex?: number };
+    updateGroupCollapsed: { group: string, collapsed: boolean };
     setColumns: { columns: ColumnsDef, defaultOptions?: BaseColumnOptions };
     setHeight: number;
 }
@@ -53,6 +54,7 @@ export class Store extends BaseStore<State, Actions> {
             updateColumnPinned: [],
             updateColumnWidth: [],
             updateColumnVisible: [],
+            updateGroupCollapsed: [],
             setColumns: [],
             setHeight: [],
         }, Object.assign({}, initialState, initial));
@@ -114,6 +116,26 @@ export class Store extends BaseStore<State, Actions> {
                 groups: { $set: normalized.groups },
                 groupsData: { $set: normalized.groupsData }
             });
+        });
+
+        this.handle('updateGroupCollapsed', (state, { group, collapsed }) => {
+
+            const columns: any = {};
+            state.groupsData[group].columns.slice(1).map(c => {
+                columns[c] = { visible: { $set: !collapsed } };
+            });
+
+            const newState = update(state, {
+                groupsData: {
+                    [group]: { collapsed: { $set: collapsed } }
+                },
+                columns: columns
+            });
+
+            return {
+                ...newState,
+                ...this.setColumns(Object.values(newState.columns))
+            };
         });
 
         this.handle('setHeight', (state, height) => {
@@ -202,6 +224,16 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         return { width, flex };
+    }
+
+    public setGroupCollapsed(group: string, collapsed: boolean) {
+        return this.dispatch('updateGroupCollapsed', { group, collapsed });
+    }
+
+    public toggleGroupCollapsed(group: string) {
+        return this.dispatch('updateGroupCollapsed', {
+            group, collapsed: !this._state.groupsData[group].collapsed
+        });
     }
 }
 

@@ -37,6 +37,7 @@ interface State {
 class Header extends Component<Props, State> {
 
     public componentDidUpdate = () => {
+        this.props.headerContainerRef.current.style.width = '';
         this.props.headerContainerRef.current.style.width = this.props.headerContainerRef.current.scrollWidth + 'px';
     }
 

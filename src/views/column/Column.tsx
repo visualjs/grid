@@ -45,7 +45,7 @@ class Column extends Component<Props> {
                 <span>{this.options.headerName}</span>
                 {
                     this.props.onContextMenu
-                    && <span onClick={this.handleContextMenu} className={`${styles.columnIcon} ${styles.columnIconHiden} vg-menu`}></span>
+                    && <span onClick={this.handleContextMenu} className={`${styles.columnIcon} vg-menu`}></span>
                 }
                 {
                     !this.options.flex && this.options.resizable
