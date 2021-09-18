@@ -20,6 +20,12 @@ export class InputEditor extends CellEditor<Props> {
             this.input = document.createElement('input');
             this.input.type = props.type;
             this.input.className = styles.inlineInput;
+
+            this.input.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter') {
+                    params.gird.stopEditing();
+                }
+            });
         }
 
         this.input.value = params.value;

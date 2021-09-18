@@ -63,6 +63,13 @@ export class Grid {
         return this.root;
     }
 
+    public destroy() {
+        this.store('grid').destroy();
+        return new Promise<void>(resolve => {
+            setTimeout(resolve, 0);
+        });
+    }
+
     /**
      * Agent for root store
      */
@@ -251,6 +258,14 @@ export class Grid {
     }
 
     /**
+     * Agent for grid store
+     */
+
+    public setLoading(loading: boolean) {
+        return this.store('grid').dispatch('setLoading', loading);
+    }
+
+    /**
      * Agent for column store
      */
 
@@ -312,6 +327,14 @@ export class Grid {
 
     public getCoordLocatedRange(coord: Coordinate): CellRange | undefined {
         return this.store('cell').getCoordLocatedRange(coord);
+    }
+
+    public stopEditing() {
+        this.store('cell').stopEditing();
+    }
+
+    public setEditing(pos?: CellPosition) {
+        this.store('cell').setEditing(pos);
     }
 }
 

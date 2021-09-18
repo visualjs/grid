@@ -11,6 +11,8 @@ import styles from './grid.module.css';
 
 interface Props {
     grid: GridApi;
+    // grid
+    loading: boolean;
     width: string;
     height: string;
     preloadRowCount: number;
@@ -195,6 +197,18 @@ class Grid extends Component<Props> {
                 </div>
                 {/* hidden global elements like column resizer etc. */}
                 <div ref={this.createRef("columnResizer")} className={styles.columnResizer}></div>
+                {/* loading */}
+                {
+                    this.props.loading && <div className={styles.loading}>
+                        <div className={styles.spinner}>
+                            <div className={styles.dot}></div>
+                            <div className={styles.dot}></div>
+                            <div className={styles.dot}></div>
+                            <div className={styles.dot}></div>
+                            <div className={styles.dot}></div>
+                        </div>
+                    </div>
+                }
             </div>
         );
     }
@@ -202,6 +216,7 @@ class Grid extends Component<Props> {
 
 const mapStateToProps = (state: RootState) => {
     return {
+        loading: state.grid.loading,
         width: state.grid.width,
         height: state.grid.height,
         preloadRowCount: state.grid.preloadRowCount,

@@ -1,7 +1,10 @@
 import { Store as BaseStore } from "@/grid/store";
 import { Fillable, GetContextMenuItemsParams, MenuItem } from "@/types";
+import update from 'immutability-helper';
 
 export interface Actions {
+    destroy: undefined;
+    setLoading: boolean;
     setHorizontalScrollLeft: number;
 }
 
@@ -11,6 +14,8 @@ export interface State {
     preloadRowCount: number;
     horizontalScrollLeft?: number;
     fillable?: Fillable;
+    loading?: boolean;
+    destroyed?: boolean;
     // context menus
     getContextMenuItems?: (params: GetContextMenuItemsParams) => MenuItem[];
 }
@@ -24,12 +29,30 @@ const initialState: State = {
 export class Store extends BaseStore<State, Actions> {
     constructor(initial?: Partial<State>) {
         super({
-            setHorizontalScrollLeft: []
+            setHorizontalScrollLeft: [],
+            setLoading: [],
+            destroy: [],
         }, Object.assign({}, initialState, initial));
 
         this.handle('setHorizontalScrollLeft', (state, scrollLeft) => {
             return { ...state, horizontalScrollLeft: scrollLeft };
         });
+
+        this.handle('setLoading', (state, loading) => {
+            return update(state, {
+                loading: { $set: loading }
+            });
+        });
+
+        this.handle('destroy', (state) => {
+            return update(state, {
+                destroyed: { $set: true },
+            })
+        });
+    }
+
+    public destroy() {
+        this.dispatch('destroy', undefined);
     }
 }
 

@@ -1,16 +1,30 @@
 import Grid from "@/grid";
-import { render as p } from 'preact';
+import { hydrate as p } from 'preact';
 import { Root as RootProvider } from '@/views/root';
+import { useLayoutEffect, useState } from "preact/hooks";
 import GridRoot from '@/views/grid';
 
 import '@/fonts.css';
 
-export function render(grid: Grid, container: HTMLElement) {
-    p((
-        <RootProvider grid={grid}>
+function App(props: { grid: Grid }) {
+
+    const [state, setState] = useState({ destroyed: false });
+
+    useLayoutEffect(() => {
+        return props.grid.store('grid').subscribe('destroy', () => {
+            setState({ destroyed: true });
+        });
+    }, []);
+
+    return !state.destroyed && (
+        <RootProvider grid={props.grid}>
             <GridRoot />
         </RootProvider>
-    ), container);
+    );
+}
+
+export function render(grid: Grid, container: HTMLElement) {
+    p(<App grid={grid} />, container);
 }
 
 export default render;

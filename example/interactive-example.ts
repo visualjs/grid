@@ -67,6 +67,9 @@ import { showContainer } from './utils';
             <input type="button" id="add-row" value="Add Row" />
             <br />
             <br />
+            <button class="loading">Toggle loading</button>
+            <br />
+            <br />
             <button class="small">Small</button>
             <button class="middle">Middle</button>
             <button class="large">Large</button>
@@ -100,5 +103,9 @@ import { showContainer } from './utils';
     controls.querySelector<HTMLButtonElement>('.large').addEventListener('click', () => {
         grid.store('row').dispatch('setBaseHeight', 50);
         grid.store('column').dispatch('setHeight', 50);
+    });
+
+    controls.querySelector<HTMLButtonElement>('.loading').addEventListener('click', () => {
+        grid.setLoading(!grid.state('grid').loading);
     });
 })();

@@ -314,7 +314,7 @@ const mapActionsToProps = (grid: Grid) => {
             return grid.store('cell').dispatch('selectCells', { start, end });
         },
         setEditing: (pos?: CellPosition) => {
-            return grid.store('cell').dispatch('setEditing', pos);
+            return grid.setEditing(pos);
         },
         setFilling: (filling?: FillRange) => {
             return grid.store('cell').dispatch('setFilling', filling);
