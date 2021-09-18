@@ -2,9 +2,9 @@ import Component from "@/views/PureComponent";
 import { connect, withGrid } from "@/views/root";
 import Grid, { State as RootState } from "@/grid";
 import { ColumnOptions, GroupData } from "@/types";
+import { classes } from "@/utils";
 
 import styles from './column.module.css';
-import { classes } from "@/utils";
 
 export interface Props {
     grid: Grid;

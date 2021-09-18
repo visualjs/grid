@@ -88,6 +88,7 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
             return;
         }
 
+        // Ignore groups without children
         if (group.children.length == 0) {
             return;
         }
@@ -96,19 +97,21 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
 
         const subResult = normalizedColumns(group.children);
 
+        // Combine the current groupe data and the groupe data of the subset into the original data
         groupsData = Object.assign(groupsData, {[group.id]: {
             id: group.id,
             headerName: group.headerName,
+            // The columns under the grouping include all the columns under the grouping subset
             columns: subResult.columns.map(c => c.field),
             collapsed: group.collapsed,
             collapsible: group.collapsible,
         }}, subResult.groupsData);
 
+        // If the group is collapsed,
+        // hide all columns except the first column under the group
         if (group.collapsed) {
-            subResult.columns.forEach((c, i) => {
-                if (i !== 0) {
-                    c.visible = false;
-                }
+            subResult.columns.slice(1).forEach(c => {
+                c.visible = false;
             })
         }
 

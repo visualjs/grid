@@ -155,6 +155,48 @@ describe('dispatchers for column', () => {
         expect(cbs).toBeCalledTimes(1);
     });
 
+    test('updateGroupCollapsed', () => {
+
+        const store = new Store();
+
+        store.dispatch('setColumns', {
+            columns: [
+                {
+                    headerName: 'Group 1', children: [
+                        { headerName: 'Name', field: 'name' },
+                    ]
+                },
+                {
+                    headerName: 'Group 2', id: 'group-02', children: [
+                        { headerName: 'Country', field: 'country' },
+                        {
+                            headerName: 'Group 2-1', children: [
+                                { headerName: 'Game', field: 'game' },
+                            ],
+                        }
+                    ],
+                },
+                { headerName: 'Bought', field: 'bought' },
+            ]
+        });
+
+        const cbs = jest.fn();
+
+        useSelector(store, (s) => {
+            return { columns: s.columns }
+        }, cbs)
+
+        const cb = jest.fn();
+        store.subscribe('updateGroupCollapsed', cb);
+
+        expect(store.getState().columns['game'].visible).not.toBeFalsy();
+        expect(store.getState().groupsData['group-02'].collapsed).not.toBeTruthy();
+
+        store.dispatch('updateGroupCollapsed', { group: 'group-02', collapsed: true });
+
+        expect(store.getState().columns['game'].visible).toBeFalsy();
+        expect(store.getState().groupsData['group-02'].collapsed).toBeTruthy();
+    });
 });
 
 describe('actions for column', () => {

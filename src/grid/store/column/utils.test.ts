@@ -178,7 +178,7 @@ describe('normalizedColumns', () => {
                 ]
             },
             {
-                headerName: 'Group 2', children: [
+                headerName: 'Group 2', collapsed: true, children: [
                     { headerName: 'Country', field: 'country' },
                     {
                         headerName: 'Group 2-1', children: [
@@ -196,6 +196,7 @@ describe('normalizedColumns', () => {
         expect(result.columns[0].field).toBe('name');
         expect(result.columns[1].field).toBe('country');
         expect(result.columns[2].field).toBe('game');
+        expect(result.columns[2].visible).toBeFalsy();
         expect(result.columns[3].field).toBe('bought');
 
         expect(result.groups.length).toBe(2);
@@ -208,6 +209,7 @@ describe('normalizedColumns', () => {
         expect(result.groupsData['0'].columns).toStrictEqual(['name']);
         expect(result.groupsData['1'].columns).toStrictEqual(['name']);
         expect(result.groupsData['2'].columns).toStrictEqual(['country', 'game']);
+        expect(result.groupsData['2'].collapsed).toBeTruthy();
     });
 
 });
