@@ -126,27 +126,32 @@ import { showContainer } from './utils';
 
             const options = params.grid.getColumnOptions(params.column);
 
-            const setColumnPinned = (pinned?: 'left' | 'right') => {
-                params.grid.store('column').dispatch('updateColumnPinned', {
-                    field: params.column,
-                    pinned: pinned
-                });
+            const setRowPinned = (pinned?: 'top' | 'bottom') => {
+                if (pinned == 'top') {
+                    params.grid.store('row').appendPinnedTopRows([params.row]);
+                } else {
+                    params.grid.store('row').appendPinnedBottomRows([params.row]);
+                }
             }
 
-            const pinnedIcon = (pinned?: 'left' | 'right') => {
-                if (pinned === options.pinned) {
-                    return 'vg-checkmark';
-                }
+            const pinnedTopRowIcon = () => {
+                return params.grid.store('row').isPinnedTop(params.row) ? 'vg-checkmark' : '';
+            }
+            const pinnedBottomRowIcon = () => {
+                return params.grid.store('row').isPinnedBottom(params.row) ? 'vg-checkmark' : '';
+            }
+            const noPinnedRowIcon = () => {
+                return !params.grid.store('row').isPinnedRow(params.row) ? 'vg-checkmark' : '';
             }
 
             return [
                 { name: 'Enlarge', icon: 'vg-enlarge-simplicit' },
                 { separator: true },
                 {
-                    name: 'Pin Current Column', icon: 'vg-pin', disabled: options.readonly, subMenus: [
-                        { name: 'Pin Left', action: () => setColumnPinned('left'), icon: pinnedIcon('left') },
-                        { name: 'Pin Right', action: () => setColumnPinned('right'), icon: pinnedIcon('right') },
-                        { name: 'No Pin', action: () => setColumnPinned(), icon: pinnedIcon() },
+                    name: 'Pin Current Row', icon: 'vg-pin', subMenus: [
+                        { name: 'Pin Top', action: () => setRowPinned('top'), icon: pinnedTopRowIcon() },
+                        { name: 'Pin Bottom', action: () => setRowPinned('bottom'), icon: pinnedBottomRowIcon() },
+                        { name: 'No Pin', action: () => setRowPinned(), icon: noPinnedRowIcon() },
                     ]
                 },
                 { separator: true },
@@ -169,4 +174,5 @@ import { showContainer } from './utils';
     });
 
     grid.appendRows(rows);
+    grid.store('row').setPinnedTopRows(['row_1', 'row_3', 'row_5', 'row_7']);
 })();

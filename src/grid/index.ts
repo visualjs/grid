@@ -95,26 +95,13 @@ export class Grid {
      */
 
     public getCoordinate(row: string, col: string): Coordinate {
-        const opt = this.state('column').columns[col];
+        const pos = {
+            x: this.store('column').getColumnIndex(col),
+            y: this.store('row').getRowIndex(row)
+        };
 
-        if (this.state('row').rowIndexes[row] === undefined || opt === undefined) {
+        if (pos.x == -1 || pos.y == -1) {
             return { x: -1, y: -1 };
-        }
-
-        const pos = { x: -1, y: this.state('row').rowIndexes[row] };
-
-        if (opt.pinned === 'left') {
-            pos.x = this.state('column').pinnedLeftColumns.findIndex(c => c == col);
-        } else if (opt.pinned === 'right') {
-            pos.x = this.state('column').pinnedRightColumns.findIndex(c => c == col);
-            if (pos.x !== -1) {
-                pos.x = pos.x + this.state('column').pinnedLeftColumns.length + this.state('column').normalColumns.length;
-            }
-        } else if (opt.pinned === undefined) {
-            pos.x = this.state('column').normalColumns.findIndex(c => c == col);
-            if (pos.x !== -1) {
-                pos.x = pos.x + this.state('column').pinnedLeftColumns.length;
-            }
         }
 
         return pos;

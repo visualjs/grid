@@ -1,4 +1,4 @@
-import { counter } from ".";
+import { counter, diff } from ".";
 
 describe('utils', () => {
     test('counter', () => {
@@ -14,4 +14,11 @@ describe('utils', () => {
         expect(c2()).toBe(1);
         expect(c2()).toBe(2);
     });
+
+    test('diff', () => {
+        expect(diff([1, 2], [2])).toStrictEqual([1]);
+        expect(diff([1], [2, 1])).toStrictEqual([]);
+        expect(diff([1, 2, 3, 4], [2, 1, 0])).toStrictEqual([3, 4]);
+    });
+
 });

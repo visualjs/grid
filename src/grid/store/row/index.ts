@@ -1,5 +1,6 @@
 import { Store as BaseStore } from "@/grid/store";
 import { RowData } from "@/types";
+import { diff } from "@/utils";
 import update from 'immutability-helper';
 
 export interface Actions {
@@ -8,6 +9,8 @@ export interface Actions {
         column: string;
         value: any
     };
+    setPinnedTopRows: string[];
+    setPinnedBottomRows: string[];
     setHoveredRow: string | undefined;
     selectRows: string[];
     appendRowsBefore: { index: number, rows: RowData[] };
@@ -17,16 +20,20 @@ export interface Actions {
 }
 
 export interface State {
-    rows: RowData[];
-    rowIndexes: Record<string, number>;
+    rows: Record<string, RowData>;
+    pinnedTopRows: string[];
+    pinnedBottomRows: string[];
+    normalRows: string[];
     hoveredRow?: string;
     selectedRows: string[];
     height: number;
 }
 
 const initialState: State = {
-    rows: [],
-    rowIndexes: {},
+    rows: {},
+    pinnedTopRows: [],
+    pinnedBottomRows: [],
+    normalRows: [],
     selectedRows: [],
     height: 28,
 };
@@ -36,6 +43,8 @@ export class Store extends BaseStore<State, Actions> {
     constructor(initial?: Partial<State>) {
         super({
             setCellValue: [],
+            setPinnedBottomRows: [],
+            setPinnedTopRows: [],
             setHoveredRow: [],
             selectRows: [],
             appendRowsBefore: [],
@@ -45,12 +54,12 @@ export class Store extends BaseStore<State, Actions> {
         }, Object.assign({}, initialState, initial));
 
         this.handle('setCellValue', (state, { row, column, value }) => {
-            const index = state.rowIndexes[row];
-            if (index === undefined) return state;
+            const index = this.getRowIndex(row);
+            if (index === -1) return state;
 
             return update(state, {
                 rows: {
-                    [index]: { [column]: { $set: value } }
+                    [row]: { [column]: { $set: value } }
                 }
             });
         });
@@ -60,55 +69,69 @@ export class Store extends BaseStore<State, Actions> {
             // If the newly added row already exists,
             // use the new data to overwrite the old data
             // and do not add a new one
-            rows = rows.filter((row) => {
-                const i = state.rowIndexes[row.id];
-                if (i !== undefined) {
-                    state.rows[i] = row;
-                    return false;
-                }
-                return true;
+            const params: any = {};
+            rows.forEach(r => {
+                params[r.id] = { $set: r };
             });
+            const rowsData = update(state.rows, params);
+
+            const row = this.getRowIdByIndex(index);
+
+            // Append new rows in the pinned top rows
+            if (this.isPinnedTop(row)) {
+                return update(state, {
+                    rows: { $set: rowsData },
+                    pinnedTopRows: {
+                        $set: [
+                            ...state.pinnedTopRows.slice(0, index),
+                            ...diff(rows.map(r => r.id), state.pinnedTopRows),
+                            ...state.pinnedTopRows.slice(index, state.pinnedTopRows.length)
+                        ]
+                    },
+                });
+            }
+
+            // Global index to local index
+            index -= this._state.pinnedTopRows.length;
+            // Append new rows in the pinned bottom rows
+            if (this.isPinnedBottom(row)) {
+                index -= this._state.normalRows.length;
+                return update(state, {
+                    rows: { $set: rowsData },
+                    pinnedBottomRows: {
+                        $set: [
+                            ...state.pinnedBottomRows.slice(0, index),
+                            ...diff(rows.map(r => r.id), state.pinnedBottomRows),
+                            ...state.pinnedBottomRows.slice(index, state.pinnedBottomRows.length)
+                        ]
+                    },
+                });
+            }
 
             index = Math.max(index, 0);
-            rows = [
-                ...state.rows.slice(0, index),
-                ...rows,
-                ...state.rows.slice(index, state.rows.length)
-            ];
-
-            // Reset row indexes
-            const rowIndexes: Record<string, number> = {};
-            rows.forEach((r, i) => {
-                rowIndexes[r.id] = i;
+            return update(state, {
+                rows: { $set: rowsData },
+                normalRows: {
+                    $set: [
+                        ...state.normalRows.slice(0, index),
+                        ...diff(rows.map(r => r.id), state.normalRows),
+                        ...state.normalRows.slice(index, state.normalRows.length)
+                    ]
+                },
             });
-
-            return { ...state, rows, rowIndexes };
         });
 
         this.handle('takeRows', (state, takeRows) => {
-
-            takeRows = takeRows.filter((row) => {
-                return state.rowIndexes[row] !== undefined;
-            });
-
-            const rows = state.rows.filter(r => {
-                return takeRows.indexOf(r.id) === -1;
-            });
-
-            // Reset row indexes
-            const rowIndexes: Record<string, number> = {};
-            rows.forEach((r, i) => {
-                rowIndexes[r.id] = i;
-            });
-
             return update(state, {
-                rowIndexes: { $set: rowIndexes },
-                rows: { $set: rows },
+                pinnedTopRows: { $set: diff(state.pinnedTopRows, takeRows) },
+                pinnedBottomRows: { $set: diff(state.pinnedBottomRows, takeRows) },
+                normalRows: { $set: diff(state.normalRows, takeRows) },
+                rows: { $unset: takeRows },
             });
         });
 
         this.handle('setHoveredRow', (state, row) => {
-            if (row === undefined || state.rowIndexes[row] !== undefined) {
+            if (row === undefined || this.getRowIndex(row) !== -1) {
                 return update(state, {
                     hoveredRow: { $set: row }
                 });
@@ -119,7 +142,8 @@ export class Store extends BaseStore<State, Actions> {
 
         this.handle('selectRows', (state, rows) => {
             rows = rows.filter((r, i) => {
-                return state.rowIndexes[r] !== undefined && rows.indexOf(r, 0) === i;
+                // valid row and remove duplicates
+                return this.getRowIndex(r) !== -1 && rows.indexOf(r, 0) === i;
             });
 
             return update(state, {
@@ -127,10 +151,28 @@ export class Store extends BaseStore<State, Actions> {
             });
         });
 
+        this.handle('setPinnedTopRows', (state, rows) => {
+            return update(state, {
+                pinnedTopRows: { $set: rows },
+                pinnedBottomRows: { $set: diff(state.pinnedBottomRows, rows) },
+                normalRows: { $set: diff(state.normalRows, rows) },
+            });
+        });
+
+        this.handle('setPinnedBottomRows', (state, rows) => {
+            return update(state, {
+                pinnedBottomRows: { $set: rows },
+                pinnedTopRows: { $set: diff(state.pinnedTopRows, rows) },
+                normalRows: { $set: diff(state.normalRows, rows) },
+            });
+        });
+
         this.handle('clear', (state) => {
             return update(state, {
-                rowIndexes: { $set: {} },
-                rows: { $set: [] },
+                rows: { $set: {} },
+                pinnedTopRows: { $set: [] },
+                pinnedBottomRows: { $set: [] },
+                normalRows: { $set: [] },
                 hoveredRow: { $set: undefined },
                 selectedRows: { $set: [] }
             });
@@ -149,7 +191,7 @@ export class Store extends BaseStore<State, Actions> {
 
     public appendRows(rows: RowData[]) {
         return this.dispatch('appendRowsBefore', {
-            index: this._state.rows.length,
+            index: this._state.pinnedTopRows.length + this._state.normalRows.length,
             rows: rows,
         });
     }
@@ -174,30 +216,109 @@ export class Store extends BaseStore<State, Actions> {
         }));
     }
 
+    public setPinnedTopRows(rows: string[]) {
+        return this.dispatch('setPinnedTopRows', rows);
+    }
+
+    public appendPinnedTopRows(rows: string[]) {
+        rows = [...this._state.pinnedTopRows, ...rows];
+        return this.dispatch('setPinnedTopRows', rows);
+    }
+
+    public setPinnedBottomRows(rows: string[]) {
+        return this.dispatch('setPinnedBottomRows', rows);
+    }
+
+    public appendPinnedBottomRows(rows: string[]) {
+        rows = [...this._state.pinnedBottomRows, ...rows];
+        return this.dispatch('setPinnedBottomRows', rows);
+    }
+
+    public takePinnedRow(row: string) {
+        const t = this._state.pinnedTopRows.indexOf(row);
+        if (t !== -1) {
+            this.dispatch('setPinnedTopRows', update(this._state.pinnedTopRows, {
+                $splice: [[t, 1]]
+            }));
+        }
+
+        const b = this._state.pinnedBottomRows.indexOf(row);
+        if (b !== -1) {
+            this.dispatch('setPinnedBottomRows', update(this._state.pinnedBottomRows, {
+                $splice: [[b, 1]]
+            }));
+        }
+    }
+
+    public isPinnedTop(row: string) {
+        return this._state.pinnedTopRows.indexOf(row) !== -1;
+    }
+
+    public isPinnedBottom(row: string) {
+        return this._state.pinnedBottomRows.indexOf(row) !== -1;
+    }
+
+    public isPinnedRow(row: string) {
+        return this.isPinnedTop(row) || this.isPinnedBottom(row);
+    }
+
+    public getPinnedTopRows() {
+        return this._state.pinnedTopRows;
+    }
+
+    public getPinnedBottomRows() {
+        return this._state.pinnedBottomRows;
+    }
+
     public getRowIds() {
-        return this._state.rows.map(r => r.id);
+        return this._state.normalRows;
     }
 
     public getRowIdByIndex(y: number) {
-        return this._state.rows[y].id;
+        if (y < this._state.pinnedTopRows.length) {
+            return this._state.pinnedTopRows[y];
+        }
+
+        y -= this._state.pinnedTopRows.length;
+        if (y < this._state.normalRows.length) {
+            return this._state.normalRows[y];
+        }
+
+        y -= this._state.normalRows.length;
+        return this._state.pinnedBottomRows[y];
     }
 
     public getRowIndex(id: string) {
-        return this._state.rowIndexes[id];
+        let index = this._state.pinnedTopRows.indexOf(id);
+        if (index !== -1) {
+            return index;
+        }
+
+        index = this._state.normalRows.indexOf(id);
+        if (index !== -1) {
+            return index + this._state.pinnedTopRows.length;
+        }
+
+        index = this._state.pinnedBottomRows.indexOf(id);
+        if (index !== -1) {
+            return index + this._state.pinnedTopRows.length + this._state.normalRows.length;
+        }
+
+        return index;
     }
 
     public getRowDataByIndex(y: number) {
-        return this._state.rows[y];
+        return this.getRowData(this.getRowIdByIndex(y));
     }
 
     public getRowData(row: string) {
-        return this.getRowDataByIndex(this.getRowIndex(row));
+        return this._state.rows[row];
     }
 
     // Get the original cell data without applying transformer
     public getRawCellValue(row: string, column: string): any {
-        const index = this._state.rowIndexes[row];
-        if (index === undefined) {
+        const index = this.getRowIndex(row);
+        if (index === -1) {
             return undefined;
         }
 
@@ -205,7 +326,7 @@ export class Store extends BaseStore<State, Actions> {
             return index + 1;
         }
 
-        return this._state.rows[index][column];
+        return this._state.rows[row][column];
     }
 }
 

@@ -208,6 +208,29 @@ export class Store extends BaseStore<State, Actions> {
         return this._state.columns[this.getColumnByIndex(x)];
     }
 
+    public getColumnIndex(field: string) {
+        const opt = this._state.columns[field];
+        if (!opt) return -1;
+
+        let index = -1;
+
+        if (opt.pinned === 'left') {
+            index = this._state.pinnedLeftColumns.findIndex(c => c == field);
+        } else if (opt.pinned === 'right') {
+            index = this._state.pinnedRightColumns.findIndex(c => c == field);
+            if (index !== -1) {
+                index = index + this._state.pinnedLeftColumns.length + this._state.normalColumns.length;
+            }
+        } else if (opt.pinned === undefined) {
+            index = this._state.normalColumns.findIndex(c => c == field);
+            if (index !== -1) {
+                index = index + this._state.pinnedLeftColumns.length;
+            }
+        }
+
+        return index;
+    }
+
     public getColumnByIndex(x: number) {
         if (x < this._state.pinnedLeftColumns.length) {
             return this._state.pinnedLeftColumns[x];

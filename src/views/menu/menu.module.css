@@ -7,7 +7,7 @@
     position: fixed;
     left: 0;
     top: 0;
-    z-index: var(--menu-z-index, 3);
+    z-index: var(--menu-z-index, 4);
     border-radius: 2px;
     color: #000;
     font-weight: normal;

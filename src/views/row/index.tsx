@@ -58,7 +58,7 @@ class Row extends Component<Props> {
             minHeight: this.props.baseHeight,
         }
 
-        const index = this.props.grid.state('row').rowIndexes[this.props.value];
+        const index = this.props.grid.store('row').getRowIndex(this.props.value);
 
         const className = classes({
             [styles.rowCells]: true,

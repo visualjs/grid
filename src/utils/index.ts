@@ -30,3 +30,9 @@ export function counter() {
         return current++;
     };
 };
+
+export function diff<T>(a1: T[], a2: T[]): T[] {
+    return a1.filter((i) => {
+        return a2.indexOf(i) < 0;
+    });
+}

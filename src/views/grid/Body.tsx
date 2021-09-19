@@ -30,6 +30,7 @@ interface Props {
     setEditing: (pos?: CellPosition) => void;
     setFilling: (filling?: FillRange) => void;
     // refs
+    bodyRef?: RefObject<HTMLDivElement>;
     normalCellsRef: RefObject<HTMLDivElement>;
     normalCellsContainerRef: RefObject<HTMLDivElement>;
     // handlers
@@ -245,10 +246,11 @@ class Body extends Component<Props, State> {
 
         return (
             <div
+                ref={this.props.bodyRef}
                 onKeyDown={this.handleKeyDown}
                 onBlur={this.handleBlur}
                 tabIndex={0}
-                style={{ display: 'flex', outline: 'none', position: 'relative', minHeight: '100%' }}
+                style={{ display: 'flex', outline: 'none', position: 'relative' }}
                 onMouseLeave={() => this.props.hoverRow(undefined)}
                 onContextMenu={handleContextMenu}
             >
