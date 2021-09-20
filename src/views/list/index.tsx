@@ -8,7 +8,6 @@ interface Props {
     items: any[];
     preLoadCount?: number;
     render: (items: any[]) => JSX.Element;
-    selfRef?: RefObject<HTMLDivElement>;
 }
 
 class List extends Component<Props> {
@@ -49,8 +48,8 @@ class List extends Component<Props> {
         // Set the cell container height according to the content height
         const contentHeight = this.props.items.length * this.props.itemHeight;
 
-        const clientHeight = this.props.selfRef?.current?.clientHeight;
-        const scrollTop = this.props.selfRef?.current?.scrollTop;
+        const clientHeight = this.refs.container?.current.clientHeight;
+        const scrollTop = this.refs.container?.current.scrollTop;
         const itemSize = this.props.itemHeight;
 
         const visibleCount = Math.ceil(clientHeight / itemSize);
@@ -62,7 +61,7 @@ class List extends Component<Props> {
         const viewOffset = startIndex * itemSize;
 
         return (
-            <div ref={this.props.selfRef} className={styles.listContainer} onScroll={this.handleScroll}>
+            <div ref={this.createRef("container")} className={styles.listContainer} onScroll={this.handleScroll}>
                 <div style={{ height: contentHeight }}></div>
                 <div style={{ top: viewOffset }} className={styles.listView}>
                     <div ref={this.createRef("start")}></div>

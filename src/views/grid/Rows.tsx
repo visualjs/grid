@@ -1,4 +1,4 @@
-import Component from "@/views/Component";
+import Component from "@/views/PureComponent";
 import { Grid, State as RootState } from "@/grid";
 import { connect } from "@/views/root";
 import Row from '@/views/row';

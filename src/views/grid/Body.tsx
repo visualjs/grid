@@ -1,5 +1,5 @@
 import { RefObject } from "preact";
-import Component from "@/views/Component";
+import Component from "@/views/PureComponent";
 import Grid, { State as RootState } from "@/grid";
 import List from "@/views/list";
 import { connect, withGrid } from "@/views/root";
@@ -28,7 +28,7 @@ interface Props {
     setEditing: (pos?: CellPosition) => void;
     setFilling: (filling?: FillRange) => void;
     // refs
-    listRef?: RefObject<HTMLDivElement>;
+    listRef?: RefObject<HTMLElement>;
     normalCellsContainerRef?: RefObject<HTMLDivElement>;
     pinnedTopNormalCellsContainerRef?: RefObject<HTMLDivElement>;
     pinnedBottomNormalCellsContainerRef?: RefObject<HTMLDivElement>;
@@ -258,7 +258,7 @@ class Body extends Component<Props, State> {
                     />
                 </div>
                 <List
-                    selfRef={this.props.listRef}
+                    ref={this.props.listRef}
                     items={this.props.normalRows}
                     itemHeight={this.props.rowHeight}
                     preLoadCount={this.props.preloadRowCount}

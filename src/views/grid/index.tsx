@@ -54,7 +54,8 @@ class Grid extends Component<Props> {
     public resize() {
         // If a vertical scroll bar appears, the last column will be misaligned
         // a spacer needs to be added
-        const spacerX = this.refs.list.current.offsetWidth - this.refs.list.current.clientWidth;
+        const list = (this.refs.list.current as any).base;
+        const spacerX = list.offsetWidth - list.clientWidth;
 
         // fake horizontal scrollbar
         let horizontalScrollHeight = 0;

@@ -36,3 +36,10 @@ export function diff<T>(a1: T[], a2: T[]): T[] {
         return a2.indexOf(i) < 0;
     });
 }
+
+export function unique<T>(arr: T[]): T[] {
+    return arr.filter((item, index) => {
+        // valid row and remove duplicates
+        return arr.indexOf(item, 0) === index;
+    });
+}

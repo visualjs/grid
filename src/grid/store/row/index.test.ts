@@ -209,6 +209,50 @@ describe('dispatchers for row', () => {
         expect(cb).toBeCalledTimes(3);
     });
 
+    test('set/takePinnedRows', () => {
+        const store = new Store();
+        expect(store.getRowIds().length).toBe(0);
+
+        store.appendRows([
+            { id: '01' },
+            { id: '02' },
+            { id: '03' },
+            { id: '04' },
+            { id: '05' },
+            { id: '06' },
+        ]);
+
+        const cb = jest.fn();
+        useSelector(store, (state) => {
+            return {
+                t: state.pinnedTopRows,
+                b: state.pinnedBottomRows,
+                n: state.normalRows,
+            };
+        }, cb);
+
+        expect(store.getRowIds().length).toBe(6);
+        expect(store.getPinnedTopRows().length).toBe(0);
+        expect(store.getPinnedBottomRows().length).toBe(0);
+
+        store.dispatch('setPinnedTopRows', ['01', '01', '02', '00']);
+        expect(store.getRowIds()).toStrictEqual(['03', '04', '05', '06']);
+        expect(store.getPinnedTopRows()).toStrictEqual(['01', '02']);
+        expect(store.getPinnedBottomRows()).toStrictEqual([]);
+
+        store.dispatch('setPinnedBottomRows', ['01', '03', '03', '00']);
+        expect(store.getRowIds()).toStrictEqual(['04', '05', '06']);
+        expect(store.getPinnedTopRows()).toStrictEqual(['02']);
+        expect(store.getPinnedBottomRows()).toStrictEqual(['01', '03']);
+
+        store.dispatch('takePinnedRows', ['01', '02']);
+        expect(store.getRowIds()).toStrictEqual(['04', '05', '06', '01', '02']);
+        expect(store.getPinnedTopRows()).toStrictEqual([]);
+        expect(store.getPinnedBottomRows()).toStrictEqual(['03']);
+
+        expect(cb).toBeCalledTimes(3);
+    });
+
     test('clear', () => {
         const store = new Store();
         expect(store.getRowIds().length).toBe(0);

@@ -1,6 +1,6 @@
 import { Store as BaseStore } from "@/grid/store";
 import { RowData } from "@/types";
-import { diff } from "@/utils";
+import { diff, unique } from "@/utils";
 import update from 'immutability-helper';
 
 export interface Actions {
@@ -11,6 +11,7 @@ export interface Actions {
     };
     setPinnedTopRows: string[];
     setPinnedBottomRows: string[];
+    takePinnedRows: string[];
     setHoveredRow: string | undefined;
     selectRows: string[];
     appendRowsBefore: { index: number, rows: RowData[] };
@@ -45,6 +46,7 @@ export class Store extends BaseStore<State, Actions> {
             setCellValue: [],
             setPinnedBottomRows: [],
             setPinnedTopRows: [],
+            takePinnedRows: [],
             setHoveredRow: [],
             selectRows: [],
             appendRowsBefore: [],
@@ -141,10 +143,7 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         this.handle('selectRows', (state, rows) => {
-            rows = rows.filter((r, i) => {
-                // valid row and remove duplicates
-                return this.getRowIndex(r) !== -1 && rows.indexOf(r, 0) === i;
-            });
+            rows = this.getValidRows(rows);
 
             return update(state, {
                 selectedRows: { $set: rows }
@@ -152,6 +151,8 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         this.handle('setPinnedTopRows', (state, rows) => {
+            rows = this.getValidRows(rows);
+
             return update(state, {
                 pinnedTopRows: { $set: rows },
                 pinnedBottomRows: { $set: diff(state.pinnedBottomRows, rows) },
@@ -160,10 +161,22 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         this.handle('setPinnedBottomRows', (state, rows) => {
+            rows = this.getValidRows(rows);
+
             return update(state, {
-                pinnedBottomRows: { $set: rows },
                 pinnedTopRows: { $set: diff(state.pinnedTopRows, rows) },
+                pinnedBottomRows: { $set: rows },
                 normalRows: { $set: diff(state.normalRows, rows) },
+            });
+        });
+
+        this.handle('takePinnedRows', (state, rows) => {
+            rows = this.getValidRows(rows);
+
+            return update(state, {
+                pinnedTopRows: { $set: diff(state.pinnedTopRows, rows) },
+                pinnedBottomRows: { $set: diff(state.pinnedBottomRows, rows) },
+                normalRows: { $set: unique(state.normalRows.concat(rows)) },
             });
         });
 
@@ -182,6 +195,13 @@ export class Store extends BaseStore<State, Actions> {
             return update(state, {
                 height: { $set: height }
             });
+        });
+    }
+
+    protected getValidRows(rows: string[]): string[] {
+        return rows.filter((r, i) => {
+            // valid row and remove duplicates
+            return this.getRowIndex(r) !== -1 && rows.indexOf(r, 0) === i;
         });
     }
 
@@ -234,20 +254,8 @@ export class Store extends BaseStore<State, Actions> {
         return this.dispatch('setPinnedBottomRows', rows);
     }
 
-    public takePinnedRow(row: string) {
-        const t = this._state.pinnedTopRows.indexOf(row);
-        if (t !== -1) {
-            this.dispatch('setPinnedTopRows', update(this._state.pinnedTopRows, {
-                $splice: [[t, 1]]
-            }));
-        }
-
-        const b = this._state.pinnedBottomRows.indexOf(row);
-        if (b !== -1) {
-            this.dispatch('setPinnedBottomRows', update(this._state.pinnedBottomRows, {
-                $splice: [[b, 1]]
-            }));
-        }
+    public takePinnedRows(rows: string[]) {
+        return this.dispatch('takePinnedRows', rows);
     }
 
     public isPinnedTop(row: string) {
