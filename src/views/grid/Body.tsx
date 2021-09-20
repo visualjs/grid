@@ -1,26 +1,24 @@
-import Component from "@/views/Component";
-import { Grid, State as RootState } from "@/grid";
-import { connect } from "@/views/root";
-import Row from '@/views/row';
-import { CellPosition, Coordinate, MenuItem } from "@/types";
-import { Button } from "@/utils";
-import withGrid from "@/views/root/withGrid";
-import CellRange from "@/selection/CellRange";
-import { FillRange } from "@/selection/FillRange";
-import { Menu } from "@/views/menu";
 import { RefObject } from "preact";
+import Component from "@/views/Component";
+import Grid, { State as RootState } from "@/grid";
+import List from "@/views/list";
+import { connect, withGrid } from "@/views/root";
+import { Menu } from "@/views/menu";
+import { CellPosition, Coordinate, MenuItem } from "@/types";
+import CellRange from "@/selection/CellRange";
+import { Button } from "@/utils";
+import { FillRange } from "@/selection/FillRange";
+import Rows from "./Rows";
 
 import styles from './grid.module.css';
 
 interface Props {
     grid: Grid;
-    items: string[];
-    // columns
-    pinnedLeftColumns: string[];
-    pinnedRightColumns: string[];
-    normalColumns: string[];
-    // rows
+    pinnedTopRows: string[];
+    pinnedBottomRows: string[];
+    normalRows: string[];
     rowHeight: number;
+    preloadRowCount: number;
     // actions
     getCoordinate: (row: string, column: string) => Coordinate;
     getCoordLocatedRange: (coord: Coordinate) => CellRange | undefined;
@@ -30,11 +28,17 @@ interface Props {
     setEditing: (pos?: CellPosition) => void;
     setFilling: (filling?: FillRange) => void;
     // refs
-    bodyRef?: RefObject<HTMLDivElement>;
-    normalCellsRef: RefObject<HTMLDivElement>;
-    normalCellsContainerRef: RefObject<HTMLDivElement>;
+    listRef?: RefObject<HTMLDivElement>;
+    normalCellsContainerRef?: RefObject<HTMLDivElement>;
+    pinnedTopNormalCellsContainerRef?: RefObject<HTMLDivElement>;
+    pinnedBottomNormalCellsContainerRef?: RefObject<HTMLDivElement>;
+    normalCellsRef?: RefObject<HTMLDivElement>;
+    pinnedTopNormalCellsRef?: RefObject<HTMLDivElement>;
+    pinnedBottomNormalCellsRef?: RefObject<HTMLDivElement>;
+    pinnedTopRowsRef?: RefObject<HTMLDivElement>;
+    pinnedBottomRowsRef?: RefObject<HTMLDivElement>;
     // handlers
-    handleHorizontalScroll: (ev: UIEvent) => void;
+    onHorizontalScroll?: (ev: UIEvent) => void;
 }
 
 interface State {
@@ -67,21 +71,6 @@ class Body extends Component<Props, State> {
         document.removeEventListener('mouseup', this.handleMouseUp);
     }
 
-    componentDidUpdate = () => {
-        this.refs.normalCellsWrapper.current.style.height = this.props.normalCellsRef.current.clientHeight + 'px';
-    }
-
-    // copy and paste
-    protected handleKeyDown = (ev: KeyboardEvent) => {
-        if (ev.key === 'c' && (ev.ctrlKey || ev.metaKey)) {
-            return this.props.grid.copySelection();
-        }
-
-        if (ev.key === 'v' && (ev.ctrlKey || ev.metaKey)) {
-            return this.props.grid.pasteFromClipboard();
-        }
-    }
-
     // Double-click the cell to enable editing
     protected handleCellDbClick = (ev: MouseEvent, row: string, column: string) => {
         this.props.setEditing({ row, column });
@@ -91,7 +80,7 @@ class Body extends Component<Props, State> {
         ev.stopPropagation();
 
         // stop any editing when click a cell
-        this.props.setEditing();
+        this.props.grid.stopEditing();
 
         const coord = this.props.getCoordinate(row, column);
 
@@ -156,20 +145,6 @@ class Body extends Component<Props, State> {
         }
     }
 
-    protected handleMouseUp = () => {
-        if (this.isSelecting) {
-            this.isSelecting = false;
-        }
-
-        if (this.isFilling) {
-            this.isFilling = false;
-            this.handleFill(new FillRange(this.fillingRef, this.fillingEnd, this.props.grid.state('grid').fillable));
-
-            this.fillingRef = this.fillingEnd = null;
-            this.handleFillRangeChanged();
-        }
-    }
-
     protected handleCellFillerMouseDown = (ev: MouseEvent, row: string, col: string) => {
 
         if (ev.button !== Button.Left) {
@@ -186,10 +161,18 @@ class Body extends Component<Props, State> {
         this.handleFillRangeChanged();
     }
 
-    protected handleBlur = () => {
-        this.props.selectRows([]);
-        this.selectionStart = this.selectionEnd = null;
-        this.handleSelectionChanged();
+    protected handleMouseUp = () => {
+        if (this.isSelecting) {
+            this.isSelecting = false;
+        }
+
+        if (this.isFilling) {
+            this.isFilling = false;
+            this.handleFill(new FillRange(this.fillingRef, this.fillingEnd, this.props.grid.state('grid').fillable));
+
+            this.fillingRef = this.fillingEnd = null;
+            this.handleFillRangeChanged();
+        }
     }
 
     protected handleSelectionChanged = () => {
@@ -202,12 +185,6 @@ class Body extends Component<Props, State> {
         ));
     }
 
-    protected hideContextMenu = () => {
-        if (this.state.isMenuVisible) {
-            this.setState({ isMenuVisible: false });
-        }
-    }
-
     protected handleFill = (range: FillRange) => {
         const ref = range.getReference();
         range.chunk(chunk => {
@@ -218,24 +195,34 @@ class Body extends Component<Props, State> {
         });
     }
 
+    protected handleBlur = () => {
+        this.props.selectRows([]);
+        this.selectionStart = this.selectionEnd = null;
+        this.handleSelectionChanged();
+    }
+
+    protected hideContextMenu = () => {
+        if (this.state.isMenuVisible) {
+            this.setState({ isMenuVisible: false });
+        }
+    }
+
     /**
      * Renders
      */
-    protected renderRows = (columns: string[]) => {
-        return this.props.items.map(row => {
-            return (
-                <Row
-                    key={row}
-                    value={row}
-                    baseHeight={this.props.rowHeight}
-                    columns={columns}
-                    onCellDbClick={this.handleCellDbClick}
-                    onCellMouseDown={this.handleCellMouseDown}
-                    onCellMouseMove={this.handleCellMouseMove}
-                    onCellFillerMouseDown={this.handleCellFillerMouseDown}
-                />
-            )
-        })
+    protected listRender = (items: string[]) => {
+        return (
+            <Rows
+                items={items}
+                onCellDbClick={this.handleCellDbClick}
+                onCellMouseDown={this.handleCellMouseDown}
+                onCellMouseMove={this.handleCellMouseMove}
+                onCellFillerMouseDown={this.handleCellFillerMouseDown}
+                handleHorizontalScroll={this.props.onHorizontalScroll}
+                normalCellsRef={this.props.normalCellsRef}
+                normalCellsContainerRef={this.props.normalCellsContainerRef}
+            />
+        )
     }
 
     render() {
@@ -246,11 +233,8 @@ class Body extends Component<Props, State> {
 
         return (
             <div
-                ref={this.props.bodyRef}
-                onKeyDown={this.handleKeyDown}
+                className={styles.body}
                 onBlur={this.handleBlur}
-                tabIndex={0}
-                style={{ display: 'flex', outline: 'none', position: 'relative' }}
                 onMouseLeave={() => this.props.hoverRow(undefined)}
                 onContextMenu={handleContextMenu}
             >
@@ -260,40 +244,47 @@ class Body extends Component<Props, State> {
                     coord={this.state.contextMenuCoord}
                     items={this.state.contextMenuItems}
                 />}
-                {this.props.pinnedLeftColumns.length > 0 && (
-                    <div className={styles.pinnedLeftCells}>
-                        {this.renderRows(this.props.pinnedLeftColumns)}
-                    </div>
-                )}
-                <div ref={this.createRef('normalCellsWrapper')} className={styles.normalCells}>
-                    <div
-                        ref={this.props.normalCellsRef}
-                        className={styles.normalCellsViewPort}
-                        onScroll={this.props.handleHorizontalScroll}
-                    >
-                        <div
-                            ref={this.props.normalCellsContainerRef}
-                            className={styles.normalCellsContainer}
-                        >
-                            {this.renderRows(this.props.normalColumns)}
-                        </div>
-                    </div>
+                <div className={styles.pinnedTopRows}>
+                    <Rows
+                        selfRef={this.props.pinnedTopRowsRef}
+                        items={this.props.pinnedTopRows}
+                        onCellDbClick={this.handleCellDbClick}
+                        onCellMouseDown={this.handleCellMouseDown}
+                        onCellMouseMove={this.handleCellMouseMove}
+                        onCellFillerMouseDown={this.handleCellFillerMouseDown}
+                        handleHorizontalScroll={this.props.onHorizontalScroll}
+                        normalCellsRef={this.props.pinnedTopNormalCellsRef}
+                        normalCellsContainerRef={this.props.pinnedTopNormalCellsContainerRef}
+                    />
                 </div>
-                {this.props.pinnedRightColumns.length > 0 && (
-                    <div className={styles.pinnedRightCells}>
-                        {this.renderRows(this.props.pinnedRightColumns)}
-                    </div>
-                )}
+                <List
+                    selfRef={this.props.listRef}
+                    items={this.props.normalRows}
+                    itemHeight={this.props.rowHeight}
+                    preLoadCount={this.props.preloadRowCount}
+                    render={this.listRender}
+                />
+                <div className={styles.pinnedBottomRows}>
+                    <Rows
+                        selfRef={this.props.pinnedBottomRowsRef}
+                        items={this.props.pinnedBottomRows}
+                        onCellDbClick={this.handleCellDbClick}
+                        onCellMouseDown={this.handleCellMouseDown}
+                        onCellMouseMove={this.handleCellMouseMove}
+                        onCellFillerMouseDown={this.handleCellFillerMouseDown}
+                        handleHorizontalScroll={this.props.onHorizontalScroll}
+                        normalCellsRef={this.props.pinnedBottomNormalCellsRef}
+                        normalCellsContainerRef={this.props.pinnedBottomNormalCellsContainerRef}
+                    />
+                </div>
             </div>
         );
-    };
+    }
 }
 
 const mapStateToProps = (state: RootState) => {
     return {
-        pinnedLeftColumns: state.column.pinnedLeftColumns,
-        pinnedRightColumns: state.column.pinnedRightColumns,
-        normalColumns: state.column.normalColumns,
+        preloadRowCount: state.grid.preloadRowCount,
         rowHeight: state.row.height,
     };
 };

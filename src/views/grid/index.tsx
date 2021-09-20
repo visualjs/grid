@@ -1,11 +1,9 @@
 import Component from "@/views/Component";
-import { connect } from "@/views/root";
+import { connect, withGrid } from "@/views/root";
 import { State as RootState, Grid as GridApi } from "@/grid";
-import { ColumnOptions, RowData } from "@/types";
-import List from '@/views/list';
+import { ColumnOptions } from "@/types";
 import Header from '@/views/header';
-import Body from './Body';
-import { withGrid } from "@/views/root";
+import Body from "./Body";
 
 import styles from './grid.module.css';
 
@@ -15,9 +13,7 @@ interface Props {
     loading: boolean;
     width: string;
     height: string;
-    preloadRowCount: number;
     // rows
-    rowHeight: number;
     normalRows: string[];
     pinnedTopRows: string[];
     pinnedBottomRows: string[];
@@ -35,7 +31,7 @@ class Grid extends Component<Props> {
 
     protected unsubscribes: (() => void)[] = [];
 
-    protected ignoreScrollEvents = false;
+    // protected ignoreScrollEvents = false;
 
     public componentDidMount = () => {
 
@@ -58,8 +54,7 @@ class Grid extends Component<Props> {
     public resize() {
         // If a vertical scroll bar appears, the last column will be misaligned
         // a spacer needs to be added
-        const list = (this.refs.list.current as any).base;
-        const spacerX = list.offsetWidth - list.clientWidth;
+        const spacerX = this.refs.list.current.offsetWidth - this.refs.list.current.clientWidth;
 
         // fake horizontal scrollbar
         let horizontalScrollHeight = 0;
@@ -75,9 +70,9 @@ class Grid extends Component<Props> {
         // rows and pinned rows
         this.refs.normalCellsContainer.current.style.width = contentWidth + 'px';
         this.refs.pinnedTopNormalCellsContainer.current.style.width = contentWidth + 'px';
-        this.refs.pinnedTopBody.current.style.paddingRight = spacerX + 'px';
+        this.refs.pinnedTopRows.current.style.paddingRight = spacerX + 'px';
         this.refs.pinnedBottomNormalCellsContainer.current.style.width = contentWidth + 'px';
-        this.refs.pinnedBottomBody.current.style.paddingRight = spacerX + 'px';
+        this.refs.pinnedBottomRows.current.style.paddingRight = spacerX + 'px';
         // horizontal scrollbar
         this.refs.horizontalScrollContainer.current.style.width = contentWidth + 'px';
         this.refs.horizontalLeftSpacer.current.style.width = (this.refs.pinnedLeftColumns?.current?.scrollWidth || 0) + 'px';
@@ -131,12 +126,13 @@ class Grid extends Component<Props> {
     protected handleHorizontalScroll = (ev: UIEvent) => {
 
         // Prevent the horizontal scroll bar from flickering when scrolling
-        if (this.ignoreScrollEvents) {
-            this.ignoreScrollEvents = false;
-            return;
-        };
+        // if (ev.target == this.refs.horizontalScroll.current && this.ignoreScrollEvents) {
+        //     this.ignoreScrollEvents = false;
+        //     return;
+        // } else {
+        //     this.ignoreScrollEvents = true;
+        // }
 
-        this.ignoreScrollEvents = true;
         const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
 
         if (ev.target != this.refs.normalCells.current) {
@@ -157,20 +153,6 @@ class Grid extends Component<Props> {
         );
     }
 
-    /**
-     * Renders
-     */
-    protected listRender = (items: string[]) => {
-        return (
-            <Body
-                items={items}
-                handleHorizontalScroll={this.handleHorizontalScroll}
-                normalCellsRef={this.createRef("normalCells")}
-                normalCellsContainerRef={this.createRef("normalCellsContainer")}
-            />
-        )
-    }
-
     render() {
 
         const rootStyle = {
@@ -180,7 +162,6 @@ class Grid extends Component<Props> {
 
         return (
             <div ref={this.createRef("root")} className={styles.root} style={rootStyle}>
-                {/* headers */}
                 <Header
                     headerRef={this.createRef("header")}
                     headerContainerRef={this.createRef("headerContainer")}
@@ -189,33 +170,22 @@ class Grid extends Component<Props> {
                     pinnedRightColumnsRef={this.createRef("pinnedRightColumns")}
                     handleColumnResizeStart={this.handleColumnResizeStart}
                 />
-                <div className={styles.body}>
-                    <div className={styles.pinnedTopRows}>
-                        <Body
-                            bodyRef={this.createRef("pinnedTopBody")}
-                            items={this.props.pinnedTopRows}
-                            handleHorizontalScroll={this.handleHorizontalScroll}
-                            normalCellsRef={this.createRef("pinnedTopNormalCells")}
-                            normalCellsContainerRef={this.createRef("pinnedTopNormalCellsContainer")}
-                        />
-                    </div>
-                    <List
-                        ref={this.createRef("list")}
-                        items={this.props.normalRows}
-                        itemHeight={this.props.rowHeight}
-                        preLoadCount={this.props.preloadRowCount}
-                        render={this.listRender}
-                    />
-                    <div className={styles.pinnedBottomRows}>
-                        <Body
-                            bodyRef={this.createRef("pinnedBottomBody")}
-                            items={this.props.pinnedBottomRows}
-                            handleHorizontalScroll={this.handleHorizontalScroll}
-                            normalCellsRef={this.createRef("pinnedBottomNormalCells")}
-                            normalCellsContainerRef={this.createRef("pinnedBottomNormalCellsContainer")}
-                        />
-                    </div>
-                </div>
+                <Body
+                    pinnedTopRows={this.props.pinnedTopRows}
+                    pinnedBottomRows={this.props.pinnedBottomRows}
+                    normalRows={this.props.normalRows}
+                    onHorizontalScroll={this.handleHorizontalScroll}
+                    // refs
+                    listRef={this.createRef("list")}
+                    normalCellsContainerRef={this.createRef("normalCellsContainer")}
+                    normalCellsRef={this.createRef("normalCells")}
+                    pinnedTopRowsRef={this.createRef("pinnedTopRows")}
+                    pinnedTopNormalCellsContainerRef={this.createRef("pinnedTopNormalCellsContainer")}
+                    pinnedTopNormalCellsRef={this.createRef("pinnedTopNormalCells")}
+                    pinnedBottomRowsRef={this.createRef("pinnedBottomRows")}
+                    pinnedBottomNormalCellsContainerRef={this.createRef("pinnedBottomNormalCellsContainer")}
+                    pinnedBottomNormalCellsRef={this.createRef("pinnedBottomNormalCells")}
+                />
                 {/* fake horizontal scroll bar */}
                 <div ref={this.createRef("horizontalScrollWrapper")} className={styles.horizontalScroll}>
                     <div ref={this.createRef("horizontalLeftSpacer")} className={styles.horizontalLeftSpacer}></div>
@@ -251,8 +221,6 @@ const mapStateToProps = (state: RootState) => {
         loading: state.grid.loading,
         width: state.grid.width,
         height: state.grid.height,
-        preloadRowCount: state.grid.preloadRowCount,
-        rowHeight: state.row.height,
         normalRows: state.row.normalRows,
         pinnedTopRows: state.row.pinnedTopRows,
         pinnedBottomRows: state.row.pinnedBottomRows,
