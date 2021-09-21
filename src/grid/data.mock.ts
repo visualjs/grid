@@ -25,7 +25,7 @@ export const data: GridOptions = {
         { field: 'status', pinned: 'left' },
         { field: 'month' },
         { field: 'game', pinned: 'right' },
-        { field: 'date' }
+        { field: 'date', readonly: true }
     ],
     rows: [
         { id: 'r_01', status: 'status_01', name: 'name_01', month: 'month_01', date: 'date_01', game: 'game_01' },

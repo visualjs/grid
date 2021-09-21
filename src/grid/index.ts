@@ -141,7 +141,7 @@ export class Grid {
         const oldValue = this.getRawCellValue(row, column);
         const columnOptions = this.getColumnOptions(column);
 
-        if (oldValue === undefined || columnOptions === undefined) {
+        if (oldValue === undefined || columnOptions === undefined || columnOptions.readonly) {
             return;
         }
 

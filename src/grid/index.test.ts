@@ -39,6 +39,10 @@ describe('actions for grid', () => {
         expect(grid.getRawCellValue('r_01', 'status')).toBe('status_01');
         grid.setCellValue('r_01', 'status', 'new_status');
         expect(grid.getRawCellValue('r_01', 'status')).toBe('new_status');
+        // readonly
+        expect(grid.getRawCellValue('r_01', 'date')).toBe('date_01');
+        grid.setCellValue('r_01', 'date', 'new_date');
+        expect(grid.getRawCellValue('r_01', 'date')).toBe('date_01');
     });
 
     describe('getSelectBoundary', () => {

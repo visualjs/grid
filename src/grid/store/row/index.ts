@@ -1,6 +1,6 @@
 import { Store as BaseStore } from "@/grid/store";
 import { RowData } from "@/types";
-import { diff, unique } from "@/utils";
+import { diff } from "@/utils";
 import update from 'immutability-helper';
 
 export interface Actions {
