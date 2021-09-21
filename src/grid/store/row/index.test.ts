@@ -11,9 +11,12 @@ describe('dispatchers for row', () => {
         ]);
 
         store.subscribe('setCellValue', (payload, newState, oldState) => {
+
+            const index = newState.rowIndexes[payload.row];
+
             expect(payload).toStrictEqual({ row: 'row', column: 'name', value: 'new name' });
-            expect(oldState.rows[payload.row].name).toBe('name');
-            expect(newState.rows[payload.row].name).toBe('new name');
+            expect(oldState.rows[index].name).toBe('name');
+            expect(newState.rows[index].name).toBe('new name');
         });
 
         expect(store.getRawCellValue('row', 'name')).toBe('name');
@@ -246,7 +249,7 @@ describe('dispatchers for row', () => {
         expect(store.getPinnedBottomRows()).toStrictEqual(['01', '03']);
 
         store.dispatch('takePinnedRows', ['01', '02']);
-        expect(store.getRowIds()).toStrictEqual(['04', '05', '06', '01', '02']);
+        expect(store.getRowIds()).toStrictEqual(['01', '02', '04', '05', '06']);
         expect(store.getPinnedTopRows()).toStrictEqual([]);
         expect(store.getPinnedBottomRows()).toStrictEqual(['03']);
 

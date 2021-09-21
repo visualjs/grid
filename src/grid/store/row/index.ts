@@ -21,7 +21,8 @@ export interface Actions {
 }
 
 export interface State {
-    rows: Record<string, RowData>;
+    rows: RowData[];
+    rowIndexes: Record<string, number>;
     pinnedTopRows: string[];
     pinnedBottomRows: string[];
     normalRows: string[];
@@ -31,7 +32,8 @@ export interface State {
 }
 
 const initialState: State = {
-    rows: {},
+    rows: [],
+    rowIndexes: {},
     pinnedTopRows: [],
     pinnedBottomRows: [],
     normalRows: [],
@@ -56,33 +58,51 @@ export class Store extends BaseStore<State, Actions> {
         }, Object.assign({}, initialState, initial));
 
         this.handle('setCellValue', (state, { row, column, value }) => {
-            const index = this.getRowIndex(row);
-            if (index === -1) return state;
+            const index = this.getRowInternalIndex(row);
+            if (index === undefined) return state;
 
             return update(state, {
                 rows: {
-                    [row]: { [column]: { $set: value } }
+                    [index]: { [column]: { $set: value } }
                 }
             });
         });
 
         this.handle('appendRowsBefore', (state, { index, rows }) => {
 
+            const row = this.getRowIdByIndex(index);
+            let internalIndex = this.getRowInternalIndex(row) || 0;
+
             // If the newly added row already exists,
             // use the new data to overwrite the old data
             // and do not add a new one
-            const params: any = {};
-            rows.forEach(r => {
-                params[r.id] = { $set: r };
+            rows = rows.filter((row) => {
+                const i = state.rowIndexes[row.id];
+                if (i !== undefined) {
+                    state.rows[i] = row;
+                    return false;
+                }
+                return true;
             });
-            const rowsData = update(state.rows, params);
 
-            const row = this.getRowIdByIndex(index);
+            internalIndex = Math.max(internalIndex, 0);
+            rows = [
+                ...state.rows.slice(0, internalIndex),
+                ...rows,
+                ...state.rows.slice(internalIndex, state.rows.length)
+            ];
+
+            // Reset row indexes
+            const rowIndexes: Record<string, number> = {};
+            rows.forEach((r, i) => {
+                rowIndexes[r.id] = i;
+            });
 
             // Append new rows in the pinned top rows
             if (this.isPinnedTop(row)) {
                 return update(state, {
-                    rows: { $set: rowsData },
+                    rows: { $set: rows },
+                    rowIndexes: { $set: rowIndexes },
                     pinnedTopRows: {
                         $set: [
                             ...state.pinnedTopRows.slice(0, index),
@@ -99,7 +119,8 @@ export class Store extends BaseStore<State, Actions> {
             if (this.isPinnedBottom(row)) {
                 index -= this._state.normalRows.length;
                 return update(state, {
-                    rows: { $set: rowsData },
+                    rows: { $set: rows },
+                    rowIndexes: { $set: rowIndexes },
                     pinnedBottomRows: {
                         $set: [
                             ...state.pinnedBottomRows.slice(0, index),
@@ -112,7 +133,8 @@ export class Store extends BaseStore<State, Actions> {
 
             index = Math.max(index, 0);
             return update(state, {
-                rows: { $set: rowsData },
+                rows: { $set: rows },
+                rowIndexes: { $set: rowIndexes },
                 normalRows: {
                     $set: [
                         ...state.normalRows.slice(0, index),
@@ -124,11 +146,26 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         this.handle('takeRows', (state, takeRows) => {
+            takeRows = takeRows.filter((row) => {
+                return state.rowIndexes[row] !== undefined;
+            });
+
+            const rows = state.rows.filter(r => {
+                return takeRows.indexOf(r.id) === -1;
+            });
+
+            // Reset row indexes
+            const rowIndexes: Record<string, number> = {};
+            rows.forEach((r, i) => {
+                rowIndexes[r.id] = i;
+            });
+
             return update(state, {
                 pinnedTopRows: { $set: diff(state.pinnedTopRows, takeRows) },
                 pinnedBottomRows: { $set: diff(state.pinnedBottomRows, takeRows) },
                 normalRows: { $set: diff(state.normalRows, takeRows) },
-                rows: { $unset: takeRows },
+                rows: { $set: rows },
+                rowIndexes: { $set: rowIndexes }
             });
         });
 
@@ -172,11 +209,14 @@ export class Store extends BaseStore<State, Actions> {
 
         this.handle('takePinnedRows', (state, rows) => {
             rows = this.getValidRows(rows);
+            const pinnedTopRows = diff(state.pinnedTopRows, rows);
+            const pinnedBottomRows = diff(state.pinnedBottomRows, rows);
+            const normalsRows = diff(state.rows.map(r => r.id), pinnedTopRows, pinnedBottomRows);
 
             return update(state, {
-                pinnedTopRows: { $set: diff(state.pinnedTopRows, rows) },
-                pinnedBottomRows: { $set: diff(state.pinnedBottomRows, rows) },
-                normalRows: { $set: unique(state.normalRows.concat(rows)) },
+                pinnedTopRows: { $set: pinnedTopRows },
+                pinnedBottomRows: { $set: pinnedBottomRows },
+                normalRows: { $set: normalsRows },
             });
         });
 
@@ -203,6 +243,10 @@ export class Store extends BaseStore<State, Actions> {
             // valid row and remove duplicates
             return this.getRowIndex(r) !== -1 && rows.indexOf(r, 0) === i;
         });
+    }
+
+    protected getRowInternalIndex(row: string) {
+        return this._state.rowIndexes[row];
     }
 
     public appendRowsBefore(index: number, rows: RowData[]) {
@@ -320,13 +364,13 @@ export class Store extends BaseStore<State, Actions> {
     }
 
     public getRowData(row: string) {
-        return this._state.rows[row];
+        return this._state.rows[this.getRowInternalIndex(row)];
     }
 
     // Get the original cell data without applying transformer
     public getRawCellValue(row: string, column: string): any {
-        const index = this.getRowIndex(row);
-        if (index === -1) {
+        const index = this.getRowInternalIndex(row);
+        if (index === undefined) {
             return undefined;
         }
 
@@ -334,7 +378,7 @@ export class Store extends BaseStore<State, Actions> {
             return index + 1;
         }
 
-        return this._state.rows[row][column];
+        return this._state.rows[index][column];
     }
 }
 

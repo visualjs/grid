@@ -31,9 +31,11 @@ export function counter() {
     };
 };
 
-export function diff<T>(a1: T[], a2: T[]): T[] {
-    return a1.filter((i) => {
-        return a2.indexOf(i) < 0;
+export function diff<T>(target: T[], ...others: T[][]): T[] {
+    return target.filter((i) => {
+        return others.every(arr => {
+            return arr.indexOf(i) < 0;
+        });
     });
 }
 
