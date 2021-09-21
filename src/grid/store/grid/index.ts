@@ -5,14 +5,12 @@ import update from 'immutability-helper';
 export interface Actions {
     destroy: undefined;
     setLoading: boolean;
-    setHorizontalScrollLeft: number;
 }
 
 export interface State {
     width: string;
     height: string;
     preloadRowCount: number;
-    horizontalScrollLeft?: number;
     fillable?: Fillable;
     loading?: boolean;
     destroyed?: boolean;
@@ -29,14 +27,9 @@ const initialState: State = {
 export class Store extends BaseStore<State, Actions> {
     constructor(initial?: Partial<State>) {
         super({
-            setHorizontalScrollLeft: [],
             setLoading: [],
             destroy: [],
         }, Object.assign({}, initialState, initial));
-
-        this.handle('setHorizontalScrollLeft', (state, scrollLeft) => {
-            return { ...state, horizontalScrollLeft: scrollLeft };
-        });
 
         this.handle('setLoading', (state, loading) => {
             return update(state, {

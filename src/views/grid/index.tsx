@@ -31,14 +31,9 @@ class Grid extends Component<Props> {
 
     protected unsubscribes: (() => void)[] = [];
 
-    // protected ignoreScrollEvents = false;
+    protected ignoreScrollEvents = false;
 
     public componentDidMount = () => {
-
-        this.unsubscribes.push(this.props.grid.store('grid').subscribeAny(() => {
-            const sl = this.props.grid.state('grid').horizontalScrollLeft;
-            this.refs.headerContainer.current.style.transform = `translateX(-${sl}px)`;
-        }));
 
         this.unsubscribes.push(this.props.grid.subscribe(() => {
             this.resize();
@@ -127,31 +122,27 @@ class Grid extends Component<Props> {
     protected handleHorizontalScroll = (ev: UIEvent) => {
 
         // Prevent the horizontal scroll bar from flickering when scrolling
-        // if (ev.target == this.refs.horizontalScroll.current && this.ignoreScrollEvents) {
-        //     this.ignoreScrollEvents = false;
-        //     return;
-        // } else {
-        //     this.ignoreScrollEvents = true;
-        // }
+        if (this.ignoreScrollEvents) return;
+        this.ignoreScrollEvents = true;
 
-        const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
-
-        if (ev.target != this.refs.normalCells.current) {
+        const update = () => {
+            const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
             this.refs.normalCells.current.scrollLeft = scrollLeft;
-        }
-        if (ev.target != this.refs.pinnedTopNormalCells.current) {
             this.refs.pinnedTopNormalCells.current.scrollLeft = scrollLeft;
-        }
-        if (ev.target != this.refs.pinnedBottomNormalCells.current) {
             this.refs.pinnedBottomNormalCells.current.scrollLeft = scrollLeft;
-        }
-        if (ev.target != this.refs.horizontalScroll.current) {
             this.refs.horizontalScroll.current.scrollLeft = scrollLeft;
-        }
+            this.refs.headerContainer.current.style.transform = `translateX(-${scrollLeft}px)`;
 
-        this.props.grid.store('grid').dispatch(
-            'setHorizontalScrollLeft', scrollLeft
-        );
+            requestAnimationFrame(() => {
+                this.ignoreScrollEvents = false;
+            });
+        };
+
+        if (ev.target == this.refs.horizontalScroll.current) {
+            requestAnimationFrame(update);
+        } else {
+            update();
+        }
     }
 
     render() {
