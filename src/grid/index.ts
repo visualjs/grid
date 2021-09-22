@@ -256,11 +256,22 @@ export class Grid {
      * Agent for column store
      */
 
-    public getColumnOptions(column: string) {
-        return this.store('column').getColumnOptions(column);
+    public getColumnOptions(column: string, row: string = undefined) {
+        const options = this.store('column').getColumnOptions(column);
+        if (row === undefined || options?.columnOptionsSelector === undefined) {
+            return options;
+        }
+
+        return Object.assign({}, options, options.columnOptionsSelector({ row, gird: this }));
     }
 
-    public getColumnOptionsByIndex(x: number) {
+    public getColumnOptionsByIndex(x: number, y: number = undefined) {
+        if (y !== undefined) {
+            return this.getColumnOptions(
+                this.getColumnByIndex(x),
+                this.store('row').getRowIdByIndex(y)
+            );
+        }
         return this.store('column').getColumnOptionsByIndex(x);
     }
 

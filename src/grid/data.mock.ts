@@ -23,7 +23,13 @@ export const data: GridOptions = {
         { field: 'id', pinned: 'left' },
         { field: 'name', transformer: new Transformer() },
         { field: 'status', pinned: 'left' },
-        { field: 'month' },
+        {
+            field: 'month', columnOptionsSelector: (params) => {
+                return {
+                    readonly: params.row === 'r_10'
+                };
+            }
+        },
         { field: 'game', pinned: 'right' },
         { field: 'date', readonly: true }
     ],

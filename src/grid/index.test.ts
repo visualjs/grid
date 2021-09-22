@@ -45,6 +45,24 @@ describe('actions for grid', () => {
         expect(grid.getRawCellValue('r_01', 'date')).toBe('date_01');
     });
 
+    test('getColumnOptions', () => {
+        const grid = new Grid(null, data, () => { });
+        expect(grid.getColumnOptions('month', 'r_01').readonly).toBeFalsy();
+        expect(grid.getColumnOptions('month', 'r_01').field).toBe("month");
+        expect(grid.getColumnOptions('month', 'r_10').readonly).toBeTruthy();
+        expect(grid.getColumnOptions('month', 'r_10').field).toBe("month");
+        expect(grid.getColumnOptions('month').readonly).toBeUndefined();
+        expect(grid.getColumnOptions('month').field).toBe("month");
+
+        const monthIndex = grid.store('column').getColumnIndex('month');
+        expect(grid.getColumnOptionsByIndex(monthIndex, 0).readonly).toBeFalsy();
+        expect(grid.getColumnOptionsByIndex(monthIndex, 0).field).toBe("month");
+        expect(grid.getColumnOptionsByIndex(monthIndex, 9).readonly).toBeTruthy();
+        expect(grid.getColumnOptionsByIndex(monthIndex, 9).field).toBe("month");
+        expect(grid.getColumnOptionsByIndex(monthIndex).readonly).toBeUndefined();
+        expect(grid.getColumnOptionsByIndex(monthIndex).field).toBe("month");
+    });
+
     describe('getSelectBoundary', () => {
 
         const grid = new Grid(null, data, () => { });

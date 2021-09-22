@@ -63,23 +63,32 @@ export interface GroupData {
     collapsible?: boolean;
 }
 
-export interface BaseColumnOptions {
-    width?: number; // default is 200
-    minWidth?: number; // default is 50
-    flex?: number;
-    resizable?: boolean;
-    visible?: boolean; // default is true
-    pinned?: Pinned;
+export interface ColumnSelectorParams {
+    row: string;
+    gird: Grid;
+}
+
+export interface OverridableColumnOptions {
+    readonly?: boolean;
     transformer?: CellTransformer;
     cellRender?: ICellRenderer;
     cellParams?: any;
     cellEditor?: ICellEditor;
 }
 
+export interface BaseColumnOptions extends OverridableColumnOptions {
+    width?: number; // default is 200
+    minWidth?: number; // default is 50
+    flex?: number;
+    resizable?: boolean;
+    visible?: boolean; // default is true
+    pinned?: Pinned;
+}
+
 export interface ColumnOptions extends BaseColumnOptions {
     field: string;
     headerName?: string;
-    readonly?: boolean;
+    columnOptionsSelector?: (params: ColumnSelectorParams) => OverridableColumnOptions;
 }
 
 export interface ColumnGroup {
