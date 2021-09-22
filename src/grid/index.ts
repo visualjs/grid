@@ -123,7 +123,7 @@ export class Grid {
 
     // Get cell data with transformer applied
     public getCellValue(row: string, column: string): any {
-        const columnOptions = this.getColumnOptions(column);
+        const columnOptions = this.getColumnOptions(column, row);
         const trans = columnOptions?.transformer;
         const value = this.getRawCellValue(row, column);
 
@@ -139,7 +139,7 @@ export class Grid {
 
     public setCellValue(row: string, column: string, value: any) {
         const oldValue = this.getRawCellValue(row, column);
-        const columnOptions = this.getColumnOptions(column);
+        const columnOptions = this.getColumnOptions(column, row);
 
         if (oldValue === undefined || columnOptions === undefined || columnOptions.readonly) {
             return;

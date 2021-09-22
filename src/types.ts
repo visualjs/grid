@@ -83,12 +83,12 @@ export interface BaseColumnOptions extends OverridableColumnOptions {
     resizable?: boolean;
     visible?: boolean; // default is true
     pinned?: Pinned;
+    columnOptionsSelector?: (params: ColumnSelectorParams) => OverridableColumnOptions;
 }
 
 export interface ColumnOptions extends BaseColumnOptions {
     field: string;
     headerName?: string;
-    columnOptionsSelector?: (params: ColumnSelectorParams) => OverridableColumnOptions;
 }
 
 export interface ColumnGroup {
