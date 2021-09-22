@@ -39,6 +39,8 @@ class Cell extends Component<Props> {
 
     protected cellContent = createRef<HTMLDivElement>();
 
+    protected popup: HTMLDivElement = null;
+
     protected isEditing: boolean = false;
 
     protected editor: CellEditor<any>;
@@ -83,6 +85,7 @@ class Cell extends Component<Props> {
 
     componentWillUnmount = () => {
         this.unsubscribeEditing && this.unsubscribeEditing();
+        this.props.grid.removeChild(this.popup);
         this.io.disconnect();
         if (this.timer) {
             clearTimeout(this.timer);
@@ -149,18 +152,12 @@ class Cell extends Component<Props> {
         }
 
 
-        const popup = document.createElement('div');
+        const editor = document.createElement('div');
         DOM.clean(this.cellContent.current);
         DOM.appendClassName(this.cellContent.current, styles.cellEditing);
 
         if (!this.editor) {
             this.editor = new this.options.cellEditor();
-        }
-
-        if (this.editor.isPopup()) {
-            popup.className = `${styles.cellEditingWrapper} ${styles.cellEditingPopup}`;
-        } else {
-            popup.className = styles.cellEditingWrapper;
         }
 
         this.editor.init && this.editor.init({
@@ -171,9 +168,33 @@ class Cell extends Component<Props> {
             gird: this.props.grid,
         });
 
-        popup.appendChild(this.editor.gui());
-        this.cellContent.current.appendChild(popup);
+        editor.appendChild(this.editor.gui());
+        editor.className = styles.cellEditingWrapper;
+
+        if (this.editor.isPopup()) {
+            this.createPopup(editor);
+        } else {
+            this.cellContent.current.appendChild(editor);
+        }
+
         this.editor.afterAttached && this.editor.afterAttached();
+    }
+
+    protected createPopup = (editor: HTMLElement) => {
+        if (!this.popup) {
+            this.popup = document.createElement('div');
+            this.popup.className = styles.cellPopupContainer;
+        }
+
+        DOM.clean(this.popup);
+
+        const rootRect = this.props.grid.getRootElement().getBoundingClientRect();
+        const rect = this.cell.current.getBoundingClientRect();
+
+        this.popup.style.left = rect.left - rootRect.left + 'px';
+        this.popup.style.top = rect.top - rootRect.top + 'px';
+        this.popup.appendChild(editor);
+        this.props.grid.appendChild(this.popup);
     }
 
     // render cell component
@@ -197,6 +218,7 @@ class Cell extends Component<Props> {
                     return;
                 }
 
+                this.props.grid.removeChild(this.popup);
                 DOM.clean(this.cellContent.current);
                 this.cellContent.current.appendChild(render.gui());
                 render.afterAttached && render.afterAttached();

@@ -70,6 +70,20 @@ export class Grid {
         });
     }
 
+    public appendChild<T extends Node>(node: T): T {
+        if (!node || this.container.firstChild.contains(node)) return node;
+        return this.container.firstChild.appendChild(node);
+    }
+
+    public removeChild<T extends Node>(node: T): T {
+        if (!node || !this.container.firstChild.contains(node)) return node;
+        return this.container.firstChild.removeChild(node);
+    }
+
+    public getRootElement(): HTMLElement {
+        return this.container.firstChild as HTMLElement;
+    }
+
     /**
      * Agent for root store
      */

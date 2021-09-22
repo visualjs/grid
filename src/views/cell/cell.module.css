@@ -81,8 +81,8 @@
     border: var(--cell-editing-popup-border, none);
 }
 
-.cell-editing-popup {
-    height: auto;
+.cell-popup-container {
+    position: absolute;
 }
 
 .cell-fill-handler {
