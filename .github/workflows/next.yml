@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - "next"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.4.0
+      
+      - name: Install yarn
+        run: npm install -g yarn
+        
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Run test
+        run: yarn test
+
+      - name: Build and publish
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          yarn build
+          yarn publish --tag=next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
