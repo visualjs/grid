@@ -33,13 +33,13 @@
 ## Install
 
 ```
-npm i visual-grid
+npm i @visualjs/grid
 ```
 
 or using yarn
 
 ```
-yarn add visual-grid
+yarn add @visualjs/grid
 ```
 
 ## Qucik Usage
