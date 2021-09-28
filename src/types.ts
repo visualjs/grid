@@ -2,21 +2,31 @@ import { CellRenderer, CellEditor, CellTransformer } from "@/grid/cell";
 import Grid from "./grid";
 
 export interface MenuItem {
+    // is it a dividing line
     separator?: boolean;
+    // disabled menu items
     disabled?: boolean;
+    // display name
     name?: string;
+    // icon
     icon?: string;
+    // callback after the menu item is clicked
     action?: () => void;
     subMenus?: MenuItem[];
 }
 
 export interface GetColumnMenuItemsParams {
-    column: string; // the column that was clicked
+    // the column that was clicked
+    column: string;
     grid: Grid;
 }
 
-export interface GetContextMenuItemsParams extends GetColumnMenuItemsParams {
+export interface GetContextMenuItemsParams {
+    // the column that was clicked
+    column: string;
+    // the row that was clicked
     row: string;
+    grid: Grid;
 }
 
 export interface Styles {
@@ -41,6 +51,7 @@ export interface Boundary {
 }
 
 export interface RowData {
+    // row id
     id: string;
     [key: string]: any;
 }
@@ -68,58 +79,87 @@ export interface ColumnSelectorParams {
     gird: Grid;
 }
 
+// for column options overridden by columnOptionsSelector
 export interface OverridableColumnOptions {
+    // when a cell is read-only, the cellEditor will be invalid,
+    // and the value of the cell cannot be modified even if the drop-down fill is
     readonly?: boolean;
+    // format the reading and writing of cell data
     transformer?: CellTransformer;
+    // cellRenderer to use for this column
     cellRender?: ICellRenderer;
-    cellParams?: any;
+    // cellEditor to use for this column
     cellEditor?: ICellEditor;
+    // params to be passed to cell renderer and cell editor component
+    cellParams?: any;
 }
 
+// BaseColumnOptions can be overridden by default column options
 export interface BaseColumnOptions extends OverridableColumnOptions {
-    width?: number; // default is 200
-    minWidth?: number; // default is 50
+    // column width, default is 200
+    width?: number;
+    // the minimum width supported when adjusting the column width, default is 50
+    minWidth?: number;
+    // use flex layout, let the column fill the remaining space by default
     flex?: number;
+    // can the column width be adjusted by dragging
     resizable?: boolean;
-    visible?: boolean; // default is true
+    // whether the column is visible, default is true
+    visible?: boolean;
+    // 'left' | 'right' | undefined
     pinned?: Pinned;
+    // columnOptionsSelector is a callback to apply different options to the same column of cells in different rows
     columnOptionsSelector?: (params: ColumnSelectorParams) => OverridableColumnOptions;
 }
 
+// column definition
 export interface ColumnOptions extends BaseColumnOptions {
+    // column id
     field: string;
+    // column name
     headerName?: string;
 }
 
-export interface ColumnGroup {
+// definition of column grouping 
+export interface ColumnGroupOptions {
+    // group id
     id?: string;
+    // group name
     headerName?: string;
-    collapsed?: boolean; // default is false
-    collapsible?: boolean; // default is false
-    children: (ColumnGroup | ColumnOptions)[];
+    // whether column grouping is collapsed by default, default is false
+    collapsed?: boolean;
+    // whether the column group can be collapsed, default is false
+    collapsible?: boolean;
+    // a subset of groups, can be multiple groups or columns
+    children: (ColumnGroupOptions | ColumnOptions)[];
 }
 
-export type ColumnDef = (ColumnGroup | ColumnOptions);
+export type ColumnDef = (ColumnGroupOptions | ColumnOptions);
 export type ColumnsDef = ColumnDef[];
 
 export type Fillable = 'x' | 'y' | 'xy' | undefined;
 
 export interface GridOptions {
-    width?: string; // default is 100%
-    height?: string; // default is 100%
+    // grid width, default is 100%
+    width?: string;
+    // grid height, default is 100%
+    height?: string;
+    // array of Column Definitions.
     columns: ColumnsDef;
+    // a default column definition.
     defaultColumnOption?: BaseColumnOptions;
-    // column menus
+    // callback called when a column menu icon is clicked.
     getColumnMenuItems?: (params: GetColumnMenuItemsParams) => MenuItem[];
+    // default grid data
     rows: RowData[];
-    // headers
-    headerHeight?: number; // default is 30
-    // row
-    rowHeight?: number; // default is 28
-    // virtual list
-    preloadRowCount?: number; // default is 20
-    // other
+    // default column height, default is 30
+    headerHeight?: number;
+    // default row height, default is 28
+    rowHeight?: number;
+    // virtual list, default is 20
+    preloadRowCount?: number;
+    // whether to enable the grid drop-down to fill data, 'x' | 'y' | 'xy' | undefined
     fillable?: Fillable;
-    // context menus
+    // callback called when a cell is right clicked.
     getContextMenuItems?: (params: GetContextMenuItemsParams) => MenuItem[];
 }
