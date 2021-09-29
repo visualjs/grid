@@ -264,12 +264,12 @@ export class Store extends BaseStore<State, Actions> {
         return this.dispatch('selectRows', rows);
     }
 
-    public appendSelectRows(rows: string[]) {
+    public appendSelectedRows(rows: string[]) {
         rows = [...this._state.selectedRows, ...rows];
         return this.dispatch('selectRows', rows);
     }
 
-    public takeSelectRow(row: string) {
+    public takeSelectedRow(row: string) {
         const i = this._state.selectedRows.indexOf(row);
         if (i === -1) {
             return;

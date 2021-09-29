@@ -303,7 +303,7 @@ describe('actions for row', () => {
         expect(store.getRawCellValue('r_02', '#')).toBe(2);
     });
 
-    test('appendSelectRows', () => {
+    test('appendSelectedRows', () => {
 
         const store = new Store();
         store.appendRows(data.rows);
@@ -311,33 +311,33 @@ describe('actions for row', () => {
         const cb = jest.fn();
         store.subscribe('selectRows', cb);
 
-        store.appendSelectRows(['r_01', 'r_02']);
+        store.appendSelectedRows(['r_01', 'r_02']);
         expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02']);
 
-        store.appendSelectRows(['r_02', 'r_03']);
+        store.appendSelectedRows(['r_02', 'r_03']);
         expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02', 'r_03']);
 
-        store.appendSelectRows(['r_04', 'r_00']);
+        store.appendSelectedRows(['r_04', 'r_00']);
         expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02', 'r_03', 'r_04']);
 
         expect(cb).toBeCalledTimes(3);
     });
 
-    test('takeSelectRow', () => {
+    test('takeSelectedRow', () => {
 
         const store = new Store();
         store.appendRows(data.rows);
 
-        store.appendSelectRows(['r_01', 'r_02', 'r_03']);
+        store.appendSelectedRows(['r_01', 'r_02', 'r_03']);
         expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02', 'r_03']);
 
         const cb = jest.fn();
         store.subscribe('selectRows', cb);
 
-        store.takeSelectRow('r_04');
+        store.takeSelectedRow('r_04');
         expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_02', 'r_03']);
 
-        store.takeSelectRow('r_02');
+        store.takeSelectedRow('r_02');
         expect(store.getState().selectedRows).toStrictEqual(['r_01', 'r_03']);
 
         expect(cb).toBeCalledTimes(1);

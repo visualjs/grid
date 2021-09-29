@@ -245,10 +245,6 @@ export class Store extends BaseStore<State, Actions> {
         return this._state.pinnedRightColumns[x];
     }
 
-    public setColumnName(field: string, name: string) {
-        return this.dispatch('updateColumnName', { field, name });
-    }
-
     public getGroupWidth(id: string, columns: string[] = []) {
         const group = this._state.groupsData[id];
         if (!group) {
@@ -271,14 +267,6 @@ export class Store extends BaseStore<State, Actions> {
         });
 
         return { width, flex };
-    }
-
-    public setGroupCollapsed(group: string, collapsed: boolean) {
-        return this.dispatch('updateGroupCollapsed', { group, collapsed });
-    }
-
-    public setGroupName(group: string, name: string) {
-        return this.dispatch('updateGroupName', { group, name });
     }
 
     public toggleGroupCollapsed(group: string) {
