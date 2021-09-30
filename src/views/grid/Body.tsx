@@ -73,10 +73,19 @@ class Body extends Component<Props, State> {
 
     // Double-click the cell to enable editing
     protected handleCellDbClick = (ev: MouseEvent, row: string, column: string) => {
+        if (this.props.grid.trigger('beforeCellDbClicked', { row, column }, ev) === false) {
+            return;
+        }
+
         this.props.setEditing({ row, column });
+        this.props.grid.trigger('afterCellDbClicked', { row, column }, ev);
     }
 
     protected handleCellMouseDown = (ev: MouseEvent, row: string, column: string) => {
+        if (this.props.grid.trigger('beforeCellMouseDown', { row, column }, ev) === false) {
+            return;
+        }
+
         ev.stopPropagation();
 
         // stop any editing when click a cell
@@ -91,9 +100,15 @@ class Body extends Component<Props, State> {
                 return;
             }
 
+            if (this.props.grid.trigger('beforeContextMenuShow', { row, column }, items) === false) {
+                return;
+            }
+
             this.setState({
                 isMenuVisible: true, contextMenuItems: items,
                 contextMenuCoord: { x: ev.clientX, y: ev.clientY }
+            }, () => {
+                this.props.grid.trigger('afterContextMenuShow', { row, column }, items);
             });
 
             // Avoid canceling the selection when you right-click in the selection range
@@ -114,13 +129,19 @@ class Body extends Component<Props, State> {
         this.selectionStart = this.selectionEnd = coord;
         this.isSelecting = true;
         this.handleSelectionChanged();
+
+        this.props.grid.trigger('afterCellMouseDown', { row, column }, ev);
     }
 
-    protected handleCellMouseMove = (ev: MouseEvent, row: string, col: string) => {
+    protected handleCellMouseMove = (ev: MouseEvent, row: string, column: string) => {
+        if (this.props.grid.trigger('beforeCellMouseMove', { row, column }, ev) === false) {
+            return;
+        }
+
         // update hovered row
         this.props.hoverRow(row);
 
-        const coord = this.props.getCoordinate(row, col);
+        const coord = this.props.getCoordinate(row, column);
 
         // If you are selecting a cell range,
         // update the selection range according to the current hover cell
@@ -143,15 +164,21 @@ class Body extends Component<Props, State> {
             this.fillingEnd = coord;
             this.handleFillRangeChanged();
         }
+
+        this.props.grid.trigger('afterCellMouseMove', { row, column }, ev);
     }
 
-    protected handleCellFillerMouseDown = (ev: MouseEvent, row: string, col: string) => {
+    protected handleCellFillerMouseDown = (ev: MouseEvent, row: string, column: string) => {
+
+        if (this.props.grid.trigger('beforeFillerMouseDown', { row, column }, ev) === false) {
+            return;
+        }
 
         if (ev.button !== Button.Left) {
             return;
         }
 
-        const coord = this.props.getCoordinate(row, col);
+        const coord = this.props.getCoordinate(row, column);
         const range = this.props.getCoordLocatedRange(coord);
         if (!range) return;
 
@@ -159,6 +186,8 @@ class Body extends Component<Props, State> {
         this.fillingEnd = coord;
         this.isFilling = true;
         this.handleFillRangeChanged();
+
+        this.props.grid.trigger('afterFillerMouseDown', { row, column }, ev);
     }
 
     protected handleMouseUp = () => {
@@ -176,7 +205,13 @@ class Body extends Component<Props, State> {
     }
 
     protected handleSelectionChanged = () => {
+
+        if (this.props.grid.trigger('beforeSelectionChange', this.selectionStart, this.selectionEnd) === false) {
+            return;
+        }
+
         this.props.selectCells(this.selectionStart, this.selectionEnd);
+        this.props.grid.trigger('afterSelectionChange', this.selectionStart, this.selectionEnd);
     }
 
     protected handleFillRangeChanged = () => {
@@ -186,6 +221,11 @@ class Body extends Component<Props, State> {
     }
 
     protected handleFill = (range: FillRange) => {
+
+        if (this.props.grid.trigger('beforeFilling', range) === false) {
+            return;
+        }
+
         const ref = range.getReference();
         range.chunk(chunk => {
             chunk.each((coord, relative) => {
@@ -193,6 +233,8 @@ class Body extends Component<Props, State> {
                 this.props.grid.setCellValueByCoord(coord, this.props.grid.getCellValueByCoord(srcCoord))
             });
         });
+
+        this.props.grid.trigger('afterFilling', range);
     }
 
     protected handleBlur = () => {

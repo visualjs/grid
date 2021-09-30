@@ -1,4 +1,12 @@
-import { BaseColumnOptions, Boundary, CellPosition, ColumnOptions, ColumnsDef, Coordinate, GridOptions, GroupData, MenuItem, Pinned, RowData } from '@/types';
+import {
+    BaseColumnOptions, Boundary,
+    CellPosition, ColumnOptions,
+    ColumnsDef, Coordinate,
+    GridOptions, GroupData,
+    MenuItem, Pinned,
+    RowData,
+    Unsubscribe
+} from '@/types';
 import defaultRender from '@/views';
 import { Root, RootState } from '@/grid/store';
 import { Store as GridStore } from '@/grid/store/grid';
@@ -7,8 +15,9 @@ import { Store as CellStore } from '@/grid/store/cell';
 import { Store as ColumnStore } from '@/grid/store/column';
 import CellRange from '@/selection/CellRange';
 import { readTextFromClipboard, writeTextToClipboard } from '@/utils';
-import Observer from './Observer';
-import Events from './Events';
+import { Observer, Handlers } from './Observer';
+import Actions from './Actions';
+import { Events, EventsDef } from './Events';
 
 const defaultGridOptions = {
     width: '100%',
@@ -32,7 +41,7 @@ export class Grid {
 
     protected root: Store;
 
-    protected observer: Observer<typeof Events>;
+    protected observer: Observer<EventsDef, typeof Actions>;
 
     constructor(protected container: HTMLElement, props: GridOptions, render = defaultRender) {
 
@@ -57,7 +66,7 @@ export class Grid {
         this.setColumns(props.columns, props.defaultColumnOption);
         this.appendRows(props.rows);
 
-        this.observer = new Observer(this, Events);
+        this.observer = new Observer(this, Events, Actions);
 
         render(this, container);
     }
@@ -82,10 +91,15 @@ export class Grid {
 
     // event binding.
     public on<
-        K extends keyof typeof Events,
-        P extends Parameters<(typeof Events)[K]>
-    >(event: K, cb: P[1]) {
-        return this.observer.on(event, cb);
+        K extends keyof typeof Actions | keyof EventsDef,
+        H extends Handlers<typeof Actions, EventsDef>,
+    >(event: K, handler: H[K]): Unsubscribe {
+        return this.observer.on(event, handler);
+    }
+
+    // event trigger
+    public trigger<K extends keyof EventsDef>(e: K, ...args: Parameters<EventsDef[K]>): boolean {
+        return this.observer.trigger(e, ...args);
     }
 
     /**

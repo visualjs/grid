@@ -1,6 +1,8 @@
 import { CellRenderer, CellEditor, CellTransformer } from "@/grid/cell";
 import Grid from "./grid";
 
+export type Unsubscribe = () => void;
+
 export interface MenuItem {
     // is it a dividing line
     separator?: boolean;

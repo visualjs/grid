@@ -2,6 +2,7 @@ export * from './enums';
 export * from './dom';
 export * from './clipboard';
 export * from './shallowEqual';
+export * from './deepCopy';
 
 export function classes(value: string | string[] | { [key: string]: boolean }) {
 
