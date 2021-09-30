@@ -35,7 +35,7 @@ class Grid extends Component<Props> {
 
     public componentDidMount = () => {
 
-        this.unsubscribes.push(this.props.grid.subscribe(() => {
+        this.unsubscribes.push(this.props.grid.getRoot().subscribeAny(() => {
             this.resize();
         }));
 

@@ -20,10 +20,7 @@ import { showContainer } from './utils';
             const options = params.grid.getColumnOptions(params.column);
 
             const setColumnPinned = (pinned?: 'left' | 'right') => {
-                params.grid.store('column').dispatch('updateColumnPinned', {
-                    field: params.column,
-                    pinned: pinned
-                });
+                params.grid.setColumnPinned(params.column, pinned);
             }
 
             const pinnedIcon = (pinned?: 'left' | 'right') => {
@@ -91,18 +88,18 @@ import { showContainer } from './utils';
     });
 
     controls.querySelector<HTMLButtonElement>('.small').addEventListener('click', () => {
-        grid.store('row').dispatch('setBaseHeight', 20);
-        grid.store('column').dispatch('setHeight', 20);
+        grid.setRowBaseHeight(20);
+        grid.setColumnHeight(20);
     });
 
     controls.querySelector<HTMLButtonElement>('.middle').addEventListener('click', () => {
-        grid.store('row').dispatch('setBaseHeight', 30);
-        grid.store('column').dispatch('setHeight', 30);
+        grid.setRowBaseHeight(30);
+        grid.setColumnHeight(30);
     });
 
     controls.querySelector<HTMLButtonElement>('.large').addEventListener('click', () => {
-        grid.store('row').dispatch('setBaseHeight', 50);
-        grid.store('column').dispatch('setHeight', 50);
+        grid.setRowBaseHeight(50);
+        grid.setColumnHeight(50);
     });
 
     controls.querySelector<HTMLButtonElement>('.loading').addEventListener('click', () => {

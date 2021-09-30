@@ -14,7 +14,7 @@ export function connect<S, A>(selector: (state: State, props?: any) => S, mapAct
             const actions = mapActions ? mapActions(grid) : undefined;
 
             useLayoutEffect(() => {
-                const s = useSelector(grid.api(), selector, (state) => {
+                const s = useSelector(grid.getRoot(), selector, (state) => {
                     setState(state);
                 }, { grid: grid, props: props });
                 return s.cancel;

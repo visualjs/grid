@@ -90,10 +90,7 @@ import { showContainer } from './utils';
             const options = params.grid.getColumnOptions(params.column);
 
             const setColumnPinned = (pinned?: 'left' | 'right') => {
-                params.grid.store('column').dispatch('updateColumnPinned', {
-                    field: params.column,
-                    pinned: pinned
-                });
+                params.grid.setColumnPinned(params.column, pinned);
             }
 
             const pinnedIcon = (pinned?: 'left' | 'right') => {
@@ -112,12 +109,12 @@ import { showContainer } from './utils';
                 },
                 {
                     name: 'Flex', icon: options.flex ? 'vg-checkmark' : '', action: () => {
-                        params.grid.store('column').dispatch('updateColumnWidth', { field: params.column, flex: Number(!options.flex) });
+                        params.grid.setColumnWidth(params.column, { flex: Number(!options.flex) });
                     }
                 },
                 {
                     name: 'Visible', icon: options.visible ? 'vg-checkmark' : '', action: () => {
-                        params.grid.store('column').dispatch('updateColumnVisible', { field: params.column, visible: false });
+                        params.grid.setColumnVisible(params.column, false);
                     }
                 }
             ];
@@ -128,20 +125,20 @@ import { showContainer } from './utils';
 
             const setRowPinned = (pinned?: 'top' | 'bottom') => {
                 if (pinned == 'top') {
-                    params.grid.store('row').appendPinnedTopRows([params.row]);
+                    params.grid.appendPinnedTopRows([params.row]);
                 } else {
-                    params.grid.store('row').appendPinnedBottomRows([params.row]);
+                    params.grid.appendPinnedBottomRows([params.row]);
                 }
             }
 
             const pinnedTopRowIcon = () => {
-                return params.grid.store('row').isPinnedTop(params.row) ? 'vg-checkmark' : '';
+                return params.grid.isPinnedTop(params.row) ? 'vg-checkmark' : '';
             }
             const pinnedBottomRowIcon = () => {
-                return params.grid.store('row').isPinnedBottom(params.row) ? 'vg-checkmark' : '';
+                return params.grid.isPinnedBottom(params.row) ? 'vg-checkmark' : '';
             }
             const noPinnedRowIcon = () => {
-                return !params.grid.store('row').isPinnedRow(params.row) ? 'vg-checkmark' : '';
+                return !params.grid.isPinnedRow(params.row) ? 'vg-checkmark' : '';
             }
 
             return [
@@ -160,7 +157,7 @@ import { showContainer } from './utils';
                 { separator: true },
                 {
                     name: 'Delete', disabled: options.readonly, icon: 'vg-trash-bin', action: () => {
-                        params.grid.store('row').dispatch('takeRows', [params.row]);
+                        params.grid.removeRows([params.row]);
                     }
                 },
                 { separator: true },
@@ -169,10 +166,14 @@ import { showContainer } from './utils';
         }
     });
 
-    grid.store('row').subscribe('setCellValue', (payload) => {
-        console.log(payload.row, payload.column, payload.value);
+    grid.on('cellValueChanged', (cell, value) => {
+        console.log(cell, value);
     });
 
+    grid.on('rowRemoved', (row) => {
+        console.log(row + ' - ' + 'removed!');
+    })
+
     grid.appendRows(rows);
-    grid.store('row').setPinnedTopRows(['row_1', 'row_3', 'row_5', 'row_7']);
+    grid.setPinnedTopRows(['row_1', 'row_3', 'row_5', 'row_7']);
 })();

@@ -64,7 +64,9 @@ interface ICellEditor {
     new(): CellEditor<unknown>;
 }
 
-export type Pinned = 'left' | 'right' | undefined;
+export type RowPinned = 'top' | 'bottom' | undefined;
+export type ColumnPinned = 'left' | 'right' | undefined;
+export type Pinned = ColumnPinned;
 
 export interface GroupData {
     id: string;

@@ -1,12 +1,14 @@
 import { BaseColumnOptions, Boundary, CellPosition, ColumnOptions, ColumnsDef, Coordinate, GridOptions, GroupData, MenuItem, Pinned, RowData } from '@/types';
 import defaultRender from '@/views';
-import { Listener, Root, RootState } from '@/grid/store';
+import { Root, RootState } from '@/grid/store';
 import { Store as GridStore } from '@/grid/store/grid';
 import { Store as RowStore } from '@/grid/store/row';
 import { Store as CellStore } from '@/grid/store/cell';
 import { Store as ColumnStore } from '@/grid/store/column';
 import CellRange from '@/selection/CellRange';
 import { readTextFromClipboard, writeTextToClipboard } from '@/utils';
+import Observer from './Observer';
+import Events from './Events';
 
 const defaultGridOptions = {
     width: '100%',
@@ -30,6 +32,8 @@ export class Grid {
 
     protected root: Store;
 
+    protected observer: Observer<typeof Events>;
+
     constructor(protected container: HTMLElement, props: GridOptions, render = defaultRender) {
 
         props = Object.assign({ grid: this }, defaultGridOptions, props);
@@ -50,16 +54,15 @@ export class Grid {
             })
         });
 
-        this.store('column').dispatch('setColumns', {
-            columns: props.columns, defaultOptions: props.defaultColumnOption
-        });
-
+        this.setColumns(props.columns, props.defaultColumnOption);
         this.appendRows(props.rows);
+
+        this.observer = new Observer(this, Events);
 
         render(this, container);
     }
 
-    public api() {
+    public getRoot() {
         return this.root;
     }
 
@@ -75,6 +78,14 @@ export class Grid {
 
     public getRootElement(): HTMLElement {
         return this.container.firstChild as HTMLElement;
+    }
+
+    // event binding.
+    public on<
+        K extends keyof typeof Events,
+        P extends Parameters<(typeof Events)[K]>
+    >(event: K, cb: P[1]) {
+        return this.observer.on(event, cb);
     }
 
     /**
@@ -134,10 +145,6 @@ export class Grid {
 
     public getState(): State {
         return this.root.getState();
-    }
-
-    public subscribe(listener: Listener<unknown, State>) {
-        return this.root.subscribeAny(listener);
     }
 
     public store<K extends keyof Stores>(s: K) {
@@ -426,6 +433,11 @@ export class Grid {
     // append new rows before the specified row in the grid.
     public appendRowsBefore(index: number, rows: RowData[]): void {
         return this.store('row').appendRowsBefore(index, rows);
+    }
+
+    // remove rows
+    public removeRows(rows: string[]): void {
+        return this.store('row').dispatch('takeRows', rows);
     }
 
     // clear all rows.
