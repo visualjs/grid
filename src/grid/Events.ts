@@ -8,21 +8,20 @@ export const Events = {
     /**
      * Cell events
      */
-    selectedCellsChanged: (grid: Grid, cb: (current?: CellRange, now?: CellRange[], before?: CellRange[]) => void) => {
-        return grid.store('cell').subscribe('selectCells', (params, newState, oldState) => {
+    selectedCellsChanged: (grid: Grid, cb: (current?: CellRange, selections?: CellRange[]) => void) => {
+        return grid.store('cell').subscribe('selectCells', (params, newState) => {
             cb(
                 new CellRange(params.start, params.end),
                 newState.selections,
-                oldState.selections
             );
         });
     },
-    editingCellChanged: (grid: Grid, cb: (cell?: CellPosition, old?: CellPosition) => void) => {
+    editingCellChanged: (grid: Grid, cb: (cell?: CellPosition, previous?: CellPosition) => void) => {
         return grid.store('cell').subscribe('setEditing', (cell, _, oldState) => {
             cb(cell, oldState.editing);
         });
     },
-    fillingRangeChanged: (grid: Grid, cb: (range?: FillRange, old?: FillRange) => void) => {
+    fillingRangeChanged: (grid: Grid, cb: (range?: FillRange, previous?: FillRange) => void) => {
         return grid.store('cell').subscribe('setFilling', (range, _, oldState) => {
             cb(range, oldState.filling);
         });
@@ -58,12 +57,12 @@ export const Events = {
     selectedRowsChanged: (grid: Grid, cb: (rows?: string[]) => void) => {
         return grid.store('row').subscribe('selectRows', cb);
     },
-    rowsChanged: (grid: Grid, cb: () => void) => {
-        const s = useSelector(grid.store('row'), (state) => {
-            return { rows: state.rows };
-        }, cb);
-        return s.cancel;
-    },
+    // rowsChanged: (grid: Grid, cb: () => void) => {
+    //     const s = useSelector(grid.store('row'), (state) => {
+    //         return { rows: state.rows };
+    //     }, cb);
+    //     return s.cancel;
+    // },
     rowAdded: (grid: Grid, cb: (row?: string) => void) => {
         return grid.store('row').subscribe('appendRowsBefore', ({ rows }) => {
             rows.forEach(r => cb(r.id));

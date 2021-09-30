@@ -172,7 +172,7 @@ import { showContainer } from './utils';
 
     grid.on('rowRemoved', (row) => {
         console.log(row + ' - ' + 'removed!');
-    })
+    });
 
     grid.appendRows(rows);
     grid.setPinnedTopRows(['row_1', 'row_3', 'row_5', 'row_7']);
