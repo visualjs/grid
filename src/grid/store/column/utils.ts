@@ -1,4 +1,4 @@
-import { ColumnDef, ColumnGroup, ColumnOptions, ColumnsDef, GroupData } from "@/types";
+import { ColumnDef, ColumnGroupOptions, ColumnOptions, ColumnsDef, GroupData } from "@/types";
 import { counter } from "@/utils";
 
 // Get the deepest grouping level
@@ -7,7 +7,7 @@ export function columnsDepth(columns: ColumnsDef, currentDepth = 1): number {
     var maxDepth = currentDepth;
 
     for (let i = 0; i < columns.length; i++) {
-        const c = (columns[i] as ColumnGroup);
+        const c = (columns[i] as ColumnGroupOptions);
         // has children
         if (Array.isArray(c.children) && c.children.length > 0) {
             const depth = columnsDepth(c.children, currentDepth + 1);
@@ -31,13 +31,13 @@ export function paddingColumn(column: ColumnDef, level: number, id?: () => numbe
         return column;
     }
 
-    if (Array.isArray((column as ColumnGroup).children)) {
+    if (Array.isArray((column as ColumnGroupOptions).children)) {
 
-        if ((column as ColumnGroup).id === undefined) {
-            (column as ColumnGroup).id = String(id());
+        if ((column as ColumnGroupOptions).id === undefined) {
+            (column as ColumnGroupOptions).id = String(id());
         }
 
-        (column as ColumnGroup).children = (column as ColumnGroup).children.map(c => {
+        (column as ColumnGroupOptions).children = (column as ColumnGroupOptions).children.map(c => {
             return paddingColumn(c, level - 1, id);
         });
 
@@ -82,7 +82,7 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
     let subGroups: string[][] = [];
 
     columnsDef.forEach((c) => {
-        const group = (c as ColumnGroup);
+        const group = (c as ColumnGroupOptions);
         if (!Array.isArray(group.children)) {
             columns.push(c as ColumnOptions);
             return;
