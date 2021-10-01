@@ -35,17 +35,6 @@ class Rows extends Component<Props> {
         this.refs.normalCellsWrapper.current.style.height = this.props.normalCellsRef.current.clientHeight + 'px';
     }
 
-    // copy and paste
-    protected handleKeyDown = (ev: KeyboardEvent) => {
-        if (ev.key === 'c' && (ev.ctrlKey || ev.metaKey)) {
-            return this.props.grid.copySelection();
-        }
-
-        if (ev.key === 'v' && (ev.ctrlKey || ev.metaKey)) {
-            return this.props.grid.pasteFromClipboard();
-        }
-    }
-
     /**
      * Renders
      */
@@ -71,7 +60,6 @@ class Rows extends Component<Props> {
         return (
             <div
                 ref={this.props.selfRef}
-                onKeyDown={this.handleKeyDown}
                 tabIndex={0}
                 style={{ display: 'flex', outline: 'none', position: 'relative' }}
             >

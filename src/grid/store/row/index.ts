@@ -380,6 +380,20 @@ export class Store extends BaseStore<State, Actions> {
 
         return this._state.rows[index][column];
     }
+
+    public getRowsBetween(start: number, end: number): string[] {
+        const s = Math.min(start, end);
+        const e = Math.max(start, end);
+
+        const rows: string[] = [];
+
+        for (let i = s; i <= e; i++) {
+            const row = this.getRowIdByIndex(i);
+            (row !== undefined) && rows.push(row);
+        }
+
+        return rows;
+    }
 }
 
 export default Store;

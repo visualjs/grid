@@ -342,4 +342,18 @@ describe('actions for row', () => {
 
         expect(cb).toBeCalledTimes(1);
     });
+
+    test('getRowsBetween', () => {
+        const store = new Store();
+        store.appendRows(data.rows);
+
+        expect(store.getRowsBetween(NaN, 2)).toStrictEqual([]);
+        expect(store.getRowsBetween(2, NaN)).toStrictEqual([]);
+        expect(store.getRowsBetween(undefined, 2)).toStrictEqual([]);
+        expect(store.getRowsBetween(2, undefined)).toStrictEqual([]);
+
+        expect(store.getRowsBetween(-1, 2)).toStrictEqual(['r_01', 'r_02', 'r_03']);
+        expect(store.getRowsBetween(2, 5)).toStrictEqual(['r_03', 'r_04', 'r_05', 'r_06']);
+        expect(store.getRowsBetween(9, 100)).toStrictEqual(['r_10']);
+    });
 });

@@ -207,7 +207,13 @@ export class Grid {
             });
         })
 
+        if (this.trigger('beforeCopy', text) === false) {
+            return;
+        }
+
         writeTextToClipboard(text);
+
+        this.trigger('afterCopy', text);
     }
 
     // parse the data from the clipboard and
@@ -218,12 +224,19 @@ export class Grid {
 
         readTextFromClipboard().then(str => {
             str = str.replace(/(\r\n|\r|\n)/g, '\n');
+
+            if (this.trigger('beforePaste', str) === false) {
+                return;
+            }
+
             str.split('\n').forEach((rowData, y) => {
                 rowData.split('\t').forEach((value, x) => {
                     const coord = { x: x + start.x, y: y + start.y };
                     this.setCellValueByCoord(coord, value);
                 });
             });
+
+            this.trigger('afterPaste', str);
         });
     }
 
@@ -482,6 +495,11 @@ export class Grid {
     // get all row ids, excluding pinned rows.
     public getRowIds(): string[] {
         return this.store('row').getRowIds();
+    }
+
+    // get all valid row ids in the start and end index range.
+    public getRowsBetween(start: number, end: number): string[] {
+        return this.store('row').getRowsBetween(start, end);
     }
 
     // get all pinned top rows.

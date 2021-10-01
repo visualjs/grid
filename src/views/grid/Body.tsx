@@ -23,7 +23,6 @@ interface Props {
     getCoordinate: (row: string, column: string) => Coordinate;
     getCoordLocatedRange: (coord: Coordinate) => CellRange | undefined;
     hoverRow: (row: string) => void;
-    selectRows: (rows: string[]) => void;
     selectCells: (start: Coordinate, end: Coordinate) => void;
     setEditing: (pos?: CellPosition) => void;
     setFilling: (filling?: FillRange) => void;
@@ -62,6 +61,9 @@ class Body extends Component<Props, State> {
     protected fillingEnd: Coordinate;
 
     protected fillingRef: CellRange;
+
+    // keybord
+    protected currentKey: KeyboardEvent;
 
     componentDidMount = () => {
         document.addEventListener('mouseup', this.handleMouseUp);
@@ -111,8 +113,13 @@ class Body extends Component<Props, State> {
                 this.props.grid.trigger('afterContextMenuShow', { row, column }, items);
             });
 
-            // Avoid canceling the selection when you right-click in the selection range
+            // Avoid canceling the selection when you right-click in the selection range.
             if (this.props.grid.getCoordLocatedRange(coord)) {
+                return;
+            }
+
+            // Avoid canceling the selected rows when you right-click.
+            if (this.props.grid.getSelectedRows().indexOf(row) !== -1) {
                 return;
             }
         } else {
@@ -124,13 +131,30 @@ class Body extends Component<Props, State> {
         }
 
         // select current active row
-        this.props.selectRows([row]);
+        this.handleSelectRow(row);
         // set current active cell as selection star position
         this.selectionStart = this.selectionEnd = coord;
         this.isSelecting = true;
         this.handleSelectionChanged();
 
         this.props.grid.trigger('afterCellMouseDown', { row, column }, ev);
+    }
+
+    protected handleSelectRow = (row: string) => {
+
+        if (this.currentKey && this.currentKey.shiftKey) {
+            const rows = this.props.grid.getSelectedRows();
+            const lastRowIndex = this.props.grid.getRowIndex(rows[rows.length - 1]);
+            const currentRowIndex = this.props.grid.getRowIndex(row);
+
+            return this.props.grid.selectRows(rows.concat(this.props.grid.getRowsBetween(lastRowIndex, currentRowIndex)));
+        }
+
+        if (this.currentKey && (this.currentKey.ctrlKey || this.currentKey.metaKey)) {
+            return this.props.grid.appendSelectedRows([row]);
+        }
+
+        this.props.grid.selectRows([row]);
     }
 
     protected handleCellMouseMove = (ev: MouseEvent, row: string, column: string) => {
@@ -238,9 +262,42 @@ class Body extends Component<Props, State> {
     }
 
     protected handleBlur = () => {
-        this.props.selectRows([]);
+        this.props.grid.selectRows([]);
         this.selectionStart = this.selectionEnd = null;
         this.handleSelectionChanged();
+    }
+
+    protected handleKeyDown = (ev: KeyboardEvent) => {
+        if (this.props.grid.trigger('beforeKeyDown', ev) === false) {
+            return;
+        }
+
+        this.currentKey = ev;
+
+        if (ev.key === 'c' && (ev.ctrlKey || ev.metaKey)) {
+            this.props.grid.copySelection();
+        } else if (ev.key === 'v' && (ev.ctrlKey || ev.metaKey)) {
+            this.props.grid.pasteFromClipboard();
+        }
+
+        this.props.grid.trigger('afterKeyDown', ev);
+    }
+
+    protected handleKeyPress = (ev: KeyboardEvent) => {
+        if (this.props.grid.trigger('beforeKeyPress', ev) === false) {
+            return;
+        }
+        this.props.grid.trigger('afterKeyPress', ev);
+    }
+
+    protected handleKeyUp = (ev: KeyboardEvent) => {
+        if (this.props.grid.trigger('beforeKeyUp', ev) === false) {
+            return;
+        }
+
+        this.currentKey = ev;
+
+        this.props.grid.trigger('afterKeyUp', ev);
     }
 
     protected hideContextMenu = () => {
@@ -279,6 +336,9 @@ class Body extends Component<Props, State> {
                 onBlur={this.handleBlur}
                 onMouseLeave={() => this.props.hoverRow(undefined)}
                 onContextMenu={handleContextMenu}
+                onKeyDown={this.handleKeyDown}
+                onKeyUp={this.handleKeyUp}
+                onKeyPress={this.handleKeyPress}
             >
                 {this.state.isMenuVisible && <Menu
                     onMenuItemClicked={this.hideContextMenu}
@@ -341,9 +401,6 @@ const mapActionsToProps = (grid: Grid) => {
         },
         hoverRow: (row: string) => {
             return grid.store('row').dispatch('setHoveredRow', row);
-        },
-        selectRows: (rows: string[]) => {
-            return grid.store('row').dispatch('selectRows', rows);
         },
         selectCells: (start: Coordinate, end: Coordinate) => {
             return grid.store('cell').dispatch('selectCells', { start, end });

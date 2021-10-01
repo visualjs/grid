@@ -123,11 +123,13 @@ import { showContainer } from './utils';
 
             const options = params.grid.getColumnOptions(params.column);
 
-            const setRowPinned = (pinned?: 'top' | 'bottom') => {
+            const setRowsPinned = (pinned?: 'top' | 'bottom') => {
                 if (pinned == 'top') {
-                    params.grid.appendPinnedTopRows([params.row]);
+                    params.grid.appendPinnedTopRows(params.grid.getSelectedRows());
+                } else if (pinned == 'bottom') {
+                    params.grid.appendPinnedBottomRows(params.grid.getSelectedRows());
                 } else {
-                    params.grid.appendPinnedBottomRows([params.row]);
+                    params.grid.takePinnedRows(params.grid.getSelectedRows());
                 }
             }
 
@@ -146,9 +148,9 @@ import { showContainer } from './utils';
                 { separator: true },
                 {
                     name: 'Pin Current Row', icon: 'vg-pin', subMenus: [
-                        { name: 'Pin Top', action: () => setRowPinned('top'), icon: pinnedTopRowIcon() },
-                        { name: 'Pin Bottom', action: () => setRowPinned('bottom'), icon: pinnedBottomRowIcon() },
-                        { name: 'No Pin', action: () => setRowPinned(), icon: noPinnedRowIcon() },
+                        { name: 'Pin Top', action: () => setRowsPinned('top'), icon: pinnedTopRowIcon() },
+                        { name: 'Pin Bottom', action: () => setRowsPinned('bottom'), icon: pinnedBottomRowIcon() },
+                        { name: 'No Pin', action: () => setRowsPinned(), icon: noPinnedRowIcon() },
                     ]
                 },
                 { separator: true },

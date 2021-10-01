@@ -19,6 +19,16 @@ export interface EventsDef {
     afterContextMenuShow: (pos: CellPosition, items: MenuItem[]) => boolean | void;
     beforeColumnResizing: (column: string, width: number) => boolean | void;
     afterColumnResizing: (column: string, width: number) => boolean | void;
+    beforeKeyDown: (ev: KeyboardEvent) => boolean | void;
+    afterKeyDown: (ev: KeyboardEvent) => boolean | void;
+    beforeKeyPress: (ev: KeyboardEvent) => boolean | void;
+    afterKeyPress: (ev: KeyboardEvent) => boolean | void;
+    beforeKeyUp: (ev: KeyboardEvent) => boolean | void;
+    afterKeyUp: (ev: KeyboardEvent) => boolean | void;
+    beforeCopy: (text: string) => boolean | void;
+    afterCopy: (text: string) => boolean | void;
+    beforePaste: (text: string) => boolean | void;
+    afterPaste: (text: string) => boolean | void;
 }
 
 export const Events: EventsType<EventsDef> = {
@@ -38,4 +48,14 @@ export const Events: EventsType<EventsDef> = {
     afterContextMenuShow: [],
     beforeColumnResizing: [],
     afterColumnResizing: [],
+    beforeKeyDown: [],
+    afterKeyDown: [],
+    beforeKeyPress: [],
+    afterKeyPress: [],
+    beforeKeyUp: [],
+    afterKeyUp: [],
+    beforeCopy: [],
+    afterCopy: [],
+    beforePaste: [],
+    afterPaste: [],
 }
