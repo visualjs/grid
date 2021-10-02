@@ -79,12 +79,7 @@ import { showContainer } from './utils';
         const name = controls.querySelector<HTMLInputElement>('#field-name');
         const age = controls.querySelector<HTMLInputElement>('#field-age');
 
-        grid.store('row').dispatch('appendRowsBefore', {
-            index: 1,
-            rows: [
-                { id: String(id++), name: name.value, age: age.value },
-            ]
-        });
+        grid.appendRowsBefore(1, [{ id: String(id++), name: name.value, age: age.value }]);
     });
 
     controls.querySelector<HTMLButtonElement>('.small').addEventListener('click', () => {

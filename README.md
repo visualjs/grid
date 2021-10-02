@@ -46,43 +46,11 @@ yarn add @visualjs/grid
 
 Please see
 
-- [example/full-example](./example/full-example.ts)
-- [example/interactive-example](./example/interactive-example.ts)
+https://visualjs.github.io/docs/qucik-start.html
 
-## Available icons
+### Documents
 
-- vg-skin
-- vg-cheveron-down
-- vg-cheveron-left
-- vg-cheveron-right
-- vg-cheveron-up
-- vg-menu
-- vg-grid
-- vg-copy
-- vg-paste
-- vg-pin
-- vg-download
-- vg-upload
-- vg-undo
-- vg-redo
-- vg-spinner
-- vg-enlarge
-- vg-shrink
-- vg-enlarge-simplicit
-- vg-shrink-simplicit
-- vg-trash-bin
-- vg-star-empty
-- vg-star-half
-- vg-star-full
-- vg-checkmark
-- vg-checkbox-checked
-- vg-checkbox-unchecked
-- vg-radio-checked
-- vg-radio-unchecked
-- vg-filter
-- vg-formula
-- vg-paragraph
-- vg-file-excel
+https://visualjs.github.io
 
 ## License
 
