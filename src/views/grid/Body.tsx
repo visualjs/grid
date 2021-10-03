@@ -165,6 +165,10 @@ class Body extends Component<Props, State> {
         // update hovered row
         this.props.hoverRow(row);
 
+        if (this.props.grid.getColumnOptions(column)?.readonly) {
+            return;
+        }
+
         const coord = this.props.getCoordinate(row, column);
 
         // If you are selecting a cell range,
