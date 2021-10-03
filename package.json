@@ -6,7 +6,7 @@
   "module": "./dist/visual-grid.es.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --force",
     "build": "vite build && tsc -p ./tsconfig.dist.json -emitDeclarationOnly && tsc-alias -p ./tsconfig.dist.json && cp -r ./src/themes ./dist",
     "preview": "vite preview",
     "test": "jest"
