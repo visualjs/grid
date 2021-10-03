@@ -19,7 +19,6 @@ export class CheckboxRender extends CellRenderer<{}> {
     public gui(): HTMLElement {
         return this.element;
     }
-
 }
 
 export default CheckboxRender;

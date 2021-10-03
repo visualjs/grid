@@ -7,6 +7,9 @@ export abstract class Component<T> {
     // on the screen.
     public afterAttached?(): void;
 
+    // A hook that performs any necessary operations before this component is destroyed.
+    public beforeDestroy?(): void;
+
     // This method is called on the component once.
     public init?(params: T): Promise<void> | void;
 }

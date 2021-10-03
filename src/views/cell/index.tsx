@@ -5,7 +5,7 @@ import { connect } from "@/views/root";
 import { ColumnOptions, Fillable } from "@/types";
 import { classes, DOM } from "@/utils";
 import { withGrid } from "@/views/root";
-import { CellEditor } from "@/grid/cell";
+import { CellEditor, CellRenderer } from "@/grid/cell";
 
 import styles from './cell.module.css';
 
@@ -43,7 +43,9 @@ class Cell extends Component<Props> {
 
     protected isEditing: boolean = false;
 
-    protected editor: CellEditor<any>;
+    protected cellEditor: CellEditor<any>;
+
+    protected cellRender: CellRenderer<any>;
 
     protected timer: any = null;
 
@@ -86,6 +88,15 @@ class Cell extends Component<Props> {
     componentWillUnmount = () => {
         this.unsubscribeEditing && this.unsubscribeEditing();
         this.props.grid.removeChild(this.popup);
+
+        // clean cell render and cell editor
+        if (this.cellRender && this.cellRender.beforeDestroy) {
+            this.cellRender.beforeDestroy();
+        }
+        if (this.cellEditor && this.cellEditor.beforeDestroy) {
+            this.cellEditor.beforeDestroy();
+        }
+
         this.io.disconnect();
         if (this.timer) {
             clearTimeout(this.timer);
@@ -143,9 +154,9 @@ class Cell extends Component<Props> {
     protected handleCellEditing = () => {
 
         if (!this.isEditing) {
-            if (this.editor) {
+            if (this.cellEditor) {
                 DOM.setClassNames(this.cellContent.current, [styles.cellContent]);
-                this.setValue(this.editor.getValue());
+                this.setValue(this.cellEditor.getValue());
                 this.doRender();
             }
             return;
@@ -156,11 +167,13 @@ class Cell extends Component<Props> {
         DOM.clean(this.cellContent.current);
         DOM.appendClassName(this.cellContent.current, styles.cellEditing);
 
-        if (!this.editor) {
-            this.editor = new this.options.cellEditor();
+        // clean up the cell editor before.
+        if (this.cellEditor && this.cellEditor.beforeDestroy) {
+            this.cellEditor.beforeDestroy();
         }
 
-        this.editor.init && this.editor.init({
+        this.cellEditor = new this.options.cellEditor();
+        this.cellEditor.init && this.cellEditor.init({
             props: this.options.cellParams,
             value: this.getValue(true),
             column: this.options,
@@ -168,16 +181,16 @@ class Cell extends Component<Props> {
             gird: this.props.grid,
         });
 
-        editor.appendChild(this.editor.gui());
+        editor.appendChild(this.cellEditor.gui());
         editor.className = styles.cellEditingWrapper;
 
-        if (this.editor.isPopup()) {
+        if (this.cellEditor.isPopup()) {
             this.createPopup(editor);
         } else {
             this.cellContent.current.appendChild(editor);
         }
 
-        this.editor.afterAttached && this.editor.afterAttached();
+        this.cellEditor.afterAttached && this.cellEditor.afterAttached();
     }
 
     protected createPopup = (editor: HTMLElement) => {
@@ -202,29 +215,35 @@ class Cell extends Component<Props> {
         if (this.isEditing) return;
 
         this.timer = setTimeout(() => {
-            if (this.props.options.cellRender) {
-                const render = new this.props.options.cellRender();
-                render.init && render.init({
-                    props: this.props.options.cellParams,
-                    value: this.getValue(true),
-                    column: this.props.options,
-                    row: this.props.row,
-                    gird: this.props.grid,
-                });
-
-                this.timer = null;
-
-                if (!this.cellContent.current) {
-                    return;
-                }
-
-                this.props.grid.removeChild(this.popup);
-                DOM.clean(this.cellContent.current);
-                this.cellContent.current.appendChild(render.gui());
-                render.afterAttached && render.afterAttached();
-            } else {
+            if (!this.props.options.cellRender) {
                 this.cellContent.current && (this.cellContent.current.textContent = this.getValue());
+                return;
             }
+
+            // clean up the cell render before.
+            if (this.cellRender && this.cellRender.beforeDestroy) {
+                this.cellRender.beforeDestroy();
+            }
+
+            this.cellRender = new this.props.options.cellRender();
+            this.cellRender.init && this.cellRender.init({
+                props: this.props.options.cellParams,
+                value: this.getValue(true),
+                column: this.props.options,
+                row: this.props.row,
+                gird: this.props.grid,
+            });
+
+            this.timer = null;
+
+            if (!this.cellContent.current) {
+                return;
+            }
+
+            this.props.grid.removeChild(this.popup);
+            DOM.clean(this.cellContent.current);
+            this.cellContent.current.appendChild(this.cellRender.gui());
+            this.cellRender.afterAttached && this.cellRender.afterAttached();
         }, 0);
     }
 
