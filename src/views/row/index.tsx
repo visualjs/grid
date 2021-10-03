@@ -62,7 +62,7 @@ class Row extends Component<Props> {
         style.minHeight = this.props.baseHeight;
         // set style for each row individually
         if (this.props.grid.state('row').getRowStyle) {
-            style = Object.assign(style, this.props.grid.state('row').getRowStyle(rowClassParams))
+            style = Object.assign({}, style, this.props.grid.state('row').getRowStyle(rowClassParams))
         }
 
         let classNames = this.props.grid.state('row').rowClass || [];

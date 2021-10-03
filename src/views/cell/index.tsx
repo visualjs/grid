@@ -275,11 +275,11 @@ class Cell extends Component<Props> {
             width: this.options.width
         };
         if (this.options.cellStyle) {
-            cellStyle = Object.assign(cellStyle, this.options.cellStyle);
+            cellStyle = Object.assign({}, cellStyle, this.options.cellStyle);
         }
         // set style for a particular cell.
         if (this.options.getCellStyle) {
-            cellStyle = Object.assign(cellStyle, this.options.getCellStyle(cellClassParam));
+            cellStyle = Object.assign({}, cellStyle, this.options.getCellStyle(cellClassParam));
         }
 
         if (this.options.flex) {
