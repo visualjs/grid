@@ -25,6 +25,8 @@ export class InputEditor extends CellEditor<Props> {
                 if (ev.key === 'Enter') {
                     params.gird.stopEditing();
                 }
+
+                ev.stopPropagation();
             });
         }
 
