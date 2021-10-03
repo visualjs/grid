@@ -48,9 +48,13 @@ Please see
 
 https://visualjs.github.io/docs/qucik-start.html
 
-### Documents
+## Documents
 
-https://visualjs.github.io
+For quick usage, please see [here](https://visualjs.github.io/docs/qucik-start.html), for full documentation, please see [https://visualjs.github.io](https://visualjs.github.io).
+
+## Changelog
+
+[Here](./CHANGELOG.md) is the changelog.
 
 ## License
 

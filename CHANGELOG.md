@@ -1,3 +1,18 @@
+### v1.1.0 / 2021-10-03
+
+- Add collapsible column group
+- Add hidden column api
+- Add column menu
+- Add pinned row
+- Add custom style and class for cell or row
+- Add columnOptionsSelector to override column options
+- Add beforeDestroy hook in cell components
+- Add UI event listener
+- Fix the horizontal scroll bar from flickering when scrolling
+- Fix cannot modify a read-only cell
+- Fix popup is cropped by the grid
+- Refactor grid api
+
 ### v1.0.5 / 2021-09-17
 
 - Add destroy grid interface
