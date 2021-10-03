@@ -95,7 +95,7 @@ class Grid extends Component<Props> {
         document.addEventListener('mouseup', this.handleMouseUp);
         document.addEventListener('mousemove', this.handleMouseMove);
 
-        const offsetX = ev.pageX - this.refs.root.current.offsetLeft;
+        const offsetX = ev.pageX - this.refs.root.current.getBoundingClientRect().left;
         this.refs.columnResizer.current.style.left = offsetX + 'px';
         this.refs.columnResizer.current.style.width = '2px';
         this.resizingColumn = { field, width, pos: ev.clientX };
@@ -121,7 +121,7 @@ class Grid extends Component<Props> {
     }
 
     protected handleMouseMove = (ev: MouseEvent) => {
-        const offsetX = ev.pageX - this.refs.root.current.offsetLeft;
+        const offsetX = ev.pageX - this.refs.root.current.getBoundingClientRect().left;
         this.refs.columnResizer.current.style.left = offsetX + 'px';
     }
 
