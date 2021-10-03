@@ -132,10 +132,16 @@ class Body extends Component<Props, State> {
 
         // select current active row
         this.handleSelectRow(row);
-        // set current active cell as selection star position
-        this.selectionStart = this.selectionEnd = coord;
-        this.isSelecting = true;
-        this.handleSelectionChanged();
+
+        if (!this.props.grid.getColumnOptions(column)?.readonly) {
+            // set current active cell as selection star position
+            this.selectionStart = this.selectionEnd = coord;
+            this.isSelecting = true;
+            this.handleSelectionChanged();
+        } else {
+            this.selectionStart = this.selectionEnd = null;
+            this.handleSelectionChanged();
+        }
 
         this.props.grid.trigger('afterCellMouseDown', { row, column }, ev);
     }
