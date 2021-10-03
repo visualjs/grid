@@ -55,7 +55,13 @@ export class Grid {
                 fillable: props.fillable,
                 getContextMenuItems: props.getContextMenuItems,
             }),
-            row: new RowStore({ height: props.rowHeight }),
+            row: new RowStore({
+                height: props.rowHeight,
+                rowStyle: props.rowStyle,
+                getRowStyle: props.getRowStyle,
+                rowClass: props.rowClass,
+                getRowClass: props.getRowClass,
+            }),
             cell: new CellStore(),
             column: new ColumnStore({
                 height: props.headerHeight,

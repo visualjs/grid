@@ -1,4 +1,5 @@
 import { CellRenderer, CellEditor, CellTransformer } from "@/grid/cell";
+import { JSXInternal } from "preact/src/jsx";
 import Grid from "./grid";
 
 export type Unsubscribe = () => void;
@@ -24,12 +25,23 @@ export interface GetColumnMenuItemsParams {
 }
 
 export interface GetContextMenuItemsParams {
+    // the row that was clicked
+    row: string;
     // the column that was clicked
     column: string;
-    // the row that was clicked
+    grid: Grid;
+}
+
+export interface RowClassParams {
     row: string;
     grid: Grid;
 }
+
+export interface CellClassParams {
+    row: string;
+    column: string;
+    grid: Grid;
+};
 
 export interface Styles {
     [key: string]: string;
@@ -96,6 +108,16 @@ export interface OverridableColumnOptions {
     cellEditor?: ICellEditor;
     // params to be passed to cell renderer and cell editor component
     cellParams?: any;
+    // an object of css values for a particular cell.
+    cellStyle?: JSXInternal.CSSProperties;
+    // callback version of property cellStyle to set style for a particular cell.
+    // function should return an object of CSS values.
+    getCellStyle?: (params: CellClassParams) => JSXInternal.CSSProperties;
+    // class to use for the cell. can be an array of strings.
+    cellClass?: string[];
+    // callback version of property cellClass to set class(es) for a particular cell.
+    // function should return an array of strings (array of class names).
+    getCellClass?: (params: CellClassParams) => string[];
 }
 
 // BaseColumnOptions can be overridden by default column options
@@ -160,6 +182,16 @@ export interface GridOptions {
     headerHeight?: number;
     // default row height, default is 28
     rowHeight?: number;
+    // providing a CSS style for the rows.
+    rowStyle?: JSXInternal.CSSProperties;
+    // callback version of property rowStyle to set style for each row individually.
+    // function should return an object of CSS values.
+    getRowStyle?: (params: RowClassParams) => JSXInternal.CSSProperties;
+    // CSS class(es) for all rows. provide an array of strings (array of class names).
+    rowClass?: string[];
+    // callback version of property rowClass to set class(es) for each row individually.
+    // function should return an array of strings (array of class names).
+    getRowClass?: (params: RowClassParams) => string[];
     // virtual list, default is 20
     preloadRowCount?: number;
     // whether to enable the grid drop-down to fill data, 'x' | 'y' | 'xy' | undefined

@@ -2,6 +2,7 @@ import Component from "@/views/PureComponent";
 import { connect } from "@/views/root";
 import { State as RootState } from "@/grid";
 import { ColumnOptions } from "@/types";
+import { JSXInternal } from "preact/src/jsx";
 
 import styles from './column.module.css';
 
@@ -32,7 +33,7 @@ class Column extends Component<Props> {
 
     render() {
 
-        const cellStyle: { [key: string]: any } = {
+        const cellStyle: JSXInternal.CSSProperties = {
             width: this.options.width
         }
 

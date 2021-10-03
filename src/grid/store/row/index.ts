@@ -1,5 +1,6 @@
 import { Store as BaseStore } from "@/grid/store";
-import { RowData } from "@/types";
+import { RowClassParams, RowData } from "@/types";
+import { JSXInternal } from "preact/src/jsx";
 import { diff } from "@/utils";
 import update from 'immutability-helper';
 
@@ -29,6 +30,10 @@ export interface State {
     hoveredRow?: string;
     selectedRows: string[];
     height: number;
+    rowStyle?: JSXInternal.CSSProperties;
+    getRowStyle?: (params: RowClassParams) => JSXInternal.CSSProperties;
+    rowClass?: string[];
+    getRowClass?: (params: RowClassParams) => string[];
 }
 
 const initialState: State = {

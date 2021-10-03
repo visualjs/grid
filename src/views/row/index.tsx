@@ -6,6 +6,7 @@ import { withGrid } from "@/views/root";
 import { createRef, RefObject } from "preact";
 
 import styles from './row.module.css';
+import { JSXInternal } from "preact/src/jsx";
 
 interface Props {
     value: string;
@@ -53,20 +54,29 @@ class Row extends Component<Props> {
 
     render() {
 
-        const style = {
-            height: this.props.baseHeight,
-            minHeight: this.props.baseHeight,
-        }
-
+        const rowClassParams = {row: this.props.value, grid: this.props.grid};
         const index = this.props.grid.store('row').getRowIndex(this.props.value);
 
-        const className = classes({
-            [styles.rowCells]: true,
-            [styles.rowStripeCells]: index % 2 === 0,
-        })
+        let style: JSXInternal.CSSProperties = this.props.grid.state('row').rowStyle || {};
+        style.height = this.props.baseHeight;
+        style.minHeight = this.props.baseHeight;
+        // set style for each row individually
+        if (this.props.grid.state('row').getRowStyle) {
+            style = Object.assign(style, this.props.grid.state('row').getRowStyle(rowClassParams))
+        }
+
+        let classNames = this.props.grid.state('row').rowClass || [];
+        classNames.push(styles.rowCells);
+        if (index % 2 === 0) {
+            classNames.push(styles.rowStripeCells);
+        }
+        // set class(es) for each row individually.
+        if (this.props.grid.state('row').getRowClass) {
+            classNames = classNames.concat(this.props.grid.state('row').getRowClass(rowClassParams));
+        }
 
         return (
-            <div ref={this.self} className={className} style={style}>
+            <div ref={this.self} className={classes(classNames)} style={style}>
                 {
                     this.props.columns.map((col) => {
                         return (

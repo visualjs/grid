@@ -4,14 +4,14 @@
     white-space: nowrap;
 }
 
-.row-stripe-cells .cell {
+.row-stripe-cells {
     background-color: var(--row-stripe-background, transparent);
 }
 
-.row-cells.row-cells-hover .cell  {
+.row-cells.row-cells-hover  {
     background-color: var(--row-hover-background, transparent);
 }
 
-.row-cells.row-cells-select .cell  {
+.row-cells.row-cells-select  {
     background-color: var(--row-select-background, transparent);
 }

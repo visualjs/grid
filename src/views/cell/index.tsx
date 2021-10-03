@@ -6,6 +6,7 @@ import { ColumnOptions, Fillable } from "@/types";
 import { classes, DOM } from "@/utils";
 import { withGrid } from "@/views/root";
 import { CellEditor, CellRenderer } from "@/grid/cell";
+import { JSXInternal } from "preact/src/jsx";
 
 import styles from './cell.module.css';
 
@@ -248,6 +249,13 @@ class Cell extends Component<Props> {
     }
 
     render() {
+        const cellClassParam = { column: this.props.column, row: this.props.row, grid: this.props.grid };
+
+        let cellClassNames = this.props.options.cellClass || [];
+        // set class(es) for a particular cell.
+        if (this.props.options.getCellClass) {
+            cellClassNames = cellClassNames.concat(this.props.options.getCellClass(cellClassParam));
+        }
 
         const className = classes({
             [styles.cell]: true,
@@ -263,8 +271,15 @@ class Cell extends Component<Props> {
             [styles.cellFillingBottomBoundary]: this.props.isBottomFilling,
         });
 
-        const cellStyle: { [key: string]: any } = {
+        let cellStyle: JSXInternal.CSSProperties = {
             width: this.options.width
+        };
+        if (this.options.cellStyle) {
+            cellStyle = Object.assign(cellStyle, this.options.cellStyle);
+        }
+        // set style for a particular cell.
+        if (this.options.getCellStyle) {
+            cellStyle = Object.assign(cellStyle, this.options.getCellStyle(cellClassParam));
         }
 
         if (this.options.flex) {
@@ -278,7 +293,7 @@ class Cell extends Component<Props> {
         return (
             <div
                 ref={this.cell}
-                className={className}
+                className={className + ' ' + classes(cellClassNames)}
                 style={cellStyle}
                 onMouseDown={this.handleMouseDown}
                 onMouseMove={this.handleMouseMove}
