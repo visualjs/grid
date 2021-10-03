@@ -42,11 +42,17 @@ or using yarn
 yarn add @visualjs/grid
 ```
 
-## Qucik Usage
+If you want to use the latest beta version, please specify the @next tag when installing.
 
-Please see
+```
+npm i @visualjs/grid@next
+```
 
-https://visualjs.github.io/docs/qucik-start.html
+or using yarn
+
+```
+yarn add @visualjs/grid@next
+```
 
 ## Documents
 
