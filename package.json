@@ -1,7 +1,7 @@
 {
-  "name": "@visualjs/grid",
+  "name": "grid-keeping-latest",
   "version": "1.1.0",
-  "description": "JavaScript Data Table",
+  "description": "Fork from https://github.com/visualjs/grid for keeping latest version on npm",
   "main": "./dist/visual-grid.umd.js",
   "module": "./dist/visual-grid.es.js",
   "types": "./dist/index.d.ts",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/visualjs/grid.git"
+    "url": "git+https://github.com/carl-jin/grid-keeping-latest.git"
   },
   "keywords": [
     "visualjs",
@@ -23,9 +23,9 @@
   "author": "visualjs",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/visualjs/grid/issues"
+    "url": "https://github.com/carl-jin/grid-keeping-latest/issues"
   },
-  "homepage": "https://github.com/visualjs/grid#readme",
+  "homepage": "https://github.com/carl-jin/grid-keeping-latest#readme",
   "devDependencies": {
     "@preact/preset-vite": "^2.1.0",
     "@types/jest": "^27.0.1",
@@ -47,3 +47,8 @@
     "dist/**/*.d.ts"
   ]
 }
+
+//  创建新的包
+//  token
+//  package.json
+//  ci 文件
