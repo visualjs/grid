@@ -47,8 +47,3 @@
     "dist/**/*.d.ts"
   ]
 }
-
-//  创建新的包
-//  token
-//  package.json
-//  ci 文件
