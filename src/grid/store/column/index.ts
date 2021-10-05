@@ -46,7 +46,7 @@ const initialState: State = {
 
 export const defaultColumnOptions: BaseColumnOptions = {
     width: 200,
-    minWidth: 50,
+    minWidth: 100,
     visible: true,
 };
 
@@ -132,10 +132,24 @@ export class Store extends BaseStore<State, Actions> {
 
         this.handle('updateGroupCollapsed', (state, { group, collapsed }) => {
 
-            const columns: any = {};
-            state.groupsData[group].columns.slice(1).map(c => {
-                columns[c] = { visible: { $set: !collapsed } };
-            });
+            const getCollapsedColumnsInGroup = (group: GroupData, collapsed: boolean): any => {
+                const columns: any = {};
+                group.columns.forEach((c, i) => {
+                    columns[c] = { visible: { $set: (i === 0) ? true : !collapsed } };
+                });
+                return columns;
+            }
+
+            let columns: any = getCollapsedColumnsInGroup(state.groupsData[group], collapsed);
+            // when openning the group,
+            // the display status of the column needs to be determined according to the sub-group
+            if (collapsed === false) {
+                state.groupsData[group].groups.forEach(g => {
+                    columns = Object.assign({}, columns, getCollapsedColumnsInGroup(
+                        state.groupsData[g], state.groupsData[g].collapsed
+                    ));
+                });
+            }
 
             const newState = update(state, {
                 groupsData: {
@@ -260,7 +274,7 @@ export class Store extends BaseStore<State, Actions> {
             }
 
             const options = this.getColumnOptions(c);
-            width += options?.width || 0;
+            width += Math.max(options?.width || 0, options?.minWidth || 0) || 0;
             if (options?.flex) {
                 flex = options?.flex;
             }

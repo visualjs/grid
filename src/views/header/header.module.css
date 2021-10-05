@@ -10,6 +10,7 @@
     display: flex;
     color: var(--header-foreground-color);
     font-weight: 600;
+    white-space: nowrap;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -26,11 +27,9 @@
 
 .pinned-right-columns {
     z-index: var(--pinned-z-index, 1);
-    box-shadow: rgba(0, 0, 0, 0.05) -4px 0px 4px, rgb(230 230 229) 0px 0px 0px;
     border-left: 1px solid var(--border-color);
 }
 
 .pinned-left-columns {
     z-index: var(--pinned-z-index, 1);
-    box-shadow: rgba(0, 0, 0, 0.05) 4px 0px 4px, rgb(230 230 229) 0px 0px 0px;
 }

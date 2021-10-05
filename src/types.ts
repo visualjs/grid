@@ -86,6 +86,7 @@ export interface GroupData {
     id: string;
     headerName: string;
     columns: string[];
+    groups: string[];
     collapsed?: boolean;
     collapsible?: boolean;
 }
@@ -124,7 +125,7 @@ export interface OverridableColumnOptions {
 export interface BaseColumnOptions extends OverridableColumnOptions {
     // column width, default is 200
     width?: number;
-    // the minimum width supported when adjusting the column width, default is 50
+    // the minimum width supported when adjusting the column width, default is 100
     minWidth?: number;
     // use flex layout, let the column fill the remaining space by default
     flex?: number;
@@ -152,6 +153,8 @@ export interface ColumnGroupOptions {
     id?: string;
     // group name
     headerName?: string;
+    // this is a padding
+    isPadding?: boolean;
     // whether column grouping is collapsed by default, default is false
     collapsed?: boolean;
     // whether the column group can be collapsed, default is false
@@ -175,7 +178,7 @@ export interface GridOptions {
     // a default column definition.
     defaultColumnOption?: BaseColumnOptions;
     // callback called when a column menu icon is clicked.
-    getColumnMenuItems?: (params: GetColumnMenuItemsParams) => MenuItem[];
+    getColumnMenuItems?: (params: GetColumnMenuItemsParams) => MenuItem[] | undefined;
     // default grid data
     rows: RowData[];
     // default column height, default is 30

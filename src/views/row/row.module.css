@@ -2,6 +2,7 @@
     display: flex;
     /* display: inline-block; */
     white-space: nowrap;
+    background-color: var(--row-background, #fff);
 }
 
 .row-stripe-cells {

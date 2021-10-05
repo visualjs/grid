@@ -67,12 +67,12 @@ describe('padingColumn', () => {
         expect(paddingColumn(input, 3)).toStrictEqual({
             id: '0', headerName: 'Group 1', children: [
                 {
-                    id: '1', headerName: '', children: [
+                    id: '1', headerName: '', isPadding: true, children: [
                         { headerName: 'Name', field: 'name' },
                     ]
                 },
                 {
-                    id: '2', headerName: '', children: [
+                    id: '2', headerName: '', isPadding: true, children: [
                         { headerName: 'Age', field: 'age' },
                     ]
                 },
@@ -89,9 +89,9 @@ describe('padingColumn', () => {
         const input: ColumnDef = { headerName: 'Name', field: 'name' };
 
         expect(paddingColumn(input, 3)).toStrictEqual({
-            id: '0', headerName: '', children: [
+            id: '0', headerName: '', isPadding: true, children: [
                 {
-                    id: '1', headerName: '', children: [
+                    id: '1', headerName: '', isPadding: true, children: [
                         { headerName: 'Name', field: 'name' },
                     ]
                 }
@@ -129,7 +129,7 @@ describe('paddingColumns', () => {
                 id: '0', headerName: 'Group 1', children: [
                     {
                         id: '1',
-                        headerName: '',
+                        headerName: '', isPadding: true,
                         children: [
                             { headerName: 'Name', field: 'name' },
                         ]
@@ -140,7 +140,7 @@ describe('paddingColumns', () => {
                 id: '2', headerName: 'Group 2', children: [
                     {
                         id: '3',
-                        headerName: '',
+                        headerName: '', isPadding: true,
                         children: [
                             { headerName: 'Country', field: 'country' },
                         ]
@@ -153,10 +153,10 @@ describe('paddingColumns', () => {
                 ],
             },
             {
-                id: '5', headerName: '',
+                id: '5', headerName: '', isPadding: true,
                 children: [
                     {
-                        id: '6', headerName: '', children: [
+                        id: '6', headerName: '', isPadding: true, children: [
                             { headerName: 'Bought', field: 'bought' },
                         ]
                     }
@@ -207,8 +207,11 @@ describe('normalizedColumns', () => {
 
         expect(Object.keys(result.groupsData).length).toBe(7);
         expect(result.groupsData['0'].columns).toStrictEqual(['name']);
+        expect(result.groupsData['0'].groups).toStrictEqual(['1']);
         expect(result.groupsData['1'].columns).toStrictEqual(['name']);
+        expect(result.groupsData['1'].groups).toStrictEqual([]);
         expect(result.groupsData['2'].columns).toStrictEqual(['country', 'game']);
+        expect(result.groupsData['2'].groups).toStrictEqual(['3', '4']);
         expect(result.groupsData['2'].collapsed).toBeTruthy();
     });
 

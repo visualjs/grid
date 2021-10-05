@@ -66,7 +66,6 @@ class Header extends Component<Props, State> {
 
     protected renderColumns = (columns: string[]) => {
 
-        const hasContextMenu = this.props.grid.state('column').getColumnMenuItems !== undefined;
         const style = {
             height: this.props.height,
             minHeight: this.props.height,
@@ -90,6 +89,7 @@ class Header extends Component<Props, State> {
                 <div className={styles.headerColumns} style={style}>
                     {
                         columns.map(col => {
+                            const hasContextMenu = this.props.grid.getColumnMenuItems(col).length > 0;
                             return (
                                 <Column
                                     key={col}

@@ -272,7 +272,8 @@ class Cell extends Component<Props> {
         });
 
         let cellStyle: JSXInternal.CSSProperties = {
-            width: this.options.width
+            width: this.options.width,
+            minWidth: this.options.minWidth
         };
         if (this.options.cellStyle) {
             cellStyle = Object.assign({}, cellStyle, this.options.cellStyle);

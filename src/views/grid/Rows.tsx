@@ -39,10 +39,10 @@ class Rows extends Component<Props> {
      * Renders
      */
     protected renderRows = (columns: string[]) => {
-        return this.props.items.map(row => {
+        return this.props.items.map((row, i) => {
             return (
                 <Row
-                    key={row}
+                    key={row + "_" + String(i)}
                     value={row}
                     baseHeight={this.props.rowHeight}
                     columns={columns}
