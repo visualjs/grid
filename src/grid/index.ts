@@ -157,7 +157,7 @@ export class Grid {
 
     public getColumnMenuItems(column: string): MenuItem[] {
         if (this.state('column').getColumnMenuItems) {
-            return this.state('column').getColumnMenuItems({ column: column, grid: this });
+            return this.state('column').getColumnMenuItems({ column: column, grid: this }) || [];
         }
 
         return [];

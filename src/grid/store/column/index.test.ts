@@ -155,7 +155,7 @@ describe('dispatchers for column', () => {
         expect(cbs).toBeCalledTimes(1);
     });
 
-    test('updateGroupCollapsed', () => {
+    test('collapse group', () => {
 
         const store = new Store();
 
@@ -180,15 +180,6 @@ describe('dispatchers for column', () => {
             ]
         });
 
-        const cbs = jest.fn();
-
-        useSelector(store, (s) => {
-            return { columns: s.columns }
-        }, cbs)
-
-        const cb = jest.fn();
-        store.subscribe('updateGroupCollapsed', cb);
-
         expect(store.getState().columns['game'].visible).not.toBeFalsy();
         expect(store.getState().groupsData['group-02'].collapsed).not.toBeTruthy();
 
@@ -196,6 +187,40 @@ describe('dispatchers for column', () => {
 
         expect(store.getState().columns['game'].visible).toBeFalsy();
         expect(store.getState().groupsData['group-02'].collapsed).toBeTruthy();
+    });
+
+    test('open group', () => {
+
+        const store = new Store();
+
+        store.dispatch('setColumns', {
+            columns: [
+                {
+                    headerName: 'Group', id: 'group', collapsed: true, children: [
+                        {
+                            headerName: 'Group 01', id: 'group-01', collapsed: true, children: [
+                                { headerName: 'Game', field: 'game' },
+                                { headerName: 'Name', field: 'name' },
+                            ],
+                        },
+                        { headerName: 'Country', field: 'country' },
+                    ],
+                },
+            ]
+        });
+
+        expect(store.getState().columns['game'].visible).toBeTruthy();
+        expect(store.getState().columns['name'].visible).toBeFalsy();
+        expect(store.getState().columns['country'].visible).toBeFalsy();
+
+        expect(store.getState().groupsData['group'].collapsed).toBeTruthy();
+        expect(store.getState().groupsData['group-01'].collapsed).toBeTruthy();
+
+        store.dispatch('updateGroupCollapsed', { group: 'group', collapsed: false });
+
+        expect(store.getState().columns['game'].visible).toBeTruthy();
+        expect(store.getState().columns['name'].visible).toBeFalsy();
+        expect(store.getState().columns['country'].visible).toBeTruthy();
     });
 });
 

@@ -34,7 +34,8 @@ class Column extends Component<Props> {
     render() {
 
         const cellStyle: JSXInternal.CSSProperties = {
-            width: this.options.width
+            width: this.options.width,
+            minWidth: this.options.minWidth
         }
 
         if (this.options.flex) {
@@ -43,15 +44,17 @@ class Column extends Component<Props> {
 
         return (
             <div ref={this.createRef("column")} className={styles.headerColumn} style={cellStyle}>
-                <span>{this.options.headerName}</span>
-                {
-                    this.props.onContextMenu
-                    && <span onClick={this.handleContextMenu} className={`${styles.columnIcon} vg-menu`}></span>
-                }
-                {
-                    !this.options.flex && this.options.resizable
-                    && <div ref={this.createRef("resizer")} onMouseDown={this.handleMouseDown} className={styles.columnResizeHolder}></div>
-                }
+                <div className={styles.headerColumnContent}>
+                    <span>{this.options.headerName}</span>
+                    {
+                        this.props.onContextMenu
+                        && <span onClick={this.handleContextMenu} className={`${styles.columnIcon} vg-menu`}></span>
+                    }
+                    {
+                        !this.options.flex && this.options.resizable
+                        && <div ref={this.createRef("resizer")} onMouseDown={this.handleMouseDown} className={styles.columnResizeHolder}></div>
+                    }
+                </div>
             </div>
         );
     }
