@@ -9,7 +9,7 @@
     top: 0;
     z-index: var(--menu-z-index, 4);
     border-radius: 2px;
-    color: #000;
+    color: var(--foreground-color, #333);
     font-weight: normal;
 }
 

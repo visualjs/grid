@@ -1,0 +1,47 @@
+.v-grid-energetic-dark-theme {
+    /* custom variables */
+
+    /* global */
+    --primary-color: #dc4c3f;
+    --border-color: #5c5c5c;
+    --default-font-size: 12px;
+    --background-color: #181d20;
+    --foreground-color: rgba(245, 245, 245, 0.9);
+    --loading-background: rgba(44, 52, 54, 0.8);
+    /* headers */
+    --header-background-color: #222628;
+    --header-foreground-color: rgba(245, 245, 245, 0.5);
+    --header-resizer-active-color: var(--primary-color);
+    /* columns */
+    --column-pinned-right-shadow: rgba(255, 255, 255, 0.05) -4px 0px 4px;
+    --column-pinned-left-shadow: rgba(255, 255, 255, 0.05) 4px 0px 4px;
+    /* rows */
+    --row-background: var(--background-color);
+    --row-stripe-background: #222628;
+    --row-hover-background: #453636;
+    --row-select-background: #833c35;
+    --rows-pinned-top-shadow: rgba(255, 255, 255, 0.05) 0px 5px 5px;
+    --rows-pinned-bottom-shadow: rgba(255, 255, 255, 0.05) 0px -5px 5px;
+    /* cells */
+    --cell-selected-background: rgba(220, 76, 63, 0.2);
+    --cell-selected-boundary-color: var(--primary-color);
+    --cell-editing-popup-background: #fafafa;
+
+    /* global styles */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
+        sans-serif;
+
+    color-scheme: dark;
+}
+
+.v-grid-energetic-dark-theme [class^="v-grid-"],
+.v-grid-energetic-dark-theme [class^="v-grid-"]:focus,
+.v-grid-energetic-dark-theme [class^="v-grid-"]:after,
+.v-grid-energetic-dark-theme [class^="v-grid-"]:before {
+    box-sizing: border-box;
+    outline: none;
+}
+
+.v-grid-energetic-dark-theme [class^="v-grid-"]::selection {
+    background-color: rgba(220, 76, 63, 0.2);
+}
