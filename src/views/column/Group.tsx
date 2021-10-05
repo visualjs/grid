@@ -22,7 +22,7 @@ class Group extends Component<Props> {
     }
 
     protected toggleCollapsed = () => {
-        this.props.grid.store('column').toggleGroupCollapsed(this.props.value);
+        this.props.grid.toggleGroupCollapsed(this.props.value);
     }
 
     render() {

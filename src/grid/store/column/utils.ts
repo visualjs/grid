@@ -1,5 +1,5 @@
 import { ColumnDef, ColumnGroupOptions, ColumnOptions, ColumnsDef, GroupData } from "@/types";
-import { counter } from "@/utils";
+import { counter, unique } from "@/utils";
 
 // Get the deepest grouping level
 export function columnsDepth(columns: ColumnsDef, currentDepth = 1): number {
@@ -46,6 +46,7 @@ export function paddingColumn(column: ColumnDef, level: number, id?: () => numbe
 
     return {
         id: String(id()),
+        isPadding: true,
         headerName: '',
         children: [
             paddingColumn(column, level - 1, id)
@@ -103,6 +104,7 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
             headerName: group.headerName,
             // The columns under the grouping include all the columns under the grouping subset
             columns: subResult.columns.map(c => c.field),
+            groups: unique(subResult.groups.flat()),
             collapsed: group.collapsed,
             collapsible: group.collapsible,
         }}, subResult.groupsData);
@@ -124,6 +126,7 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
         }
     });
 
+    // all columns
     if (groups.length == 0) {
         return {groups: [], columns, groupsData};
     }

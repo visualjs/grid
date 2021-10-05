@@ -86,6 +86,7 @@ export interface GroupData {
     id: string;
     headerName: string;
     columns: string[];
+    groups: string[];
     collapsed?: boolean;
     collapsible?: boolean;
 }
@@ -152,6 +153,8 @@ export interface ColumnGroupOptions {
     id?: string;
     // group name
     headerName?: string;
+    // this is a padding
+    isPadding?: boolean;
     // whether column grouping is collapsed by default, default is false
     collapsed?: boolean;
     // whether the column group can be collapsed, default is false
