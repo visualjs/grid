@@ -10,6 +10,7 @@
     display: flex;
     color: var(--header-foreground-color);
     font-weight: 600;
+    white-space: nowrap;
     border-bottom: 1px solid var(--border-color);
 }
 

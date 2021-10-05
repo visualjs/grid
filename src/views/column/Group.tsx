@@ -3,6 +3,7 @@ import { connect, withGrid } from "@/views/root";
 import Grid, { State as RootState } from "@/grid";
 import { ColumnOptions, GroupData } from "@/types";
 import { classes } from "@/utils";
+import { JSXInternal } from "preact/src/jsx";
 
 import styles from './column.module.css';
 
@@ -32,7 +33,9 @@ class Group extends Component<Props> {
             return null;
         }
 
-        const cellStyle: { [key: string]: any } = { width: options.width }
+        const cellStyle: JSXInternal.CSSProperties = {
+            width: options.width,
+        }
 
         if (options.flex) {
             cellStyle.flexGrow = options.flex;
@@ -42,12 +45,14 @@ class Group extends Component<Props> {
 
         return (
             <div className={styles.headerColumn} style={cellStyle}>
-                <span>{this.data.headerName}</span>
-                {
-                    this.data.collapsible && (
-                        <span onClick={this.toggleCollapsed} className={className}></span>
-                    )
-                }
+                <div className={styles.headerColumnContent}>
+                    <span>{this.data.headerName}</span>
+                    {
+                        this.data.collapsible && (
+                            <span onClick={this.toggleCollapsed} className={className}></span>
+                        )
+                    }
+                </div>
             </div>
         );
     }

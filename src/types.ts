@@ -124,7 +124,7 @@ export interface OverridableColumnOptions {
 export interface BaseColumnOptions extends OverridableColumnOptions {
     // column width, default is 200
     width?: number;
-    // the minimum width supported when adjusting the column width, default is 50
+    // the minimum width supported when adjusting the column width, default is 100
     minWidth?: number;
     // use flex layout, let the column fill the remaining space by default
     flex?: number;

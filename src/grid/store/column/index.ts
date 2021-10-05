@@ -46,7 +46,7 @@ const initialState: State = {
 
 export const defaultColumnOptions: BaseColumnOptions = {
     width: 200,
-    minWidth: 50,
+    minWidth: 100,
     visible: true,
 };
 
@@ -260,7 +260,7 @@ export class Store extends BaseStore<State, Actions> {
             }
 
             const options = this.getColumnOptions(c);
-            width += options?.width || 0;
+            width += Math.max(options?.width || 0, options?.minWidth || 0) || 0;
             if (options?.flex) {
                 flex = options?.flex;
             }
