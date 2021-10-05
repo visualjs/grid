@@ -175,7 +175,7 @@ export interface GridOptions {
     // a default column definition.
     defaultColumnOption?: BaseColumnOptions;
     // callback called when a column menu icon is clicked.
-    getColumnMenuItems?: (params: GetColumnMenuItemsParams) => MenuItem[];
+    getColumnMenuItems?: (params: GetColumnMenuItemsParams) => MenuItem[] | undefined;
     // default grid data
     rows: RowData[];
     // default column height, default is 30
