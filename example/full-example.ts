@@ -179,4 +179,22 @@ import { showContainer } from './utils';
 
     grid.appendRows(rows);
     grid.setPinnedTopRows(['row_1', 'row_3', 'row_5', 'row_7']);
+
+
+    //  add control
+    const div = document.createElement('div')
+    div.innerHTML = `
+        <button id="ChangeCellValueWithoutEvent">Change cell Value and stop event emit</button>
+    `
+
+    document.getElementById('full-example-container').appendChild(div)
+
+    document.getElementById('ChangeCellValueWithoutEvent').addEventListener('click',()=>{
+        grid.setCellValueByCoord({
+            x:1,
+            y:1
+        },"it's changed" + Math.random(),{
+            stopEventEmit:true
+        })
+    })
 })();

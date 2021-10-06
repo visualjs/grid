@@ -8,7 +8,7 @@ import {
     Unsubscribe
 } from '@/types';
 import defaultRender from '@/views';
-import { Root, RootState } from '@/grid/store';
+import {dispatchArgs, Root, RootState} from '@/grid/store';
 import { Store as GridStore } from '@/grid/store/grid';
 import { Store as RowStore } from '@/grid/store/row';
 import { Store as CellStore } from '@/grid/store/cell';
@@ -304,7 +304,7 @@ export class Grid {
     }
 
     // set cell value according to cell position
-    public setCellValue(row: string, column: string, value: any): void {
+    public setCellValue(row: string, column: string, value: any, args:Partial<dispatchArgs> = {}): void {
         const oldValue = this.getRawCellValue(row, column);
         const columnOptions = this.getColumnOptions(column, row);
 
@@ -314,14 +314,15 @@ export class Grid {
 
         const trans = columnOptions.transformer;
         value = trans ? trans.parse({ value, column: columnOptions, gird: this }) : value;
-        this.store('row').dispatch('setCellValue', { row, column, value });
+        this.store('row').dispatch('setCellValue', { row, column, value }, args);
     }
 
-    public setCellValueByCoord(coord: Coordinate, value: any): void {
+    public setCellValueByCoord(coord: Coordinate, value: any, args:Partial<dispatchArgs> = {}): void {
         return this.setCellValue(
             this.getRowIdByIndex(coord.y),
             this.getColumnByIndex(coord.x),
-            value
+            value,
+            args
         );
     }
 

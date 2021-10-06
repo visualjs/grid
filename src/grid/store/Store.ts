@@ -1,6 +1,10 @@
 
 export type Listener<P, S> = (payload?: P, newState?: S, oldState?: S) => void;
 
+export type dispatchArgs = {
+    stopEventEmit:boolean
+}
+
 export class Store<S, A> {
 
     protected _state: S;
@@ -44,7 +48,7 @@ export class Store<S, A> {
         return this;
     }
 
-    public dispatch<K extends keyof A>(action: K, payload: A[K]) {
+    public dispatch<K extends keyof A>(action: K, payload: A[K], args:Partial<dispatchArgs> = {}) {
         const handler = this._actions[action];
         if (!handler) return;
 
@@ -52,7 +56,7 @@ export class Store<S, A> {
         if (newState !== this._state) {
             const oldState = this._state;
             this._state = newState;
-            this._listeners[action].forEach(listener => listener(payload, newState, oldState));
+            !args.stopEventEmit && this._listeners[action].forEach(listener => listener(payload, newState, oldState));
             this._anyListeners.forEach(listener => listener(payload, newState, oldState));
         }
     }
