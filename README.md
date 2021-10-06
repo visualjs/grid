@@ -62,7 +62,7 @@ yarn add @visualjs/grid@next
 
 ## Documents
 
-For quick usage, please see [here](https://visualjs.github.io/docs/qucik-start.html), for full documentation, please see [https://visualjs.github.io](https://visualjs.github.io).
+For quick usage, please see [here](https://visualjs.github.io/docs/docs/getting-started/qucik-start), for full documentation, please see [https://visualjs.github.io](https://visualjs.github.io).
 
 ## Changelog
 
