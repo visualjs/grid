@@ -1,6 +1,7 @@
 import { Store as BaseStore } from "@/grid/store";
 import { Fillable, GetContextMenuItemsParams, MenuItem } from "@/types";
 import update from 'immutability-helper';
+import {numeric} from "../../../../example/fake";
 
 export interface Actions {
     destroy: undefined;
@@ -23,6 +24,7 @@ const initialState: State = {
     width: '100%',
     height: '100%',
     preloadRowCount: 20,
+    disabledVirtualScrolling: false
 };
 
 export class Store extends BaseStore<State, Actions> {
