@@ -147,7 +147,7 @@ export interface ColumnOptions extends BaseColumnOptions {
     headerName?: string;
 }
 
-// definition of column grouping 
+// definition of column grouping
 export interface ColumnGroupOptions {
     // group id
     id?: string;
@@ -197,6 +197,8 @@ export interface GridOptions {
     getRowClass?: (params: RowClassParams) => string[];
     // virtual list, default is 20
     preloadRowCount?: number;
+    // Conditions when virtual scrolling should be disabled
+    disabledVirtualScrolling?: number | boolean;
     // whether to enable the grid drop-down to fill data, 'x' | 'y' | 'xy' | undefined
     fillable?: Fillable;
     // callback called when a cell is right clicked.

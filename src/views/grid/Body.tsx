@@ -19,6 +19,7 @@ interface Props {
     normalRows: string[];
     rowHeight: number;
     preloadRowCount: number;
+    disabledVirtualScrolling: number | boolean;
     // actions
     getCoordinate: (row: string, column: string) => Coordinate;
     getCoordLocatedRange: (coord: Coordinate) => CellRange | undefined;
@@ -374,6 +375,7 @@ class Body extends Component<Props, State> {
                     items={this.props.normalRows}
                     itemHeight={this.props.rowHeight}
                     preLoadCount={this.props.preloadRowCount}
+                    disabledVirtualScrolling={this.props.disabledVirtualScrolling}
                     render={this.listRender}
                 />
                 <div className={styles.pinnedBottomRows}>
@@ -397,6 +399,7 @@ class Body extends Component<Props, State> {
 const mapStateToProps = (state: RootState) => {
     return {
         preloadRowCount: state.grid.preloadRowCount,
+        disabledVirtualScrolling: state.grid.disabledVirtualScrolling,
         rowHeight: state.row.height,
     };
 };

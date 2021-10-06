@@ -7,6 +7,7 @@ interface Props {
     itemHeight: number;
     items: any[];
     preLoadCount?: number;
+    disabledVirtualScrolling: number | boolean;
     render: (items: any[]) => JSX.Element;
 }
 
@@ -20,7 +21,7 @@ class List extends Component<Props> {
         super(props);
 
         this.io = new IntersectionObserver((entries) => {
-            this.update();
+            !this.isDisabledVirtualScrolling() && this.update();
         })
     }
 
@@ -34,11 +35,24 @@ class List extends Component<Props> {
         this.io.disconnect();
     }
 
+    private isDisabledVirtualScrolling(){
+        if(this.props.disabledVirtualScrolling === true){
+            return true
+        }else{
+            if(typeof this.props.disabledVirtualScrolling === 'number'){
+                return this.props.items.length <= this.props.disabledVirtualScrolling
+            }else{
+                return false
+            }
+        }
+    }
+
     protected update = () => {
         this.setState({});
     }
 
     protected handleScroll = () => {
+        if(this.isDisabledVirtualScrolling()) return
         clearTimeout(this.timer);
         setTimeout(this.update, 100);
     }
@@ -59,13 +73,14 @@ class List extends Component<Props> {
         const startIndex = Math.max(0, clientStartIndex - this.props.preLoadCount);
         const endIndex = Math.min(this.props.items.length, clientEndIndex + this.props.preLoadCount);
         const viewOffset = startIndex * itemSize;
+        const renderItems = this.isDisabledVirtualScrolling() ? this.props.items : this.props.items.slice(startIndex, endIndex)
 
         return (
             <div ref={this.createRef("container")} className={styles.listContainer} onScroll={this.handleScroll}>
                 <div style={{ height: contentHeight }}></div>
                 <div style={{ top: viewOffset }} className={styles.listView}>
                     <div ref={this.createRef("start")}></div>
-                    {this.props.render(this.props.items.slice(startIndex, endIndex))}
+                    {this.props.render(renderItems)}
                     <div ref={this.createRef("end")}></div>
                 </div>
             </div>

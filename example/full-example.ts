@@ -35,6 +35,7 @@ import { showContainer } from './utils';
 
     showContainer('#full-example-container', 'Full Example');
     const grid = new Grid(document.querySelector("#full-example"), {
+        disabledVirtualScrolling:200,
         columns: [
             { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: true, cellRender: IndexRender },
             { headerName: 'ID', field: 'id', pinned: 'left', width: 100, resizable: true },

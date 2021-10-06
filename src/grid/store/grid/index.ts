@@ -11,6 +11,7 @@ export interface State {
     width: string;
     height: string;
     preloadRowCount: number;
+    disabledVirtualScrolling: number | boolean;
     fillable?: Fillable;
     loading?: boolean;
     destroyed?: boolean;

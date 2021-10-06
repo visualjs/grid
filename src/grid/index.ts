@@ -25,6 +25,7 @@ const defaultGridOptions = {
     headerHeight: 30,
     rowHeight: 28,
     preloadRowCount: 20,
+    disabledVirtualScrolling: false
 }
 
 export interface Stores {
@@ -52,6 +53,7 @@ export class Grid {
                 width: props.width,
                 height: props.height,
                 preloadRowCount: props.preloadRowCount,
+                disabledVirtualScrolling: props.disabledVirtualScrolling,
                 fillable: props.fillable,
                 getContextMenuItems: props.getContextMenuItems,
             }),
