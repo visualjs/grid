@@ -161,55 +161,57 @@ class Grid extends Component<Props> {
 
         return (
             <div ref={this.createRef("root")} className={styles.root} style={rootStyle}>
-                <Header
-                    headerRef={this.createRef("header")}
-                    headerContainerRef={this.createRef("headerContainer")}
-                    normalColumnsRef={this.createRef("normalColumns")}
-                    pinnedLeftColumnsRef={this.createRef("pinnedLeftColumns")}
-                    pinnedRightColumnsRef={this.createRef("pinnedRightColumns")}
-                    handleColumnResizeStart={this.handleColumnResizeStart}
-                />
-                <Body
-                    pinnedTopRows={this.props.pinnedTopRows}
-                    pinnedBottomRows={this.props.pinnedBottomRows}
-                    normalRows={this.props.normalRows}
-                    onHorizontalScroll={this.handleHorizontalScroll}
-                    // refs
-                    listRef={this.createRef("list")}
-                    normalCellsContainerRef={this.createRef("normalCellsContainer")}
-                    normalCellsRef={this.createRef("normalCells")}
-                    pinnedTopRowsRef={this.createRef("pinnedTopRows")}
-                    pinnedTopNormalCellsContainerRef={this.createRef("pinnedTopNormalCellsContainer")}
-                    pinnedTopNormalCellsRef={this.createRef("pinnedTopNormalCells")}
-                    pinnedBottomRowsRef={this.createRef("pinnedBottomRows")}
-                    pinnedBottomNormalCellsContainerRef={this.createRef("pinnedBottomNormalCellsContainer")}
-                    pinnedBottomNormalCellsRef={this.createRef("pinnedBottomNormalCells")}
-                />
-                {/* fake horizontal scroll bar */}
-                <div ref={this.createRef("horizontalScrollWrapper")} className={styles.horizontalScroll}>
-                    <div ref={this.createRef("horizontalLeftSpacer")} className={styles.horizontalLeftSpacer}></div>
-                    <div ref={this.createRef("horizontalScroll")} className={styles.horizontalScrollView} onScroll={this.handleHorizontalScroll}>
-                        <div
-                            ref={this.createRef("horizontalScrollContainer")}
-                            className={styles.horizontalScrollContainer}
-                        ></div>
-                    </div>
-                    <div ref={this.createRef("horizontalRightSpacer")} className={styles.horizontalRightSpacer}></div>
-                </div>
-                {/* hidden global elements like column resizer etc. */}
-                <div ref={this.createRef("columnResizer")} className={styles.columnResizer}></div>
-                {/* loading */}
-                {
-                    this.props.loading && <div className={styles.loading}>
-                        <div className={styles.spinner}>
-                            <div className={styles.dot}></div>
-                            <div className={styles.dot}></div>
-                            <div className={styles.dot}></div>
-                            <div className={styles.dot}></div>
-                            <div className={styles.dot}></div>
+                <div className={styles.grid}>
+                    <Header
+                        headerRef={this.createRef("header")}
+                        headerContainerRef={this.createRef("headerContainer")}
+                        normalColumnsRef={this.createRef("normalColumns")}
+                        pinnedLeftColumnsRef={this.createRef("pinnedLeftColumns")}
+                        pinnedRightColumnsRef={this.createRef("pinnedRightColumns")}
+                        handleColumnResizeStart={this.handleColumnResizeStart}
+                    />
+                    <Body
+                        pinnedTopRows={this.props.pinnedTopRows}
+                        pinnedBottomRows={this.props.pinnedBottomRows}
+                        normalRows={this.props.normalRows}
+                        onHorizontalScroll={this.handleHorizontalScroll}
+                        // refs
+                        listRef={this.createRef("list")}
+                        normalCellsContainerRef={this.createRef("normalCellsContainer")}
+                        normalCellsRef={this.createRef("normalCells")}
+                        pinnedTopRowsRef={this.createRef("pinnedTopRows")}
+                        pinnedTopNormalCellsContainerRef={this.createRef("pinnedTopNormalCellsContainer")}
+                        pinnedTopNormalCellsRef={this.createRef("pinnedTopNormalCells")}
+                        pinnedBottomRowsRef={this.createRef("pinnedBottomRows")}
+                        pinnedBottomNormalCellsContainerRef={this.createRef("pinnedBottomNormalCellsContainer")}
+                        pinnedBottomNormalCellsRef={this.createRef("pinnedBottomNormalCells")}
+                    />
+                    {/* fake horizontal scroll bar */}
+                    <div ref={this.createRef("horizontalScrollWrapper")} className={styles.horizontalScroll}>
+                        <div ref={this.createRef("horizontalLeftSpacer")} className={styles.horizontalLeftSpacer}></div>
+                        <div ref={this.createRef("horizontalScroll")} className={styles.horizontalScrollView} onScroll={this.handleHorizontalScroll}>
+                            <div
+                                ref={this.createRef("horizontalScrollContainer")}
+                                className={styles.horizontalScrollContainer}
+                            ></div>
                         </div>
+                        <div ref={this.createRef("horizontalRightSpacer")} className={styles.horizontalRightSpacer}></div>
                     </div>
-                }
+                    {/* hidden global elements like column resizer etc. */}
+                    <div ref={this.createRef("columnResizer")} className={styles.columnResizer}></div>
+                    {/* loading */}
+                    {
+                        this.props.loading && <div className={styles.loading}>
+                            <div className={styles.spinner}>
+                                <div className={styles.dot}></div>
+                                <div className={styles.dot}></div>
+                                <div className={styles.dot}></div>
+                                <div className={styles.dot}></div>
+                                <div className={styles.dot}></div>
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
         );
     }
