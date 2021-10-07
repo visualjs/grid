@@ -95,7 +95,6 @@ export class Store extends BaseStore<State, Actions> {
 
             // Append new rows in the pinned top rows
             if (this.isPinnedTop(row)) {
-                //  这里有问题
                 pinnedTopRows = [
                     ...state.pinnedTopRows.slice(0, index),
                     ...diff(
@@ -144,6 +143,10 @@ export class Store extends BaseStore<State, Actions> {
             ].filter((rowId) => {
                 return !existedRowsId.includes(rowId);
             });
+
+            //  emit pinned events
+            this.setPinnedTopRows(pinnedTopRows.slice());
+            this.setPinnedBottomRows(pinnedBottomRows.slice());
 
             return update(state, {
                 rows: { $set: rows },
