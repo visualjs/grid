@@ -1,21 +1,21 @@
-import { Store as BaseStore } from "@/grid/store";
-import { RowClassParams, RowData } from "@/types";
-import { JSXInternal } from "preact/src/jsx";
-import { diff } from "@/utils";
+import { Store as BaseStore } from '@/grid/store';
+import { RowClassParams, RowData } from '@/types';
+import { JSXInternal } from 'preact/src/jsx';
+import { diff } from '@/utils';
 import update from 'immutability-helper';
 
 export interface Actions {
     setCellValue: {
         row: string;
         column: string;
-        value: any
+        value: any;
     };
     setPinnedTopRows: string[];
     setPinnedBottomRows: string[];
     takePinnedRows: string[];
     setHoveredRow: string | undefined;
     selectRows: string[];
-    appendRowsBefore: { index: number, rows: RowData[] };
+    appendRowsBefore: { index: number; rows: RowData[] };
     takeRows: string[];
     clear: undefined;
     setBaseHeight: number;
@@ -47,20 +47,22 @@ const initialState: State = {
 };
 
 export class Store extends BaseStore<State, Actions> {
-
     constructor(initial?: Partial<State>) {
-        super({
-            setCellValue: [],
-            setPinnedBottomRows: [],
-            setPinnedTopRows: [],
-            takePinnedRows: [],
-            setHoveredRow: [],
-            selectRows: [],
-            appendRowsBefore: [],
-            takeRows: [],
-            clear: [],
-            setBaseHeight: [],
-        }, Object.assign({}, initialState, initial));
+        super(
+            {
+                setCellValue: [],
+                setPinnedBottomRows: [],
+                setPinnedTopRows: [],
+                takePinnedRows: [],
+                setHoveredRow: [],
+                selectRows: [],
+                appendRowsBefore: [],
+                takeRows: [],
+                clear: [],
+                setBaseHeight: [],
+            },
+            Object.assign({}, initialState, initial)
+        );
 
         this.handle('setCellValue', (state, { row, column, value }) => {
             const index = this.getRowInternalIndex(row);
@@ -68,14 +70,15 @@ export class Store extends BaseStore<State, Actions> {
 
             return update(state, {
                 rows: {
-                    [index]: { [column]: { $set: value } }
-                }
+                    [index]: { [column]: { $set: value } },
+                },
             });
         });
 
         this.handle('appendRowsBefore', (state, { index, rows }) => {
-
             const row = this.getRowIdByIndex(index);
+            let pinnedTopRows = state.pinnedTopRows.slice();
+            let pinnedBottomRows = state.pinnedBottomRows.slice();
             let internalIndex = this.getRowInternalIndex(row) || 0;
 
             // If the newly added row already exists,
@@ -90,32 +93,17 @@ export class Store extends BaseStore<State, Actions> {
                 return true;
             });
 
-            internalIndex = Math.max(internalIndex, 0);
-            rows = [
-                ...state.rows.slice(0, internalIndex),
-                ...rows,
-                ...state.rows.slice(internalIndex, state.rows.length)
-            ];
-
-            // Reset row indexes
-            const rowIndexes: Record<string, number> = {};
-            rows.forEach((r, i) => {
-                rowIndexes[r.id] = i;
-            });
-
             // Append new rows in the pinned top rows
             if (this.isPinnedTop(row)) {
-                return update(state, {
-                    rows: { $set: rows },
-                    rowIndexes: { $set: rowIndexes },
-                    pinnedTopRows: {
-                        $set: [
-                            ...state.pinnedTopRows.slice(0, index),
-                            ...diff(rows.map(r => r.id), state.pinnedTopRows),
-                            ...state.pinnedTopRows.slice(index, state.pinnedTopRows.length)
-                        ]
-                    },
-                });
+                //  这里有问题
+                pinnedTopRows = [
+                    ...state.pinnedTopRows.slice(0, index),
+                    ...diff(
+                        rows.map((r) => r.id),
+                        state.pinnedTopRows
+                    ),
+                    ...state.pinnedTopRows.slice(index, state.pinnedTopRows.length),
+                ];
             }
 
             // Global index to local index
@@ -123,29 +111,51 @@ export class Store extends BaseStore<State, Actions> {
             // Append new rows in the pinned bottom rows
             if (this.isPinnedBottom(row)) {
                 index -= this._state.normalRows.length;
-                return update(state, {
-                    rows: { $set: rows },
-                    rowIndexes: { $set: rowIndexes },
-                    pinnedBottomRows: {
-                        $set: [
-                            ...state.pinnedBottomRows.slice(0, index),
-                            ...diff(rows.map(r => r.id), state.pinnedBottomRows),
-                            ...state.pinnedBottomRows.slice(index, state.pinnedBottomRows.length)
-                        ]
-                    },
-                });
+                pinnedBottomRows = [
+                    ...state.pinnedBottomRows.slice(0, index),
+                    ...diff(
+                        rows.map((r) => r.id),
+                        state.pinnedBottomRows
+                    ),
+                    ...state.pinnedBottomRows.slice(index, state.pinnedBottomRows.length),
+                ];
             }
 
+            internalIndex = Math.max(internalIndex, 0);
+            rows = [...state.rows.slice(0, internalIndex), ...rows, ...state.rows.slice(internalIndex, state.rows.length)];
+
+            // Reset row indexes
+            const rowIndexes: Record<string, number> = {};
+            rows.forEach((r, i) => {
+                rowIndexes[r.id] = i;
+            });
+
             index = Math.max(index, 0);
+
+            //  Remove row ids from these who already in pinned Top/Bottom Arr
+            const existedRowsId = [].concat(pinnedTopRows).concat(pinnedBottomRows);
+            const newNormalRows = [
+                ...state.normalRows.slice(0, index),
+                ...diff(
+                    rows.map((r) => r.id),
+                    state.normalRows
+                ),
+                ...state.normalRows.slice(index, state.normalRows.length),
+            ].filter((rowId) => {
+                return !existedRowsId.includes(rowId);
+            });
+
             return update(state, {
                 rows: { $set: rows },
                 rowIndexes: { $set: rowIndexes },
                 normalRows: {
-                    $set: [
-                        ...state.normalRows.slice(0, index),
-                        ...diff(rows.map(r => r.id), state.normalRows),
-                        ...state.normalRows.slice(index, state.normalRows.length)
-                    ]
+                    $set: newNormalRows,
+                },
+                pinnedTopRows: {
+                    $set: pinnedTopRows,
+                },
+                pinnedBottomRows: {
+                    $set: pinnedBottomRows,
                 },
             });
         });
@@ -155,7 +165,7 @@ export class Store extends BaseStore<State, Actions> {
                 return state.rowIndexes[row] !== undefined;
             });
 
-            const rows = state.rows.filter(r => {
+            const rows = state.rows.filter((r) => {
                 return takeRows.indexOf(r.id) === -1;
             });
 
@@ -170,14 +180,14 @@ export class Store extends BaseStore<State, Actions> {
                 pinnedBottomRows: { $set: diff(state.pinnedBottomRows, takeRows) },
                 normalRows: { $set: diff(state.normalRows, takeRows) },
                 rows: { $set: rows },
-                rowIndexes: { $set: rowIndexes }
+                rowIndexes: { $set: rowIndexes },
             });
         });
 
         this.handle('setHoveredRow', (state, row) => {
             if (row === undefined || this.getRowIndex(row) !== -1) {
                 return update(state, {
-                    hoveredRow: { $set: row }
+                    hoveredRow: { $set: row },
                 });
             }
 
@@ -188,7 +198,7 @@ export class Store extends BaseStore<State, Actions> {
             rows = this.getValidRows(rows);
 
             return update(state, {
-                selectedRows: { $set: rows }
+                selectedRows: { $set: rows },
             });
         });
 
@@ -216,7 +226,11 @@ export class Store extends BaseStore<State, Actions> {
             rows = this.getValidRows(rows);
             const pinnedTopRows = diff(state.pinnedTopRows, rows);
             const pinnedBottomRows = diff(state.pinnedBottomRows, rows);
-            const normalsRows = diff(state.rows.map(r => r.id), pinnedTopRows, pinnedBottomRows);
+            const normalsRows = diff(
+                state.rows.map((r) => r.id),
+                pinnedTopRows,
+                pinnedBottomRows
+            );
 
             return update(state, {
                 pinnedTopRows: { $set: pinnedTopRows },
@@ -232,13 +246,13 @@ export class Store extends BaseStore<State, Actions> {
                 pinnedBottomRows: { $set: [] },
                 normalRows: { $set: [] },
                 hoveredRow: { $set: undefined },
-                selectedRows: { $set: [] }
+                selectedRows: { $set: [] },
             });
         });
 
         this.handle('setBaseHeight', (state, height) => {
             return update(state, {
-                height: { $set: height }
+                height: { $set: height },
             });
         });
     }
@@ -280,9 +294,12 @@ export class Store extends BaseStore<State, Actions> {
             return;
         }
 
-        return this.dispatch('selectRows', update(this._state.selectedRows, {
-            $splice: [[i, 1]]
-        }));
+        return this.dispatch(
+            'selectRows',
+            update(this._state.selectedRows, {
+                $splice: [[i, 1]],
+            })
+        );
     }
 
     public setPinnedTopRows(rows: string[]) {
@@ -394,7 +411,7 @@ export class Store extends BaseStore<State, Actions> {
 
         for (let i = s; i <= e; i++) {
             const row = this.getRowIdByIndex(i);
-            (row !== undefined) && rows.push(row);
+            row !== undefined && rows.push(row);
         }
 
         return rows;

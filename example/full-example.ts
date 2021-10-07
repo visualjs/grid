@@ -163,6 +163,18 @@ import { showContainer } from './utils';
                         params.grid.removeRows([params.row]);
                     }
                 },
+                {
+                    name:"Insert One Row below",
+                    action:()=>{
+                        const newRow = JSON.parse(JSON.stringify(rows[0]))
+                        newRow.id = `row_${Math.ceil(Math.random() * 99999)}`
+                        console.log(newRow)
+                        params.grid.appendRowsBefore(
+                          params.grid.getRowIndex(params.row),
+                          [newRow]
+                        );
+                    }
+                },
                 { separator: true },
                 { name: 'Download', icon: 'vg-download', disabled: true },
             ];
