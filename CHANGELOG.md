@@ -1,3 +1,10 @@
+### v1.1.1 / 2021-10-06
+
+- Add dark theme
+- Fix group collapsed error
+- Fix column flex layout error
+- Fix hide column menu icon when no menu items
+
 ### v1.1.0 / 2021-10-03
 
 - Add collapsible column group

@@ -63,6 +63,7 @@ class Grid extends Component<Props> {
 
         this.refs.header.current.style.paddingRight = spacerX + 'px';
         this.refs.horizontalScrollWrapper.current.style.height = horizontalScrollHeight + 'px';
+        this.refs.horizontalScrollWrapper.current.style.display = horizontalScrollHeight > 0 ? '' : 'none';
         // rows and pinned rows
         this.refs.normalCellsContainer.current.style.width = contentWidth + 'px';
         this.refs.pinnedTopNormalCellsContainer.current.style.width = contentWidth + 'px';

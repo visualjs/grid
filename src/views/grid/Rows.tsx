@@ -42,7 +42,7 @@ class Rows extends Component<Props> {
         return this.props.items.map((row, i) => {
             return (
                 <Row
-                    key={row + "_" + String(i)}
+                    key={row}
                     value={row}
                     baseHeight={this.props.rowHeight}
                     columns={columns}

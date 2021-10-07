@@ -1,12 +1,12 @@
 import Component from "@/views/PureComponent";
 import Cell from '@/views/cell';
 import { Grid } from "@/grid";
-import { classes, DOM } from '@/utils';
+import { classes, DOM, unique } from '@/utils';
 import { withGrid } from "@/views/root";
 import { createRef, RefObject } from "preact";
+import { JSXInternal } from "preact/src/jsx";
 
 import styles from './row.module.css';
-import { JSXInternal } from "preact/src/jsx";
 
 interface Props {
     value: string;
@@ -31,8 +31,15 @@ class Row extends Component<Props> {
 
             if (!this.self.current) return;
 
+            const index = this.props.grid.store('row').getRowIndex(this.props.value);
             const hovered = this.props.grid.state('row').hoveredRow === this.props.value;
             const selected = this.props.grid.state('row').selectedRows.indexOf(this.props.value) !== -1;
+            
+            if (index % 2 === 0) {
+                DOM.appendClassName(this.self.current, styles.rowStripeCells);
+            } else {
+                DOM.removeClassName(this.self.current, styles.rowStripeCells);
+            }
 
             if (hovered) {
                 DOM.appendClassName(this.self.current, styles.rowCellsHover);
@@ -74,6 +81,8 @@ class Row extends Component<Props> {
         if (this.props.grid.state('row').getRowClass) {
             classNames = classNames.concat(this.props.grid.state('row').getRowClass(rowClassParams));
         }
+
+        classNames = unique(classNames);
 
         return (
             <div ref={this.self} className={classes(classNames)} style={style}>
