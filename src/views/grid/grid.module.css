@@ -63,6 +63,7 @@
 
 .pinned-top-rows {
     z-index: var(--pinned-body-z-index, 2);
+    border-bottom: 1px solid var(--border-color);
     box-shadow: var(--rows-pinned-top-shadow, rgba(0, 0, 0, 0.05) 0px 5px 5px, rgb(230 230 229) 0px 0px 0px);
 }
 
@@ -70,6 +71,11 @@
     z-index: var(--pinned-body-z-index, 2);
     border-top: 1px solid var(--border-color);
     box-shadow: var(--rows-pinned-bottom-shadow, rgba(0, 0, 0, 0.05) 0px -5px 5px, rgb(230 230 229) 0px 0px 0px);
+}
+
+.pinned-bottom-rows .row-cells:last-of-type .cell,
+.pinned-top-rows .row-cells:last-of-type .cell {
+    border-bottom: none;
 }
 
 /* scroll */

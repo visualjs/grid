@@ -1,7 +1,7 @@
 import Component from "@/views/PureComponent";
 import Cell from '@/views/cell';
 import { Grid } from "@/grid";
-import { classes, DOM } from '@/utils';
+import { classes, DOM, unique } from '@/utils';
 import { withGrid } from "@/views/root";
 import { createRef, RefObject } from "preact";
 import { JSXInternal } from "preact/src/jsx";
@@ -81,6 +81,8 @@ class Row extends Component<Props> {
         if (this.props.grid.state('row').getRowClass) {
             classNames = classNames.concat(this.props.grid.state('row').getRowClass(rowClassParams));
         }
+
+        classNames = unique(classNames);
 
         return (
             <div ref={this.self} className={classes(classNames)} style={style}>
