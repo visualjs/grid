@@ -5,7 +5,7 @@ export interface CellTransformerParams {
     value: any;
     column: ColumnOptions;
     gird: Grid;
-    oldValue: any;
+    oldValue?: any;
 }
 
 export abstract class CellTransformer {
