@@ -1,14 +1,19 @@
 import {
-    BaseColumnOptions, Boundary,
-    CellPosition, ColumnOptions,
-    ColumnsDef, Coordinate,
-    GridOptions, GroupData,
-    MenuItem, Pinned,
+    BaseColumnOptions,
+    Boundary,
+    CellPosition,
+    ColumnOptions,
+    ColumnsDef,
+    Coordinate,
+    GridOptions,
+    GroupData,
+    MenuItem,
+    Pinned,
     RowData,
-    Unsubscribe
+    Unsubscribe,
 } from '@/types';
 import defaultRender from '@/views';
-import {dispatchArgs, Root, RootState} from '@/grid/store';
+import { dispatchArgs, Root, RootState } from '@/grid/store';
 import { Store as GridStore } from '@/grid/store/grid';
 import { Store as RowStore } from '@/grid/store/row';
 import { Store as CellStore } from '@/grid/store/cell';
@@ -25,8 +30,8 @@ const defaultGridOptions = {
     headerHeight: 30,
     rowHeight: 28,
     preloadRowCount: 20,
-    disabledVirtualScrolling: false
-}
+    disabledVirtualScrolling: false,
+};
 
 export interface Stores {
     grid: GridStore;
@@ -39,13 +44,11 @@ export type Store = Root<Stores>;
 export type State = RootState<Stores>;
 
 export class Grid {
-
     protected root: Store;
 
     protected observer: Observer<EventsDef, typeof Actions>;
 
     constructor(protected container: HTMLElement, props: GridOptions, render = defaultRender) {
-
         props = Object.assign({ grid: this }, defaultGridOptions, props);
 
         this.root = new Root({
@@ -68,7 +71,7 @@ export class Grid {
             column: new ColumnStore({
                 height: props.headerHeight,
                 getColumnMenuItems: props.getColumnMenuItems,
-            })
+            }),
         });
 
         this.setColumns(props.columns, props.defaultColumnOption);
@@ -98,10 +101,10 @@ export class Grid {
     }
 
     // event binding.
-    public on<
-        K extends keyof typeof Actions | keyof EventsDef,
-        H extends Handlers<typeof Actions, EventsDef>,
-    >(event: K, handler: H[K]): Unsubscribe {
+    public on<K extends keyof typeof Actions | keyof EventsDef, H extends Handlers<typeof Actions, EventsDef>>(
+        event: K,
+        handler: H[K]
+    ): Unsubscribe {
         return this.observer.on(event, handler);
     }
 
@@ -115,7 +118,6 @@ export class Grid {
      */
 
     public getSelectBoundary(row: string, column: string): Boundary | undefined {
-
         const coord = this.getCoordinate(row, column);
 
         const range = this.getCoordLocatedRange(coord);
@@ -185,7 +187,7 @@ export class Grid {
     // the destruction of the grid is asynchronous
     public destroy(): Promise<void> {
         this.store('grid').destroy();
-        return new Promise<void>(resolve => {
+        return new Promise<void>((resolve) => {
             setTimeout(resolve, 0);
         });
     }
@@ -205,7 +207,7 @@ export class Grid {
         let text = '';
         this.state('cell').selections.forEach((range) => {
             let lastRow = -1;
-            range.each(coord => {
+            range.each((coord) => {
                 if (lastRow !== -1) {
                     text += coord.y !== lastRow ? '\n' : '\t';
                 }
@@ -213,7 +215,7 @@ export class Grid {
                 text += this.getCellValueByCoord(coord);
                 lastRow = coord.y;
             });
-        })
+        });
 
         if (this.trigger('beforeCopy', text) === false) {
             return;
@@ -230,7 +232,7 @@ export class Grid {
         const start = this.state('cell').selections[0]?.start;
         if (!start) return;
 
-        readTextFromClipboard().then(str => {
+        readTextFromClipboard().then((str) => {
             str = str.replace(/(\r\n|\r|\n)/g, '\n');
 
             if (this.trigger('beforePaste', str) === false) {
@@ -256,7 +258,7 @@ export class Grid {
     public getCoordinate(row: string, col: string): Coordinate {
         const pos = {
             x: this.store('column').getColumnIndex(col),
-            y: this.store('row').getRowIndex(row)
+            y: this.store('row').getRowIndex(row),
         };
 
         if (pos.x == -1 || pos.y == -1) {
@@ -270,7 +272,7 @@ export class Grid {
     public getCellPosition(coord: Coordinate): CellPosition {
         return {
             row: this.getRowIdByIndex(coord.y),
-            column: this.getColumnByIndex(coord.x)
+            column: this.getColumnByIndex(coord.x),
         };
     }
 
@@ -281,10 +283,7 @@ export class Grid {
 
     // get the row data of the cell according to the cell coordinates.
     public getRawCellValueByCoord(coord: Coordinate): any {
-        return this.getRawCellValue(
-            this.getRowIdByIndex(coord.y),
-            this.getColumnByIndex(coord.x)
-        );
+        return this.getRawCellValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x));
     }
 
     // Get cell data with transformer applied
@@ -297,14 +296,11 @@ export class Grid {
     }
 
     public getCellValueByCoord(coord: Coordinate): any {
-        return this.getCellValue(
-            this.getRowIdByIndex(coord.y),
-            this.getColumnByIndex(coord.x)
-        );
+        return this.getCellValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x));
     }
 
     // set cell value according to cell position
-    public setCellValue(row: string, column: string, value: any, args:Partial<dispatchArgs> = {}): void {
+    public setCellValue(row: string, column: string, value: any, args: Partial<dispatchArgs> = {}): void {
         const oldValue = this.getRawCellValue(row, column);
         const columnOptions = this.getColumnOptions(column, row);
 
@@ -313,17 +309,17 @@ export class Grid {
         }
 
         const trans = columnOptions.transformer;
-        value = trans ? trans.parse({ value, column: columnOptions, gird: this }) : value;
+        value = trans ? trans.parse({ value, column: columnOptions, gird: this, oldValue }) : value;
+
+        if (oldValue === value) {
+            return;
+        }
+
         this.store('row').dispatch('setCellValue', { row, column, value }, args);
     }
 
-    public setCellValueByCoord(coord: Coordinate, value: any, args:Partial<dispatchArgs> = {}): void {
-        return this.setCellValue(
-            this.getRowIdByIndex(coord.y),
-            this.getColumnByIndex(coord.x),
-            value,
-            args
-        );
+    public setCellValueByCoord(coord: Coordinate, value: any, args: Partial<dispatchArgs> = {}): void {
+        return this.setCellValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x), value, args);
     }
 
     // stop the cell being edited
@@ -368,10 +364,7 @@ export class Grid {
 
     public getColumnOptionsByIndex(x: number, y: number = undefined): ColumnOptions {
         if (y !== undefined) {
-            return this.getColumnOptions(
-                this.getColumnByIndex(x),
-                this.store('row').getRowIdByIndex(y)
-            );
+            return this.getColumnOptions(this.getColumnByIndex(x), this.store('row').getRowIdByIndex(y));
         }
         return this.store('column').getColumnOptionsByIndex(x);
     }
@@ -409,9 +402,11 @@ export class Grid {
         return this.store('column').dispatch('updateColumnVisible', { field, visible });
     }
 
-    public setColumnWidth(field: string, params: { width?: number, flex?: number }): void {
+    public setColumnWidth(field: string, params: { width?: number; flex?: number }): void {
         return this.store('column').dispatch('updateColumnWidth', {
-            field, width: params.width, flex: params.flex
+            field,
+            width: params.width,
+            flex: params.flex,
         });
     }
 
