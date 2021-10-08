@@ -1,5 +1,6 @@
 .inline-selections {
     display: inline-block;
+    vertical-align: bottom;
     width: 100%;
     overflow: hidden;
 }
