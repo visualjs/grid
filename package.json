@@ -1,6 +1,6 @@
 {
   "name": "@visualjs/grid",
-  "version": "1.1.2-0",
+  "version": "1.1.2-1",
   "description": "JavaScript Data Table",
   "main": "./dist/visual-grid.umd.js",
   "module": "./dist/visual-grid.es.js",
