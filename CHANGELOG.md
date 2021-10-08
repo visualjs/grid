@@ -1,3 +1,10 @@
+### v1.1.2 / 2021-10-08
+
+- Fix in some cases, horizontal scrolling cannot be rolled to the end
+- Fix cell editing popup is cropped
+- Fix row re-rendering when scrolling
+- Fix layout and style
+
 ### v1.1.1 / 2021-10-06
 
 - Add dark theme

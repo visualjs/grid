@@ -1,50 +1,51 @@
 {
-  "name": "grid-keeping-latest",
-  "version": "1.1.7",
-  "description": "Fork from https://github.com/visualjs/grid for keeping latest version on npm",
-  "main": "./dist/visual-grid.umd.js",
-  "module": "./dist/visual-grid.es.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "dev": "vite --force",
-    "build": "vite build && tsc -p ./tsconfig.dist.json -emitDeclarationOnly && tsc-alias -p ./tsconfig.dist.json && cp -r ./src/themes ./dist",
-    "preview": "vite preview",
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/carl-jin/grid-keeping-latest.git"
-  },
-  "keywords": [
-    "visualjs",
-    "grid",
-    "table"
-  ],
-  "author": "visualjs",
-  "license": "BSD-2-Clause",
-  "bugs": {
-    "url": "https://github.com/carl-jin/grid-keeping-latest/issues"
-  },
-  "homepage": "https://github.com/carl-jin/grid-keeping-latest#readme",
-  "devDependencies": {
-    "@preact/preset-vite": "^2.1.0",
-    "@types/jest": "^27.0.1",
-    "autoprefixer": "^10.3.4",
-    "esbuild-jest": "^0.5.0",
-    "identity-obj-proxy": "^3.0.0",
-    "immutability-helper": "^3.1.1",
-    "jest": "^27.1.0",
-    "postcss-flexbugs-fixes": "^5.0.2",
-    "preact": "^10.5.14",
-    "prettier": "^2.4.1",
-    "ts-jest": "^27.0.5",
-    "tsc-alias": "^1.3.9",
-    "typescript": "^4.3.5",
-    "vite": "^2.5.0"
-  },
-  "files": [
-    "dist/**/*.css",
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
-  ]
+    "name": "grid-keeping-latest",
+    "version": "1.1.8",
+    "description": "Fork from https://github.com/visualjs/grid for keeping latest version on npm",
+    "main": "./dist/visual-grid.umd.js",
+    "module": "./dist/visual-grid.es.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "dev": "vite --force",
+        "build": "vite build && tsc -p ./tsconfig.dist.json -emitDeclarationOnly && tsc-alias -p ./tsconfig.dist.json && cp -r ./src/themes ./dist",
+        "preview": "vite preview",
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/carl-jin/grid-keeping-latest.git"
+    },
+    "keywords": [
+        "visualjs",
+        "grid",
+        "table"
+    ],
+    "author": "visualjs",
+    "license": "BSD-2-Clause",
+    "bugs": {
+        "url": "https://github.com/carl-jin/grid-keeping-latest/issues"
+    },
+    "homepage": "https://github.com/carl-jin/grid-keeping-latest#readme",
+    "devDependencies": {
+        "@preact/preset-vite": "^2.1.0",
+        "@types/jest": "^27.0.1",
+        "autoprefixer": "^10.3.4",
+        "clsx": "^1.1.1",
+        "esbuild-jest": "^0.5.0",
+        "identity-obj-proxy": "^3.0.0",
+        "immutability-helper": "^3.1.1",
+        "jest": "^27.1.0",
+        "postcss-flexbugs-fixes": "^5.0.2",
+        "preact": "^10.5.14",
+        "prettier": "^2.4.1",
+        "ts-jest": "^27.0.5",
+        "tsc-alias": "^1.3.9",
+        "typescript": "^4.3.5",
+        "vite": "^2.5.0"
+    },
+    "files": [
+        "dist/**/*.css",
+        "dist/**/*.js",
+        "dist/**/*.d.ts"
+    ]
 }

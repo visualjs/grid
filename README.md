@@ -48,7 +48,7 @@ or using yarn
 yarn add @visualjs/grid
 ```
 
-If you want to use the latest beta version, please specify the @next tag when installing.
+If you want to use the latest beta version, please specify the `next` tag when installing.
 
 ```
 npm i @visualjs/grid@next

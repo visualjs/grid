@@ -84,6 +84,10 @@
     border-bottom: none;
 }
 
+.no-border {
+    border: none;
+}
+
 /* scroll */
 .horizontal-scroll {
     width: 100%;

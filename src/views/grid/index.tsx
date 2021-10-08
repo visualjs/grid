@@ -133,14 +133,13 @@ class Grid extends Component<Props> {
         this.ignoreScrollEvents = true;
 
         const update = () => {
-            const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
-            this.refs.normalCells.current.scrollLeft = scrollLeft;
-            this.refs.pinnedTopNormalCells.current.scrollLeft = scrollLeft;
-            this.refs.pinnedBottomNormalCells.current.scrollLeft = scrollLeft;
-            this.refs.horizontalScroll.current.scrollLeft = scrollLeft;
-            this.refs.headerContainer.current.style.transform = `translateX(-${scrollLeft}px)`;
-
             requestAnimationFrame(() => {
+                const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
+                this.refs.normalCells.current.scrollLeft = scrollLeft;
+                this.refs.pinnedTopNormalCells.current.scrollLeft = scrollLeft;
+                this.refs.pinnedBottomNormalCells.current.scrollLeft = scrollLeft;
+                this.refs.horizontalScroll.current.scrollLeft = scrollLeft;
+                this.refs.headerContainer.current.style.transform = `translateX(-${scrollLeft}px)`;
                 this.ignoreScrollEvents = false;
             });
         };

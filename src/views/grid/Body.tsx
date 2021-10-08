@@ -9,6 +9,7 @@ import CellRange from "@/selection/CellRange";
 import { Button } from "@/utils";
 import { FillRange } from "@/selection/FillRange";
 import Rows from "./Rows";
+import clsx from "clsx";
 
 import styles from './grid.module.css';
 
@@ -357,19 +358,23 @@ class Body extends Component<Props, State> {
                     coord={this.state.contextMenuCoord}
                     items={this.state.contextMenuItems}
                 />}
-                <div className={styles.pinnedTopRows}>
-                    <Rows
-                        selfRef={this.props.pinnedTopRowsRef}
-                        items={this.props.pinnedTopRows}
-                        onCellDbClick={this.handleCellDbClick}
-                        onCellMouseDown={this.handleCellMouseDown}
-                        onCellMouseMove={this.handleCellMouseMove}
-                        onCellFillerMouseDown={this.handleCellFillerMouseDown}
-                        handleHorizontalScroll={this.props.onHorizontalScroll}
-                        normalCellsRef={this.props.pinnedTopNormalCellsRef}
-                        normalCellsContainerRef={this.props.pinnedTopNormalCellsContainerRef}
-                    />
-                </div>
+                {
+                    <div className={clsx(styles.pinnedTopRows, {
+                        [styles.noBorder]: this.props.pinnedTopRows.length === 0
+                    })}>
+                        <Rows
+                            selfRef={this.props.pinnedTopRowsRef}
+                            items={this.props.pinnedTopRows}
+                            onCellDbClick={this.handleCellDbClick}
+                            onCellMouseDown={this.handleCellMouseDown}
+                            onCellMouseMove={this.handleCellMouseMove}
+                            onCellFillerMouseDown={this.handleCellFillerMouseDown}
+                            handleHorizontalScroll={this.props.onHorizontalScroll}
+                            normalCellsRef={this.props.pinnedTopNormalCellsRef}
+                            normalCellsContainerRef={this.props.pinnedTopNormalCellsContainerRef}
+                        />
+                    </div>
+                }
                 <List
                     ref={this.props.listRef}
                     items={this.props.normalRows}
@@ -378,7 +383,9 @@ class Body extends Component<Props, State> {
                     disabledVirtualScrolling={this.props.disabledVirtualScrolling}
                     render={this.listRender}
                 />
-                <div className={styles.pinnedBottomRows}>
+                <div className={clsx(styles.pinnedBottomRows, {
+                    [styles.noBorder]: this.props.pinnedBottomRows.length === 0
+                })}>
                     <Rows
                         selfRef={this.props.pinnedBottomRowsRef}
                         items={this.props.pinnedBottomRows}
