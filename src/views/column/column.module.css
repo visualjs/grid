@@ -31,7 +31,7 @@
 
 .header-column-content .column-icon-hiden {
     opacity: 0;
-    transition: .1s ease;
+    transition: 0.1s ease;
 }
 
 .header-column-content .column-icon-hiden:hover {
@@ -46,4 +46,9 @@
     height: 100%;
     cursor: col-resize;
     z-index: var(--column-z-index, 2);
+    margin-right: -2px;
+}
+
+.column-resize-holder:hover {
+    background-color: var(--primary-color);
 }

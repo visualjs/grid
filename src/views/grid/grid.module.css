@@ -133,6 +133,18 @@
     z-index: var(--column-resizer-z-index, 2);
 }
 
+.column-resizer::after{
+    content: '';
+    width: 5px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 30px;
+    display: block;
+    transform: translateX(-2px);
+    background: var(--header-resizer-active-color);
+}
+
 /* loading */
 .loading {
     position: absolute;
