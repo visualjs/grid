@@ -45,7 +45,7 @@ class Column extends Component<Props> {
         return (
             <div ref={this.createRef("column")} className={styles.headerColumn} style={cellStyle}>
                 <div className={styles.headerColumnContent}>
-                    <span>{this.options.headerName}</span>
+                    <span className={styles.headerColumnTitle}>{this.options.headerName}</span>
                     {
                         this.props.onContextMenu
                         && <span onClick={this.handleContextMenu} className={`${styles.columnIcon} vg-menu`}></span>

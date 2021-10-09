@@ -15,15 +15,15 @@
     --header-foreground-color: #222;
     --header-resizer-active-color: var(--primary-color);
     /* columns */
-    --column-pinned-right-shadow: rgba(0, 0, 0, 0.05) -4px 0px 4px;
-    --column-pinned-left-shadow: rgba(0, 0, 0, 0.05) 4px 0px 4px;
+    --column-pinned-right-shadow: rgba(0, 0, 0, 0.1) -4px 0px 0px 0px;
+    --column-pinned-left-shadow: rgba(0, 0, 0, 0.1) 4px 0px 0px 0px;
     /* rows */
     --row-background: var(--background-color);
     --row-stripe-background: #f9fafb;
     --row-hover-background: #ecf0f1;
     --row-select-background: rgba(0, 145, 234, 0.1);
-    --rows-pinned-top-shadow: rgba(0, 0, 0, 0.05) 0px 5px 5px;
-    --rows-pinned-bottom-shadow: rgba(0, 0, 0, 0.05) 0px -5px 5px;
+    --rows-pinned-top-shadow: rgba(0, 0, 0, 0.1) 0 4px 0 0;
+    --rows-pinned-bottom-shadow: rgba(0, 0, 0, 0.1) 0 -4px 0 0;
     /* cells */
     --cell-padding: 0 12px;
     --cell-selected-background: rgba(0, 145, 234, 0.2);
