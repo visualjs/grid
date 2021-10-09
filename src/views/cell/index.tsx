@@ -1,12 +1,12 @@
-import Component from "@/views/PureComponent";
-import { createRef } from "preact";
-import { Grid, State as RootState } from "@/grid";
-import { connect } from "@/views/root";
-import { ColumnOptions, Fillable } from "@/types";
-import { classes, DOM } from "@/utils";
-import { withGrid } from "@/views/root";
-import { CellEditor, CellRenderer } from "@/grid/cell";
-import { JSXInternal } from "preact/src/jsx";
+import Component from '@/views/PureComponent';
+import { createRef } from 'preact';
+import { Grid, State as RootState } from '@/grid';
+import { connect } from '@/views/root';
+import { ColumnOptions, Fillable } from '@/types';
+import { classes, DOM } from '@/utils';
+import { withGrid } from '@/views/root';
+import { CellEditor, CellRenderer } from '@/grid/cell';
+import { JSXInternal } from 'preact/src/jsx';
 
 import styles from './cell.module.css';
 
@@ -35,7 +35,6 @@ interface Props {
 }
 
 class Cell extends Component<Props> {
-
     protected cell = createRef<HTMLDivElement>();
 
     protected cellContent = createRef<HTMLDivElement>();
@@ -48,8 +47,6 @@ class Cell extends Component<Props> {
 
     protected cellRender: CellRenderer<any>;
 
-    protected timer: any = null;
-
     protected io: IntersectionObserver;
 
     protected unsubscribeEditing: () => void;
@@ -61,16 +58,20 @@ class Cell extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
-        this.io = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                this.doRender();
-                this.io.disconnect();
-            }
-        }, { threshold: 0.000001 })
+        this.io = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    this.doRender();
+                    this.io.disconnect();
+                }
+            },
+            { threshold: 0 }
+        );
     }
 
     componentDidMount = () => {
         this.io.observe(this.cell.current);
+        //  重新检测
         if (!this.options.cellEditor || this.options.readonly) {
             return;
         }
@@ -84,7 +85,7 @@ class Cell extends Component<Props> {
                 this.handleCellEditing();
             }
         });
-    }
+    };
 
     componentWillUnmount = () => {
         this.unsubscribeEditing && this.unsubscribeEditing();
@@ -99,40 +100,36 @@ class Cell extends Component<Props> {
         }
 
         this.io.disconnect();
-        if (this.timer) {
-            clearTimeout(this.timer);
-            this.timer = null;
-        }
-    }
+    };
 
     componentDidUpdate = () => {
         this.doRender();
-    }
+    };
 
     // Event handlers
     protected handleMouseDown = (ev: MouseEvent) => {
         if (this.isEditing) return;
         this.props.onMouseDown && this.props.onMouseDown(ev, this.props.row, this.props.column);
-    }
+    };
 
     protected handleMouseMove = (ev: MouseEvent) => {
         if (this.isEditing) return;
         this.props.onMouseMove && this.props.onMouseMove(ev, this.props.row, this.props.column);
-    }
+    };
 
     protected handleMouseUp = (ev: MouseEvent) => {
         if (this.isEditing) return;
         this.props.onMouseUp && this.props.onMouseUp(ev, this.props.row, this.props.column);
-    }
+    };
 
     protected handleDbClick = (ev: MouseEvent) => {
         this.props.onDbClick && this.props.onDbClick(ev, this.props.row, this.props.column);
-    }
+    };
 
     protected handleFillerMouseDown = (ev: MouseEvent) => {
         ev.stopPropagation();
         this.props.onFillerMouseDown && this.props.onFillerMouseDown(ev, this.props.row, this.props.column);
-    }
+    };
 
     // Actions
     protected getValue(raw: boolean = false): any {
@@ -144,16 +141,11 @@ class Cell extends Component<Props> {
     }
 
     public setValue(value: any) {
-        this.props.grid.setCellValue(
-            this.props.row,
-            this.props.column,
-            value
-        );
+        this.props.grid.setCellValue(this.props.row, this.props.column, value);
     }
 
     // Editing
     protected handleCellEditing = () => {
-
         if (!this.isEditing) {
             if (this.cellEditor) {
                 DOM.setClassNames(this.cellContent.current, [styles.cellContent]);
@@ -162,7 +154,6 @@ class Cell extends Component<Props> {
             }
             return;
         }
-
 
         const editor = document.createElement('div');
         DOM.clean(this.cellContent.current);
@@ -174,13 +165,14 @@ class Cell extends Component<Props> {
         }
 
         this.cellEditor = new this.options.cellEditor();
-        this.cellEditor.init && this.cellEditor.init({
-            props: this.options.cellParams,
-            value: this.getValue(true),
-            column: this.options,
-            row: this.props.row,
-            gird: this.props.grid,
-        });
+        this.cellEditor.init &&
+            this.cellEditor.init({
+                props: this.options.cellParams,
+                value: this.getValue(true),
+                column: this.options,
+                row: this.props.row,
+                gird: this.props.grid,
+            });
 
         editor.appendChild(this.cellEditor.gui());
         editor.className = styles.cellEditingWrapper;
@@ -192,7 +184,7 @@ class Cell extends Component<Props> {
         }
 
         this.cellEditor.afterAttached && this.cellEditor.afterAttached();
-    }
+    };
 
     protected createPopup = (editor: HTMLElement) => {
         if (!this.popup) {
@@ -209,25 +201,25 @@ class Cell extends Component<Props> {
         this.popup.style.top = rect.top - rootRect.top + 'px';
         this.popup.appendChild(editor);
         this.props.grid.appendChild(this.popup);
-    }
+    };
 
     // render cell component
     protected doRender() {
         if (this.isEditing) return;
 
-        this.timer = setTimeout(() => {
-            if (!this.props.options.cellRender) {
-                this.cellContent.current && (this.cellContent.current.textContent = this.getValue());
-                return;
-            }
+        if (!this.props.options.cellRender) {
+            this.cellContent.current && (this.cellContent.current.textContent = this.getValue());
+            return;
+        }
 
-            // clean up the cell render before.
-            if (this.cellRender && this.cellRender.beforeDestroy) {
-                this.cellRender.beforeDestroy();
-            }
+        // clean up the cell render before.
+        if (this.cellRender && this.cellRender.beforeDestroy) {
+            this.cellRender.beforeDestroy();
+        }
 
-            this.cellRender = new this.props.options.cellRender();
-            this.cellRender.init && this.cellRender.init({
+        this.cellRender = new this.props.options.cellRender();
+        this.cellRender.init &&
+            this.cellRender.init({
                 props: this.props.options.cellParams,
                 value: this.getValue(true),
                 column: this.props.options,
@@ -235,17 +227,14 @@ class Cell extends Component<Props> {
                 gird: this.props.grid,
             });
 
-            this.timer = null;
+        if (!this.cellContent.current) {
+            return;
+        }
 
-            if (!this.cellContent.current) {
-                return;
-            }
-
-            this.props.grid.removeChild(this.popup);
-            DOM.clean(this.cellContent.current);
-            this.cellContent.current.appendChild(this.cellRender.gui());
-            this.cellRender.afterAttached && this.cellRender.afterAttached();
-        }, 0);
+        this.props.grid.removeChild(this.popup);
+        DOM.clean(this.cellContent.current);
+        this.cellContent.current.appendChild(this.cellRender.gui());
+        this.cellRender.afterAttached && this.cellRender.afterAttached();
     }
 
     render() {
@@ -273,7 +262,7 @@ class Cell extends Component<Props> {
 
         let cellStyle: JSXInternal.CSSProperties = {
             width: this.options.width,
-            minWidth: this.options.minWidth
+            minWidth: this.options.minWidth,
         };
         if (this.options.cellStyle) {
             cellStyle = Object.assign({}, cellStyle, this.options.cellStyle);
@@ -287,9 +276,7 @@ class Cell extends Component<Props> {
             cellStyle.flexGrow = this.options.flex;
         }
 
-        const fillable = this.props.fillable !== undefined
-            && this.props.isBottomSelected
-            && this.props.isRightSelected;
+        const fillable = this.props.fillable !== undefined && this.props.isBottomSelected && this.props.isRightSelected;
 
         return (
             <div
@@ -302,20 +289,13 @@ class Cell extends Component<Props> {
                 onDblClick={this.handleDbClick}
             >
                 <div ref={this.cellContent} className={styles.cellContent}></div>
-                {fillable && (
-                    <div
-                        onMouseDown={this.handleFillerMouseDown}
-                        className={styles.cellFillHandler}
-                    />
-                )}
+                {fillable && <div onMouseDown={this.handleFillerMouseDown} className={styles.cellFillHandler} />}
             </div>
         );
     }
-
 }
 
-const mapStateToProps = (state: RootState, { grid, props }: { grid: Grid, props: Props }) => {
-
+const mapStateToProps = (state: RootState, { grid, props }: { grid: Grid; props: Props }) => {
     const options = grid.getColumnOptions(props.column, props.row);
     const readonly = options?.readonly;
     const selectBoundary = readonly ? undefined : grid.getSelectBoundary(props.row, props.column);
