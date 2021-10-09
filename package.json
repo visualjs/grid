@@ -1,6 +1,6 @@
 {
     "name": "grid-keeping-latest",
-    "version": "1.1.10",
+    "version": "1.1.11",
     "description": "Fork from https://github.com/visualjs/grid for keeping latest version on npm",
     "main": "./dist/visual-grid.umd.js",
     "module": "./dist/visual-grid.es.js",

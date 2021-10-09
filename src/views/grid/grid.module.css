@@ -128,6 +128,7 @@
     background-color: var(--header-resizer-active-color);
     position: absolute;
     top: 0;
+    display: none;
     left: 0;
     cursor: col-resize;
     z-index: var(--column-resizer-z-index, 2);

@@ -99,6 +99,7 @@ class Grid extends Component<Props> {
         const offsetX = ev.pageX - this.refs.root.current.getBoundingClientRect().left;
         this.refs.columnResizer.current.style.left = offsetX + 'px';
         this.refs.columnResizer.current.style.width = '2px';
+        this.refs.columnResizer.current.style.display = 'block';
         this.resizingColumn = { field, width, pos: ev.clientX };
     }
 
@@ -107,6 +108,7 @@ class Grid extends Component<Props> {
         document.removeEventListener('mousemove', this.handleMouseMove);
         this.refs.columnResizer.current.style.left = '0px';
         this.refs.columnResizer.current.style.width = '0px';
+        this.refs.columnResizer.current.style.display = 'none';
 
         if (this.resizingColumn) {
             const width = ev.clientX - this.resizingColumn.pos + this.resizingColumn.width;

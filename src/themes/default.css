@@ -5,14 +5,14 @@
     --primary-color: #0091ea;
     --border-color: #bdc3c7;
     --border-radius: none;
-    --default-font-size: 12px;
-    --foreground-color: #333;
+    --default-font-size: 13px;
+    --foreground-color: rgba(0, 0, 0, 0.9);
     --background-color: #ffffff;
     --loading-background: rgba(255, 255, 255, 0.8);
     --loading-forground: #0091ea;
     /* headers */
-    --header-background-color: #f8f8f8;
-    --header-foreground-color: rgba(0, 0, 0, 0.5);
+    --header-background-color: #eaeaea;
+    --header-foreground-color: #222;
     --header-resizer-active-color: var(--primary-color);
     /* columns */
     --column-pinned-right-shadow: rgba(0, 0, 0, 0.05) -4px 0px 4px;
@@ -45,18 +45,18 @@
     --loading-z-index: 9;
 
     /* global styles */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue',
         sans-serif;
 }
 
-.v-grid-default-theme [class^="v-grid-"],
-.v-grid-default-theme [class^="v-grid-"]:focus,
-.v-grid-default-theme [class^="v-grid-"]:after,
-.v-grid-default-theme [class^="v-grid-"]:before {
+.v-grid-default-theme [class^='v-grid-'],
+.v-grid-default-theme [class^='v-grid-']:focus,
+.v-grid-default-theme [class^='v-grid-']:after,
+.v-grid-default-theme [class^='v-grid-']:before {
     box-sizing: border-box;
     outline: none;
 }
 
-.v-grid-default-theme [class^="v-grid-"]::selection {
+.v-grid-default-theme [class^='v-grid-']::selection {
     background-color: rgba(0, 145, 234, 0.2);
 }
