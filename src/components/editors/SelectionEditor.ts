@@ -87,7 +87,7 @@ export class SelectionEditor extends CellEditor<Props> {
 
             return this.setValue(this.value);
         }
-        
+
         index === -1 ? this.setValue([value]) : this.setValue([]);
     }
 }

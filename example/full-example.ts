@@ -7,6 +7,7 @@ import { CheckboxRender, RatingRender, SelectionRender, HyperlinkRender } from '
 import { RatingEditor, InputEditor, CheckboxEditor, SelectionEditor } from '@/components';
 import { BooleanTransformer, SelectionTransformer } from '@/components';
 import { showContainer } from './utils';
+import data from './data/data';
 
 (() => {
     let rows: RowData[] = [];
@@ -30,76 +31,87 @@ import { showContainer } from './utils';
             date: date(new Date(2021, 1), new Date(2021, 6)).toString(),
         });
     }
+    const isUseTestData = false;
 
     showContainer('#full-example-container', 'Full Example');
+    data.columns.map((col) => {
+        delete col.transformer;
+    });
+
+    let columns = [
+        { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: true, cellRender: IndexRender },
+        { headerName: 'ID', field: 'id', pinned: 'left', width: 100, resizable: true },
+        { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: InputEditor },
+        {
+            headerName: 'Status',
+            field: 'status',
+            width: 80,
+            resizable: true,
+            transformer: new BooleanTransformer(),
+            cellRender: CheckboxRender,
+            cellEditor: CheckboxEditor,
+        },
+        {
+            headerName: 'Month',
+            field: 'month',
+            resizable: true,
+            transformer: new SelectionTransformer({
+                allowNotExistOption: false,
+                options: Object.keys(monthOptions),
+            }),
+            cellRender: SelectionRender,
+            cellEditor: SelectionEditor,
+            cellParams: { options: monthOptions, multiple: true },
+        },
+        { headerName: 'Game Name', field: 'game', resizable: true, cellRender: HyperlinkRender },
+        {
+            headerName: 'Language',
+            field: 'language',
+            width: 100,
+            resizable: true,
+            transformer: new SelectionTransformer({
+                allowNotExistOption: false,
+                options: Object.keys(languageOptions),
+            }),
+            cellRender: SelectionRender,
+            cellEditor: SelectionEditor,
+            cellParams: { options: languageOptions },
+        },
+        { headerName: 'Country', field: 'country', resizable: true },
+        { headerName: 'Continent', field: 'continent', resizable: true },
+        { headerName: 'Bought', field: 'bought', resizable: true, cellRender: CheckboxRender },
+        {
+            headerName: 'Bank Balance',
+            field: 'balance',
+            resizable: true,
+            cellEditor: InputEditor,
+            cellParams: { type: 'number' },
+        },
+        {
+            headerName: 'Rating',
+            field: 'rating',
+            pinned: 'left',
+            resizable: true,
+            cellRender: RatingRender,
+            cellEditor: RatingEditor,
+        },
+        {
+            headerName: 'Total Winnings',
+            field: 'winnings',
+            resizable: true,
+            cellEditor: InputEditor,
+            cellParams: { type: 'number' },
+        },
+        { headerName: 'Date', field: 'date', resizable: true, pinned: 'right' },
+    ];
+
+    if (isUseTestData) {
+        columns = data.columns;
+    }
+
     const grid = new Grid(document.querySelector('#full-example'), {
         disabledVirtualScrolling: 200,
-        columns: [
-            { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: true, cellRender: IndexRender },
-            { headerName: 'ID', field: 'id', pinned: 'left', width: 100, resizable: true },
-            { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: InputEditor },
-            {
-                headerName: 'Status',
-                field: 'status',
-                width: 80,
-                resizable: true,
-                transformer: new BooleanTransformer(),
-                cellRender: CheckboxRender,
-                cellEditor: CheckboxEditor,
-            },
-            {
-                headerName: 'Month',
-                field: 'month',
-                resizable: true,
-                transformer: new SelectionTransformer({
-                    allowNotExistOption: false,
-                    options: Object.keys(monthOptions),
-                }),
-                cellRender: SelectionRender,
-                cellEditor: SelectionEditor,
-                cellParams: { options: monthOptions, multiple: true },
-            },
-            { headerName: 'Game Name', field: 'game', resizable: true, cellRender: HyperlinkRender },
-            {
-                headerName: 'Language',
-                field: 'language',
-                width: 100,
-                resizable: true,
-                transformer: new SelectionTransformer({
-                    allowNotExistOption: false,
-                    options: Object.keys(languageOptions),
-                }),
-                cellRender: SelectionRender,
-                cellEditor: SelectionEditor,
-                cellParams: { options: languageOptions },
-            },
-            { headerName: 'Country', field: 'country', resizable: true },
-            { headerName: 'Continent', field: 'continent', resizable: true },
-            { headerName: 'Bought', field: 'bought', resizable: true, cellRender: CheckboxRender },
-            {
-                headerName: 'Bank Balance',
-                field: 'balance',
-                resizable: true,
-                cellEditor: InputEditor,
-                cellParams: { type: 'number' },
-            },
-            {
-                headerName: 'Rating',
-                field: 'rating',
-                pinned: 'left',
-                resizable: true,
-                cellRender: RatingRender,
-                cellEditor: RatingEditor,
-            },
-            {
-                headerName: 'Total Winnings',
-                field: 'winnings',
-                resizable: true,
-                cellEditor: InputEditor,
-                cellParams: { type: 'number' },
-            },
-            { headerName: 'Date', field: 'date', resizable: true, pinned: 'right' },
-        ],
+        columns: columns,
         rows: [],
         rowHeight: 30,
         fillable: 'xy',
@@ -213,7 +225,11 @@ import { showContainer } from './utils';
         console.log(row + ' - ' + 'removed!');
     });
 
-    grid.appendRows(rows);
+    if (isUseTestData) {
+        grid.appendRows(data.rows);
+    } else {
+        grid.appendRows(rows);
+    }
     grid.setPinnedTopRows(['row_1', 'row_3', 'row_5', 'row_7']);
 
     //  add control
