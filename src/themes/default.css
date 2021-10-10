@@ -60,3 +60,40 @@
 .v-grid-default-theme [class^='v-grid-']::selection {
     background-color: rgba(0, 145, 234, 0.2);
 }
+
+
+.v-grid-list-container::-webkit-scrollbar-thumb,
+.v-grid-horizontal-scroll-view::-webkit-scrollbar-thumb{
+    background: #DADCE0;
+    border-radius: 12px;
+    border: 2px solid #f8f8f8;
+}
+
+.v-grid-list-container::-webkit-scrollbar-thumb:hover,
+.v-grid-horizontal-scroll-view::-webkit-scrollbar-thumb:hover{
+    background: #aeb0b5 !important;
+    border: none;
+}
+
+.v-grid-list-container::-webkit-scrollbar-thumb:active,
+.v-grid-horizontal-scroll-view::-webkit-scrollbar-thumb:active{
+    background: #6a6a6a !important;
+}
+
+
+.v-grid-list-container::-webkit-scrollbar-track ,
+.v-grid-horizontal-scroll-view::-webkit-scrollbar-track {
+    background: #f8f8f8;
+}
+
+.v-grid-list-container::-webkit-scrollbar {
+    width: 13px;
+}
+
+.v-grid-horizontal-scroll-view::-webkit-scrollbar{
+    height: 13px;
+}
+.v-grid-horizontal-scroll-container{
+    height: 14px;
+}
+
