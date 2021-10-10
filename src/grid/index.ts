@@ -239,12 +239,17 @@ export class Grid {
                 return;
             }
 
+            let theLastCellCoord = { x: start.x, y: start.y };
             str.split('\n').forEach((rowData, y) => {
                 rowData.split('\t').forEach((value, x) => {
                     const coord = { x: x + start.x, y: y + start.y };
+                    theLastCellCoord = coord;
                     this.setCellValueByCoord(coord, value);
                 });
             });
+
+            //  set Cell selection after pasted
+            this.selectCells({ x: start.x, y: start.y }, theLastCellCoord);
 
             this.trigger('afterPaste', str);
         });

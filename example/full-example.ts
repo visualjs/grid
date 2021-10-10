@@ -79,7 +79,14 @@ import data from './data/data';
         },
         { headerName: 'Country', field: 'country', resizable: true },
         { headerName: 'Continent', field: 'continent', resizable: true },
-        { headerName: 'Bought', field: 'bought', resizable: true, cellRender: CheckboxRender },
+        {
+            headerName: 'Bought',
+            field: 'bought',
+            resizable: true,
+            cellRender: CheckboxRender,
+            cellEditor: CheckboxEditor,
+            transformer: new BooleanTransformer(),
+        },
         {
             headerName: 'Bank Balance',
             field: 'balance',
