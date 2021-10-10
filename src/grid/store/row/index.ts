@@ -9,6 +9,7 @@ export interface Actions {
         row: string;
         column: string;
         value: any;
+        force: boolean;
     };
     setPinnedTopRows: string[];
     setPinnedBottomRows: string[];
@@ -64,9 +65,14 @@ export class Store extends BaseStore<State, Actions> {
             Object.assign({}, initialState, initial)
         );
 
-        this.handle('setCellValue', (state, { row, column, value }) => {
+        this.handle('setCellValue', (state, { row, column, value, force }) => {
             const index = this.getRowInternalIndex(row);
             if (index === undefined) return state;
+
+            //  skip update if newValue and oldValue is the same
+            if (!force && this.getRowData(row)[column] === value) {
+                return state;
+            }
 
             return update(state, {
                 rows: {
