@@ -42,6 +42,7 @@
     right: -1px;
     bottom: -1px;
     background: var(--cell-selected-background, rgba(0, 145, 234, 0.2)) !important;
+    pointer-events: none;
 }
 
 .cell-filling {
