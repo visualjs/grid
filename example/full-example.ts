@@ -39,7 +39,7 @@ import data from './data/data';
     });
 
     let columns = [
-        { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: true, cellRender: IndexRender },
+        { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: false, cellRender: IndexRender },
         { headerName: 'ID', field: 'id', pinned: 'left', width: 100, resizable: true },
         { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: InputEditor },
         {
