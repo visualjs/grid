@@ -9,7 +9,7 @@ export interface Actions {
         row: string;
         column: string;
         value: any;
-        force: boolean;
+        force?: boolean;
     };
     setPinnedTopRows: string[];
     setPinnedBottomRows: string[];
