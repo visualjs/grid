@@ -70,7 +70,16 @@ class Cell extends Component<Props> {
     }
 
     componentDidMount = () => {
-        this.io.observe(this.cell.current);
+        //  skip observe when El visible in the current position of viewport
+        //  Pls dont make this calc be complex！
+        const { left, top } = this.cell.current.getBoundingClientRect();
+        const interView: boolean = left < window.innerWidth && top < window.innerHeight;
+        if (interView) {
+            this.doRender();
+        } else {
+            this.io.observe(this.cell.current);
+        }
+
         //  重新检测
         if (!this.options.cellEditor || this.options.readonly) {
             return;
