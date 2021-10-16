@@ -47,5 +47,8 @@
         "dist/**/*.css",
         "dist/**/*.js",
         "dist/**/*.d.ts"
-    ]
+    ],
+    "dependencies": {
+        "hotkeys-js": "^3.8.7"
+    }
 }

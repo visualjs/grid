@@ -10,6 +10,7 @@ import { Button } from '@/utils';
 import { FillRange } from '@/selection/FillRange';
 import Rows from './Rows';
 import clsx from 'clsx';
+import hotkeys, { HotkeysEvent } from 'hotkeys-js';
 
 import styles from './grid.module.css';
 
@@ -63,15 +64,16 @@ class Body extends Component<Props, State> {
 
     protected fillingRef: CellRange;
 
-    // keybord
-    protected currentKey: KeyboardEvent;
+    protected hotkeys: string = 'ctrl+c,command+c,ctrl+v,command+v';
 
     componentDidMount = () => {
         document.addEventListener('mouseup', this.handleMouseUp);
+        hotkeys(this.hotkeys, this.handleBindHotkeys.bind(this));
     };
 
     componentWillUnmount = () => {
         document.removeEventListener('mouseup', this.handleMouseUp);
+        hotkeys.unbind(this.hotkeys);
     };
 
     // Double-click the cell to enable editing
@@ -147,7 +149,7 @@ class Body extends Component<Props, State> {
     };
 
     protected handleSelectRow = (row: string) => {
-        if (this.currentKey && this.currentKey.shiftKey) {
+        if (hotkeys.shift) {
             const rows = this.props.grid.getSelectedRows();
             const lastRowIndex = this.props.grid.getRowIndex(rows[rows.length - 1]);
             const currentRowIndex = this.props.grid.getRowIndex(row);
@@ -155,7 +157,7 @@ class Body extends Component<Props, State> {
             return this.props.grid.selectRows(rows.concat(this.props.grid.getRowsBetween(lastRowIndex, currentRowIndex)));
         }
 
-        if (this.currentKey && (this.currentKey.ctrlKey || this.currentKey.metaKey)) {
+        if (hotkeys.control || hotkeys.ctrl) {
             return this.props.grid.appendSelectedRows([row]);
         }
 
@@ -267,17 +269,20 @@ class Body extends Component<Props, State> {
         this.handleSelectionChanged();
     };
 
-    protected handleKeyDown = (ev: KeyboardEvent) => {
+    protected handleBindHotkeys = (ev: KeyboardEvent, handler: HotkeysEvent) => {
         if (this.props.grid.trigger('beforeKeyDown', ev) === false) {
             return;
         }
 
-        this.currentKey = ev;
-
-        if (ev.key === 'c' && (ev.ctrlKey || ev.metaKey)) {
-            this.props.grid.copySelection();
-        } else if (ev.key === 'v' && (ev.ctrlKey || ev.metaKey)) {
-            this.props.grid.pasteFromClipboard();
+        switch (handler.key) {
+            case 'ctrl+c':
+            case 'command+c':
+                this.props.grid.copySelection();
+                break;
+            case 'ctrl+v':
+            case 'command+v':
+                this.props.grid.pasteFromClipboard();
+                break;
         }
 
         this.props.grid.trigger('afterKeyDown', ev);
@@ -294,8 +299,6 @@ class Body extends Component<Props, State> {
         if (this.props.grid.trigger('beforeKeyUp', ev) === false) {
             return;
         }
-
-        this.currentKey = ev;
 
         this.props.grid.trigger('afterKeyUp', ev);
     };
@@ -337,7 +340,6 @@ class Body extends Component<Props, State> {
                 onBlur={this.handleBlur}
                 onMouseLeave={() => this.props.hoverRow(undefined)}
                 onContextMenu={handleContextMenu}
-                onKeyDown={this.handleKeyDown}
                 onKeyUp={this.handleKeyUp}
                 onKeyPress={this.handleKeyPress}
             >
