@@ -49,7 +49,7 @@ class Grid extends Component<Props> {
                 this.refs.pinnedBottomNormalCells.current,
                 this.refs.horizontalScroll.current,
             ],
-            (ev) => {
+            (ev:any) => {
                 this.refs.headerContainer.current.style.transform = `translateX(-${ev.target.scrollLeft}px)`;
             }
         );

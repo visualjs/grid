@@ -41,17 +41,17 @@ export function unique<T>(arr: T[]): T[] {
 }
 
 //  https://stackoverflow.com/a/63864273
-export function scrollSync(elements, cb) {
+export function scrollSync(elements:Element[], cb:Function) {
     let active: any = null;
-    elements.forEach(function (element) {
-        element.addEventListener('mouseenter', function (e) {
+    elements.forEach(function (element:Element) {
+        element.addEventListener('mouseenter', function (e:UIEvent) {
             active = e.target;
         });
 
-        element.addEventListener('scroll', function (e) {
+        element.addEventListener('scroll', function (e:UIEvent) {
             if (e.target !== active) return;
 
-            elements.forEach(function (target) {
+            elements.forEach(function (target:Element) {
                 if (active === target) {
                     cb(e);
                     return;
