@@ -274,8 +274,6 @@ class Body extends Component<Props, State> {
             return;
         }
 
-        console.log(handler.key)
-
         switch (handler.key) {
             case 'ctrl+c':
             case 'command+c':
