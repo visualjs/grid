@@ -228,7 +228,7 @@ export class Grid {
 
     // parse the data from the clipboard and
     // set the selected cell data according to the order.
-    public pasteFromClipboard(): void {
+    public pasteFromClipboard(isRemoveStyle: boolean = false): void {
         const start = this.state('cell').selections[0]?.start;
         if (!start) return;
 
@@ -240,13 +240,19 @@ export class Grid {
             }
 
             let theLastCellCoord = { x: start.x, y: start.y };
-            str.split('\n').forEach((rowData, y) => {
-                rowData.split('\t').forEach((value, x) => {
-                    const coord = { x: x + start.x, y: y + start.y };
-                    theLastCellCoord = coord;
-                    this.setCellValueByCoord(coord, value);
+
+            //  skip style if shift was pressed
+            if(isRemoveStyle){
+                this.setCellValueByCoord(theLastCellCoord, str);
+            }else{
+                str.split('\n').forEach((rowData, y) => {
+                    rowData.split('\t').forEach((value, x) => {
+                        const coord = { x: x + start.x, y: y + start.y };
+                        theLastCellCoord = coord;
+                        this.setCellValueByCoord(coord, value);
+                    });
                 });
-            });
+            }
 
             //  set Cell selection after pasted
             this.selectCells({ x: start.x, y: start.y }, theLastCellCoord);

@@ -64,7 +64,7 @@ class Body extends Component<Props, State> {
 
     protected fillingRef: CellRange;
 
-    protected hotkeys: string = 'ctrl+c,command+c,ctrl+v,command+v';
+    protected hotkeys: string = 'ctrl+c,command+c,ctrl+v,command+v,ctrl+shift+v,command+shift+v';
 
     componentDidMount = () => {
         document.addEventListener('mouseup', this.handleMouseUp);
@@ -274,6 +274,8 @@ class Body extends Component<Props, State> {
             return;
         }
 
+        console.log(handler.key)
+
         switch (handler.key) {
             case 'ctrl+c':
             case 'command+c':
@@ -281,7 +283,9 @@ class Body extends Component<Props, State> {
                 break;
             case 'ctrl+v':
             case 'command+v':
-                this.props.grid.pasteFromClipboard();
+            case 'ctrl+shift+v':
+            case 'command+shift+v':
+                this.props.grid.pasteFromClipboard(hotkeys.shift);
                 break;
         }
 
