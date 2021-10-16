@@ -1,15 +1,15 @@
-import { RefObject } from "preact";
-import Component from "@/views/PureComponent";
-import Grid, { State as RootState } from "@/grid";
-import List from "@/views/list";
-import { connect, withGrid } from "@/views/root";
-import { Menu } from "@/views/menu";
-import { CellPosition, Coordinate, MenuItem } from "@/types";
-import CellRange from "@/selection/CellRange";
-import { Button } from "@/utils";
-import { FillRange } from "@/selection/FillRange";
-import Rows from "./Rows";
-import clsx from "clsx";
+import { RefObject } from 'preact';
+import Component from '@/views/PureComponent';
+import Grid, { State as RootState } from '@/grid';
+import List from '@/views/list';
+import { connect, withGrid } from '@/views/root';
+import { Menu } from '@/views/menu';
+import { CellPosition, Coordinate, MenuItem } from '@/types';
+import CellRange from '@/selection/CellRange';
+import { Button } from '@/utils';
+import { FillRange } from '@/selection/FillRange';
+import Rows from './Rows';
+import clsx from 'clsx';
 
 import styles from './grid.module.css';
 
@@ -49,7 +49,6 @@ interface State {
 }
 
 class Body extends Component<Props, State> {
-
     // selection
     protected isSelecting: boolean;
 
@@ -69,11 +68,11 @@ class Body extends Component<Props, State> {
 
     componentDidMount = () => {
         document.addEventListener('mouseup', this.handleMouseUp);
-    }
+    };
 
     componentWillUnmount = () => {
         document.removeEventListener('mouseup', this.handleMouseUp);
-    }
+    };
 
     // Double-click the cell to enable editing
     protected handleCellDbClick = (ev: MouseEvent, row: string, column: string) => {
@@ -83,7 +82,7 @@ class Body extends Component<Props, State> {
 
         this.props.setEditing({ row, column });
         this.props.grid.trigger('afterCellDbClicked', { row, column }, ev);
-    }
+    };
 
     protected handleCellMouseDown = (ev: MouseEvent, row: string, column: string) => {
         if (this.props.grid.trigger('beforeCellMouseDown', { row, column }, ev) === false) {
@@ -108,12 +107,16 @@ class Body extends Component<Props, State> {
                 return;
             }
 
-            this.setState({
-                isMenuVisible: true, contextMenuItems: items,
-                contextMenuCoord: { x: ev.clientX, y: ev.clientY }
-            }, () => {
-                this.props.grid.trigger('afterContextMenuShow', { row, column }, items);
-            });
+            this.setState(
+                {
+                    isMenuVisible: true,
+                    contextMenuItems: items,
+                    contextMenuCoord: { x: ev.clientX, y: ev.clientY },
+                },
+                () => {
+                    this.props.grid.trigger('afterContextMenuShow', { row, column }, items);
+                }
+            );
 
             // Avoid canceling the selection when you right-click in the selection range.
             if (this.props.grid.getCoordLocatedRange(coord)) {
@@ -135,21 +138,15 @@ class Body extends Component<Props, State> {
         // select current active row
         this.handleSelectRow(row);
 
-        if (!this.props.grid.getColumnOptions(column)?.readonly) {
-            // set current active cell as selection star position
-            this.selectionStart = this.selectionEnd = coord;
-            this.isSelecting = true;
-            this.handleSelectionChanged();
-        } else {
-            this.selectionStart = this.selectionEnd = null;
-            this.handleSelectionChanged();
-        }
+        // set current active cell as selection star position
+        this.selectionStart = this.selectionEnd = coord;
+        this.isSelecting = true;
+        this.handleSelectionChanged();
 
         this.props.grid.trigger('afterCellMouseDown', { row, column }, ev);
-    }
+    };
 
     protected handleSelectRow = (row: string) => {
-
         if (this.currentKey && this.currentKey.shiftKey) {
             const rows = this.props.grid.getSelectedRows();
             const lastRowIndex = this.props.grid.getRowIndex(rows[rows.length - 1]);
@@ -163,7 +160,7 @@ class Body extends Component<Props, State> {
         }
 
         this.props.grid.selectRows([row]);
-    }
+    };
 
     protected handleCellMouseMove = (ev: MouseEvent, row: string, column: string) => {
         if (this.props.grid.trigger('beforeCellMouseMove', { row, column }, ev) === false) {
@@ -172,10 +169,6 @@ class Body extends Component<Props, State> {
 
         // update hovered row
         this.props.hoverRow(row);
-
-        if (this.props.grid.getColumnOptions(column)?.readonly) {
-            return;
-        }
 
         const coord = this.props.getCoordinate(row, column);
 
@@ -202,10 +195,9 @@ class Body extends Component<Props, State> {
         }
 
         this.props.grid.trigger('afterCellMouseMove', { row, column }, ev);
-    }
+    };
 
     protected handleCellFillerMouseDown = (ev: MouseEvent, row: string, column: string) => {
-
         if (this.props.grid.trigger('beforeFillerMouseDown', { row, column }, ev) === false) {
             return;
         }
@@ -224,7 +216,7 @@ class Body extends Component<Props, State> {
         this.handleFillRangeChanged();
 
         this.props.grid.trigger('afterFillerMouseDown', { row, column }, ev);
-    }
+    };
 
     protected handleMouseUp = () => {
         if (this.isSelecting) {
@@ -238,46 +230,42 @@ class Body extends Component<Props, State> {
             this.fillingRef = this.fillingEnd = null;
             this.handleFillRangeChanged();
         }
-    }
+    };
 
     protected handleSelectionChanged = () => {
-
         if (this.props.grid.trigger('beforeSelectionChange', this.selectionStart, this.selectionEnd) === false) {
             return;
         }
 
         this.props.selectCells(this.selectionStart, this.selectionEnd);
         this.props.grid.trigger('afterSelectionChange', this.selectionStart, this.selectionEnd);
-    }
+    };
 
     protected handleFillRangeChanged = () => {
-        this.props.setFilling(new FillRange(
-            this.fillingRef, this.fillingEnd, this.props.grid.state('grid').fillable
-        ));
-    }
+        this.props.setFilling(new FillRange(this.fillingRef, this.fillingEnd, this.props.grid.state('grid').fillable));
+    };
 
     protected handleFill = (range: FillRange) => {
-
         if (this.props.grid.trigger('beforeFilling', range) === false) {
             return;
         }
 
         const ref = range.getReference();
-        range.chunk(chunk => {
+        range.chunk((chunk) => {
             chunk.each((coord, relative) => {
                 const srcCoord = ref.getGlobalCoord(relative);
-                this.props.grid.setCellValueByCoord(coord, this.props.grid.getCellValueByCoord(srcCoord))
+                this.props.grid.setCellValueByCoord(coord, this.props.grid.getCellValueByCoord(srcCoord));
             });
         });
 
         this.props.grid.trigger('afterFilling', range);
-    }
+    };
 
     protected handleBlur = () => {
         this.props.grid.selectRows([]);
         this.selectionStart = this.selectionEnd = null;
         this.handleSelectionChanged();
-    }
+    };
 
     protected handleKeyDown = (ev: KeyboardEvent) => {
         if (this.props.grid.trigger('beforeKeyDown', ev) === false) {
@@ -293,14 +281,14 @@ class Body extends Component<Props, State> {
         }
 
         this.props.grid.trigger('afterKeyDown', ev);
-    }
+    };
 
     protected handleKeyPress = (ev: KeyboardEvent) => {
         if (this.props.grid.trigger('beforeKeyPress', ev) === false) {
             return;
         }
         this.props.grid.trigger('afterKeyPress', ev);
-    }
+    };
 
     protected handleKeyUp = (ev: KeyboardEvent) => {
         if (this.props.grid.trigger('beforeKeyUp', ev) === false) {
@@ -310,13 +298,13 @@ class Body extends Component<Props, State> {
         this.currentKey = ev;
 
         this.props.grid.trigger('afterKeyUp', ev);
-    }
+    };
 
     protected hideContextMenu = () => {
         if (this.state.isMenuVisible) {
             this.setState({ isMenuVisible: false });
         }
-    }
+    };
 
     /**
      * Renders
@@ -333,13 +321,14 @@ class Body extends Component<Props, State> {
                 normalCellsRef={this.props.normalCellsRef}
                 normalCellsContainerRef={this.props.normalCellsContainerRef}
             />
-        )
-    }
+        );
+    };
 
     render() {
-
         const handleContextMenu = this.props.grid.state('grid').getContextMenuItems
-            ? (ev: MouseEvent) => { ev.preventDefault(); }
+            ? (ev: MouseEvent) => {
+                  ev.preventDefault();
+              }
             : undefined;
 
         return (
@@ -352,16 +341,20 @@ class Body extends Component<Props, State> {
                 onKeyUp={this.handleKeyUp}
                 onKeyPress={this.handleKeyPress}
             >
-                {this.state.isMenuVisible && <Menu
-                    onMenuItemClicked={this.hideContextMenu}
-                    onClickOutside={this.hideContextMenu}
-                    coord={this.state.contextMenuCoord}
-                    items={this.state.contextMenuItems}
-                />}
+                {this.state.isMenuVisible && (
+                    <Menu
+                        onMenuItemClicked={this.hideContextMenu}
+                        onClickOutside={this.hideContextMenu}
+                        coord={this.state.contextMenuCoord}
+                        items={this.state.contextMenuItems}
+                    />
+                )}
                 {
-                    <div className={clsx(styles.pinnedTopRows, {
-                        [styles.noBorder]: this.props.pinnedTopRows.length === 0
-                    })}>
+                    <div
+                        className={clsx(styles.pinnedTopRows, {
+                            [styles.noBorder]: this.props.pinnedTopRows.length === 0,
+                        })}
+                    >
                         <Rows
                             selfRef={this.props.pinnedTopRowsRef}
                             items={this.props.pinnedTopRows}
@@ -383,9 +376,11 @@ class Body extends Component<Props, State> {
                     disabledVirtualScrolling={this.props.disabledVirtualScrolling}
                     render={this.listRender}
                 />
-                <div className={clsx(styles.pinnedBottomRows, {
-                    [styles.noBorder]: this.props.pinnedBottomRows.length === 0
-                })}>
+                <div
+                    className={clsx(styles.pinnedBottomRows, {
+                        [styles.noBorder]: this.props.pinnedBottomRows.length === 0,
+                    })}
+                >
                     <Rows
                         selfRef={this.props.pinnedBottomRowsRef}
                         items={this.props.pinnedBottomRows}
@@ -430,8 +425,8 @@ const mapActionsToProps = (grid: Grid) => {
         },
         setFilling: (filling?: FillRange) => {
             return grid.store('cell').dispatch('setFilling', filling);
-        }
+        },
     };
-}
+};
 
 export default connect(mapStateToProps, mapActionsToProps)(withGrid(Body));

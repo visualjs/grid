@@ -15,12 +15,16 @@ export class IndexRender extends CellRenderer {
 
         this.index.innerText = params.value;
         this.enlarge.className = `vg-enlarge-simplicit ${styles.indexEnlarge}`;
-        this.enlarge.addEventListener('click', () => {
+        this.enlarge.addEventListener('mousedown', () => {
             console.log('enlarge - ' + params.row);
+            return false
         });
 
         this.wrapper.appendChild(this.index);
         this.wrapper.appendChild(this.enlarge);
+    }
+
+    public beforeDestroy() {
     }
 
     public gui(): HTMLElement {
