@@ -238,6 +238,7 @@ class Cell extends Component<Props> {
             column: this.props.options,
             row: this.props.row,
             gird: this.props.grid,
+            cell: this.cell,
         };
 
         // clean up the cell render before.
@@ -255,17 +256,18 @@ class Cell extends Component<Props> {
         this.props.grid.removeChild(this.popup);
         DOM.clean(this.cellContent.current);
 
-        if (
+        const isUseReadonlyGui =
             this.getIsSelectedCurrentCellOnly() &&
             this.cellRender.readOnlySelectedGui &&
-            this.props.grid.getColumnOptions(this.props.column).readonly
-        ) {
+            this.props.grid.getColumnOptions(this.props.column).readonly;
+
+        if (isUseReadonlyGui) {
             this.cellContent.current.appendChild(this.cellRender.readOnlySelectedGui(props));
         } else {
             this.cellContent.current.appendChild(this.cellRender.gui());
         }
 
-        this.cellRender.afterAttached && this.cellRender.afterAttached();
+        this.cellRender.afterAttached && this.cellRender.afterAttached(isUseReadonlyGui);
     }
 
     render() {

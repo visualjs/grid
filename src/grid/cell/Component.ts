@@ -7,7 +7,7 @@ export abstract class Component<T> {
 
     // A hook to perform any necessary operation just after the GUI for this component has been rendered
     // on the screen.
-    public afterAttached?(): void;
+    public afterAttached?(isUseReadonlyGui: boolean): void;
 
     // A hook that performs any necessary operations before this component is destroyed.
     public beforeDestroy?(): void;
