@@ -193,7 +193,7 @@ class Cell extends Component<Props> {
             this.cellContent.current.appendChild(editor);
         }
 
-        this.cellEditor.afterAttached && this.cellEditor.afterAttached();
+        this.cellEditor.afterAttached && this.cellEditor.afterAttached(false);
     };
 
     protected createPopup = (editor: HTMLElement) => {
