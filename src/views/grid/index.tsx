@@ -31,8 +31,10 @@ class Grid extends Component<Props> {
 
     protected unsubscribes: (() => void)[] = [];
 
-    protected scrollXNodes: HTMLDivElement[] = [];
+    protected horizontalScrollbar: HTMLDivElement;
 
+    protected scrollXNodes: HTMLDivElement[] = [];
+  
     protected scrollYNode: HTMLDivElement;
 
     public componentDidMount = () => {
@@ -125,24 +127,17 @@ class Grid extends Component<Props> {
         this.refs.columnResizer.current.style.left = offsetX + 'px';
     }
 
-    private active: any = null;
-
     protected getScrollXNode = (node: HTMLDivElement) => {
         this.scrollXNodes.push(node);
-
-        node?.addEventListener('mouseenter', (ev) => {
-            this.active = ev.target;
-        });
     }
 
-    protected handleHorizontalScroll = (ev: UIEvent) => {
-        if (ev.target !== this.active) {
-            return;
-        }
+    protected handleHorizontalWheel = (ev: WheelEvent) => {
+        this.horizontalScrollbar.scrollLeft += ev.deltaX * 1.25;
+    }
 
+    protected handleHorizontalScroll = (ev: Event) => {
         const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
         this.scrollXNodes.forEach(node => {
-            if (node === this.active) return;
             node.scrollLeft = scrollLeft;
         });
         this.refs.headerContainer.current.style.transform = `translateX(-${scrollLeft}px)`;
@@ -170,7 +165,7 @@ class Grid extends Component<Props> {
                         pinnedTopRows={this.props.pinnedTopRows}
                         pinnedBottomRows={this.props.pinnedBottomRows}
                         normalRows={this.props.normalRows}
-                        onScrollHorizontal={this.handleHorizontalScroll}
+                        onScrollHorizontal={this.handleHorizontalWheel}
                         // refs
                         pinnedTopRowsRef={this.createRef("pinnedTopRows")}
                         pinnedBottomRowsRef={this.createRef("pinnedBottomRows")}
@@ -180,7 +175,7 @@ class Grid extends Component<Props> {
                     {/* fake horizontal scroll bar */}
                     <div ref={this.createRef("horizontalScrollWrapper")} className={styles.horizontalScroll}>
                         <div ref={this.createRef("horizontalLeftSpacer")} className={styles.horizontalLeftSpacer}></div>
-                        <div ref={this.getScrollXNode} className={styles.horizontalScrollView}>
+                        <div ref={node => this.horizontalScrollbar = node} className={styles.horizontalScrollView} onScroll={this.handleHorizontalScroll}>
                             <div
                                 ref={this.createRef("horizontalScrollContainer")}
                                 className={styles.horizontalScrollContainer}

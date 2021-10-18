@@ -128,6 +128,8 @@ export class VirtualGrid extends PureComponent<Props, State> {
         this.onScrollHorizontal = (ev: Event) => this.handleScroll(ev, Direction.Horizontal);
         this.scrollYNode?.addEventListener('scroll', this.onScrollVertical, { passive: true });
         this.scrollXNode?.addEventListener('scroll', this.onScrollHorizontal, { passive: true });
+        this.scrollXNode?.addEventListener('wheel', this.handleMouseWheel, { passive: false });
+
 
         let scrollLeft = undefined;
         let scrollTop = undefined;
@@ -251,6 +253,7 @@ export class VirtualGrid extends PureComponent<Props, State> {
     componentWillUnmount() {
         this.scrollYNode?.removeEventListener('scroll', this.onScrollVertical);
         this.scrollXNode?.removeEventListener('scroll', this.onScrollHorizontal);
+        this.scrollXNode?.removeEventListener('wheel', this.handleMouseWheel);
     }
 
     scrollTo({ top, left }: { top?: number, left?: number }) {
@@ -346,10 +349,17 @@ export class VirtualGrid extends PureComponent<Props, State> {
         return (this.columnStyleCache[id] = { ...STYLE_PINNED_ITEM, width });
     }
 
+    private handleMouseWheel = (ev: WheelEvent) => {
+        if (ev.deltaX !== 0) {
+            ev.preventDefault();
+            this.props.onScrollHorizontal && this.props.onScrollHorizontal(ev);
+        }
+    }
+
     private handleScroll = (ev: Event, direction: Direction) => {
 
-        if (typeof this.props[scrollEventProp[direction]] === 'function') {
-            (this.props[scrollEventProp[direction]])(ev);
+        if (direction === Direction.Vertical && typeof this.props.onScrollVertical === 'function') {
+            this.props.onScrollVertical(ev);
         }
 
         const offset = this.getNodeOffset();
