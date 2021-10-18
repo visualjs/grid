@@ -24,7 +24,8 @@ const defaultGridOptions = {
     height: '100%',
     headerHeight: 30,
     rowHeight: 28,
-    preloadRowCount: 20,
+    overscanRowCount: 5,
+    overscanColumnCount: 2,
 }
 
 export interface Stores {
@@ -51,7 +52,9 @@ export class Grid {
             grid: new GridStore({
                 width: props.width,
                 height: props.height,
-                preloadRowCount: props.preloadRowCount,
+                overscanRowCount: props.overscanRowCount,
+                overscanColumnCount: props.overscanColumnCount,
+                scrollThrottleRate: props.scrollThrottleRate,
                 fillable: props.fillable,
                 getContextMenuItems: props.getContextMenuItems,
             }),

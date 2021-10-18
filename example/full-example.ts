@@ -1,5 +1,5 @@
 import { Grid } from '@/index';
-import { RowData } from '@/types';
+import { ColumnsDef, RowData } from '@/types';
 import { name, country, game, date, numeric, month } from './fake';
 import { monthOptions, languageOptions } from './fake';
 import IndexRender from './renders/IndexRender';
@@ -11,41 +11,51 @@ import { showContainer } from './utils';
 ; (() => {
 
     let rows: RowData[] = [];
+    let columns: ColumnsDef = [
+        { headerName: '#', field: '#', width: 80, readonly: true, pinned: 'left', cellRender: IndexRender },
+        { headerName: 'ID', field: 'id', width: 100, pinned: 'left', resizable: true },
+    ];
 
-    for (let i = 0; i < 100; i++) {
+    const columnIteration = 10;
+
+    for (let i = 0; i < 1000; i++) {
 
         const countryData = country(i);
+        let rowData: RowData = { id: 'row_' + i };
 
-        rows.push({
-            id: 'row_' + i,
-            name: name(i),
-            status: i % 2 == 0,
-            month: [month(), month()],
-            language: [countryData.language],
-            country: countryData.country,
-            continent: countryData.continent,
-            game: { title: game(i), link: "https://www.example.com" },
-            bought: numeric(100) > 50,
-            balance: numeric(10000),
-            rating: numeric(10),
-            winnings: numeric(100000),
-            date: date(new Date(2021, 1), new Date(2021, 6)).toString(),
-        });
+        for (let c = 0; c < columnIteration; c++) {
+            rowData = Object.assign({}, rowData, {
+                [`name_${c}`]: name(i),
+                [`status_${c}`]: i % 2 == 0,
+                [`month_${c}`]: [month(), month()],
+                [`language_${c}`]: [countryData.language],
+                [`country_${c}`]: countryData.country,
+                [`continent_${c}`]: countryData.continent,
+                [`game_${c}`]: { title: game(i), link: "https://www.example.com" },
+                [`bought_${c}`]: numeric(100) > 50,
+                [`balance_${c}`]: numeric(10000),
+                [`rating_${c}`]: numeric(10),
+                [`winnings_${c}`]: numeric(100000),
+                [`date_${c}`]: date(new Date(2021, 1), new Date(2021, 6)).toString(),
+            });
+        }
+
+        rows.push(rowData);
     }
 
-    showContainer('#full-example-container', 'Full Example');
-    const grid = new Grid(document.querySelector("#full-example"), {
-        columns: [
-            { headerName: '#', field: '#', pinned: 'left', width: 80, readonly: true, cellRender: IndexRender },
-            { headerName: 'ID', field: 'id', pinned: 'left', width: 100, resizable: true },
-            { headerName: 'Name', field: 'name', width: 120, resizable: true, cellEditor: InputEditor },
+    for (let c = 0; c < columnIteration; c++) {
+
+        const pinnedRight = c === 0 ? 'right' : undefined;
+
+        columns = columns.concat([
+            { headerName: 'Name', field: `name_${c}`, width: 120, resizable: true, cellEditor: InputEditor },
             {
-                headerName: 'Status', field: 'status', width: 80, resizable: true,
+                headerName: 'Status', field: `status_${c}`, width: 80, resizable: true,
                 transformer: new BooleanTransformer(),
                 cellRender: CheckboxRender, cellEditor: CheckboxEditor
             },
             {
-                headerName: 'Month', field: 'month', resizable: true,
+                headerName: 'Month', field: `month_${c}`, resizable: true,
                 transformer: new SelectionTransformer({
                     allowNotExistOption: false, options: Object.keys(monthOptions)
                 }),
@@ -53,9 +63,9 @@ import { showContainer } from './utils';
                 cellEditor: SelectionEditor,
                 cellParams: { options: monthOptions, multiple: true }
             },
-            { headerName: 'Game Name', field: 'game', resizable: true, cellRender: HyperlinkRender },
+            { headerName: 'Game Name', field: `game_${c}`, resizable: true, cellRender: HyperlinkRender },
             {
-                headerName: 'Language', field: 'language', width: 100, resizable: true,
+                headerName: 'Language', field: `language_${c}`, width: 100, resizable: true,
                 transformer: new SelectionTransformer({
                     allowNotExistOption: false, options: Object.keys(languageOptions)
                 }),
@@ -63,29 +73,41 @@ import { showContainer } from './utils';
                 cellEditor: SelectionEditor,
                 cellParams: { options: languageOptions },
             },
-            { headerName: 'Country', field: 'country', resizable: true },
-            { headerName: 'Continent', field: 'continent', resizable: true },
-            { headerName: 'Bought', field: 'bought', resizable: true, cellRender: CheckboxRender },
+            { headerName: 'Country', field: `country_${c}`, resizable: true },
+            { headerName: 'Continent', field: `continent_${c}`, resizable: true },
+            { headerName: 'Bought', field: `bought_${c}`, resizable: true, cellRender: CheckboxRender },
             {
-                headerName: 'Bank Balance', field: 'balance', resizable: true,
+                headerName: 'Bank Balance', field: `balance_${c}`, resizable: true,
                 cellEditor: InputEditor,
                 cellParams: { type: 'number' }
             },
             {
-                headerName: 'Rating', field: 'rating', pinned: 'left', resizable: true,
+                headerName: 'Rating', field: `rating_${c}`, resizable: true,
                 cellRender: RatingRender,
                 cellEditor: RatingEditor
             },
             {
-                headerName: 'Total Winnings', field: 'winnings', resizable: true,
+                headerName: 'Total Winnings', field: `winnings_${c}`, pinned: pinnedRight, resizable: true,
                 cellEditor: InputEditor,
                 cellParams: { type: 'number' }
             },
-            { headerName: 'Date', field: 'date', resizable: true, pinned: 'right' },
-        ],
+            { headerName: 'Date', field: `date_${c}`, pinned: pinnedRight, resizable: true },
+        ]);
+    }
+
+    showContainer('#full-example-container', 'Full Example');
+    const container = document.querySelector<HTMLDivElement>("#full-example");
+    container.style.height = '680px';
+    const grid = new Grid(container, {
+        columns: columns,
+        defaultColumnOption: {
+            minWidth: 100
+        },
         rows: [],
-        rowHeight: 30,
+        rowHeight: 34,
         fillable: 'xy',
+        overscanRowCount: 10,
+        overscanColumnCount: 2,
         getColumnMenuItems: (params) => {
             const options = params.grid.getColumnOptions(params.column);
 
@@ -177,5 +199,6 @@ import { showContainer } from './utils';
     });
 
     grid.appendRows(rows);
-    grid.setPinnedTopRows(['row_1', 'row_3', 'row_5', 'row_7']);
+    grid.setPinnedTopRows(['row_1', 'row_3', 'row_5']);
+    grid.setPinnedBottomRows(['row_2', 'row_4']);
 })();

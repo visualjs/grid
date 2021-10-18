@@ -16,9 +16,22 @@
         "jsxFactory": "h",
         "jsxFragmentFactory": "Fragment",
         "allowJs": true,
+        "skipLibCheck": true,
         "moduleResolution": "node",
         "baseUrl": ".",
         "paths": {
+            "react": [
+                "node_modules/preact/compat"
+            ],
+            "react-dom/test-utils": [
+                "node_modules/preact/test-utils"
+            ],
+            "react-dom": [
+                "node_modules/preact/compat"
+            ],
+            "react/jsx-runtime": [
+                "node_modules/preact/jsx-runtime"
+            ],
             "@/*": [
                 "./src/*"
             ]

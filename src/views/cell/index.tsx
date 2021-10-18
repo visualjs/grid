@@ -14,6 +14,7 @@ interface Props {
     grid: Grid;
     row: string;
     column: string;
+    style?: JSXInternal.CSSProperties;
     rawValue: any;
     options: ColumnOptions;
     isSelected: boolean;
@@ -27,16 +28,13 @@ interface Props {
     isTopFilling: boolean;
     isBottomFilling: boolean;
     fillable: Fillable;
-    onDbClick?: (ev: MouseEvent, row: string, col: string) => void;
-    onMouseDown?: (ev: MouseEvent, row: string, col: string) => void;
-    onMouseMove?: (ev: MouseEvent, row: string, col: string) => void;
-    onMouseUp?: (ev: MouseEvent, row: string, col: string) => void;
-    onFillerMouseDown?: (ev: MouseEvent, row: string, col: string) => void;
 }
 
 class Cell extends Component<Props> {
 
-    protected cell = createRef<HTMLDivElement>();
+    protected cell: HTMLDivElement;
+
+    protected filler: HTMLDivElement;
 
     protected cellContent = createRef<HTMLDivElement>();
 
@@ -48,10 +46,6 @@ class Cell extends Component<Props> {
 
     protected cellRender: CellRenderer<any>;
 
-    protected timer: any = null;
-
-    protected io: IntersectionObserver;
-
     protected unsubscribeEditing: () => void;
 
     get options() {
@@ -60,17 +54,12 @@ class Cell extends Component<Props> {
 
     constructor(props: Props) {
         super(props);
-
-        this.io = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                this.doRender();
-                this.io.disconnect();
-            }
-        }, { threshold: 0.000001 })
     }
 
     componentDidMount = () => {
-        this.io.observe(this.cell.current);
+        this.bindMetaData();
+        this.doRender();
+
         if (!this.options.cellEditor || this.options.readonly) {
             return;
         }
@@ -97,41 +86,22 @@ class Cell extends Component<Props> {
         if (this.cellEditor && this.cellEditor.beforeDestroy) {
             this.cellEditor.beforeDestroy();
         }
-
-        this.io.disconnect();
-        if (this.timer) {
-            clearTimeout(this.timer);
-            this.timer = null;
-        }
     }
 
     componentDidUpdate = () => {
         this.doRender();
+        this.bindMetaData();
     }
 
-    // Event handlers
-    protected handleMouseDown = (ev: MouseEvent) => {
-        if (this.isEditing) return;
-        this.props.onMouseDown && this.props.onMouseDown(ev, this.props.row, this.props.column);
-    }
+    protected bindMetaData = () => {
+        (this.cell as any).__column = this.props.column;
+        (this.cell as any).__row = this.props.row;
 
-    protected handleMouseMove = (ev: MouseEvent) => {
-        if (this.isEditing) return;
-        this.props.onMouseMove && this.props.onMouseMove(ev, this.props.row, this.props.column);
-    }
-
-    protected handleMouseUp = (ev: MouseEvent) => {
-        if (this.isEditing) return;
-        this.props.onMouseUp && this.props.onMouseUp(ev, this.props.row, this.props.column);
-    }
-
-    protected handleDbClick = (ev: MouseEvent) => {
-        this.props.onDbClick && this.props.onDbClick(ev, this.props.row, this.props.column);
-    }
-
-    protected handleFillerMouseDown = (ev: MouseEvent) => {
-        ev.stopPropagation();
-        this.props.onFillerMouseDown && this.props.onFillerMouseDown(ev, this.props.row, this.props.column);
+        if (this.filler) {
+            (this.filler as any).__filler = true;
+            (this.filler as any).__column = this.props.column;
+            (this.filler as any).__row = this.props.row;
+        }
     }
 
     // Actions
@@ -203,7 +173,7 @@ class Cell extends Component<Props> {
         DOM.clean(this.popup);
 
         const rootRect = this.props.grid.getRootElement().getBoundingClientRect();
-        const rect = this.cell.current.getBoundingClientRect();
+        const rect = this.cell.getBoundingClientRect();
 
         this.popup.style.left = rect.left - rootRect.left + 'px';
         this.popup.style.top = rect.top - rootRect.top + 'px';
@@ -215,37 +185,33 @@ class Cell extends Component<Props> {
     protected doRender() {
         if (this.isEditing) return;
 
-        this.timer = setTimeout(() => {
-            if (!this.props.options.cellRender) {
-                this.cellContent.current && (this.cellContent.current.textContent = this.getValue());
-                return;
-            }
+        if (!this.props.options.cellRender) {
+            this.cellContent.current && (this.cellContent.current.textContent = this.getValue());
+            return;
+        }
 
-            // clean up the cell render before.
-            if (this.cellRender && this.cellRender.beforeDestroy) {
-                this.cellRender.beforeDestroy();
-            }
+        // clean up the cell render before.
+        if (this.cellRender && this.cellRender.beforeDestroy) {
+            this.cellRender.beforeDestroy();
+        }
 
-            this.cellRender = new this.props.options.cellRender();
-            this.cellRender.init && this.cellRender.init({
-                props: this.props.options.cellParams,
-                value: this.getValue(true),
-                column: this.props.options,
-                row: this.props.row,
-                gird: this.props.grid,
-            });
+        this.cellRender = new this.props.options.cellRender();
+        this.cellRender.init && this.cellRender.init({
+            props: this.props.options.cellParams,
+            value: this.getValue(true),
+            column: this.props.options,
+            row: this.props.row,
+            gird: this.props.grid,
+        });
 
-            this.timer = null;
+        if (!this.cellContent.current) {
+            return;
+        }
 
-            if (!this.cellContent.current) {
-                return;
-            }
-
-            this.props.grid.removeChild(this.popup);
-            DOM.clean(this.cellContent.current);
-            this.cellContent.current.appendChild(this.cellRender.gui());
-            this.cellRender.afterAttached && this.cellRender.afterAttached();
-        }, 0);
+        this.props.grid.removeChild(this.popup);
+        DOM.clean(this.cellContent.current);
+        this.cellContent.current.appendChild(this.cellRender.gui());
+        this.cellRender.afterAttached && this.cellRender.afterAttached();
     }
 
     render() {
@@ -272,8 +238,7 @@ class Cell extends Component<Props> {
         });
 
         let cellStyle: JSXInternal.CSSProperties = {
-            width: this.options.width,
-            minWidth: this.options.minWidth
+            ...this.props.style,
         };
         if (this.options.cellStyle) {
             cellStyle = Object.assign({}, cellStyle, this.options.cellStyle);
@@ -293,25 +258,20 @@ class Cell extends Component<Props> {
 
         return (
             <div
-                ref={this.cell}
+                ref={node => this.cell = node}
                 className={className + ' ' + classes(cellClassNames)}
                 style={cellStyle}
-                onMouseDown={this.handleMouseDown}
-                onMouseMove={this.handleMouseMove}
-                onMouseUp={this.handleMouseUp}
-                onDblClick={this.handleDbClick}
             >
                 <div ref={this.cellContent} className={styles.cellContent}></div>
                 {fillable && (
                     <div
-                        onMouseDown={this.handleFillerMouseDown}
+                        ref={node => this.filler = node}
                         className={styles.cellFillHandler}
                     />
                 )}
             </div>
         );
     }
-
 }
 
 const mapStateToProps = (state: RootState, { grid, props }: { grid: Grid, props: Props }) => {

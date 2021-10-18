@@ -10,7 +10,9 @@ export interface Actions {
 export interface State {
     width: string;
     height: string;
-    preloadRowCount: number;
+    overscanRowCount: number;
+    overscanColumnCount: number;
+    scrollThrottleRate?: number;
     fillable?: Fillable;
     loading?: boolean;
     destroyed?: boolean;
@@ -21,7 +23,8 @@ export interface State {
 const initialState: State = {
     width: '100%',
     height: '100%',
-    preloadRowCount: 20,
+    overscanRowCount: 5,
+    overscanColumnCount: 2,
 };
 
 export class Store extends BaseStore<State, Actions> {

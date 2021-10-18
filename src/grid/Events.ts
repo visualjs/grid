@@ -3,14 +3,14 @@ import { CellPosition, Coordinate, MenuItem } from '@/types';
 import { Events as EventsType } from './Observer';
 
 export interface EventsDef {
-    beforeCellDbClicked: (pos: CellPosition, ev: MouseEvent) => boolean | void;
-    afterCellDbClicked: (pos: CellPosition, ev: MouseEvent) => boolean | void;
-    beforeCellMouseDown: (pos: CellPosition, ev: MouseEvent) => boolean | void;
-    afterCellMouseDown: (pos: CellPosition, ev: MouseEvent) => boolean | void;
-    beforeCellMouseMove: (pos: CellPosition, ev: MouseEvent) => boolean | void;
-    afterCellMouseMove: (pos: CellPosition, ev: MouseEvent) => boolean | void;
-    beforeFillerMouseDown: (pos: CellPosition, ev: MouseEvent) => boolean | void;
-    afterFillerMouseDown: (pos: CellPosition, ev: MouseEvent) => boolean | void;
+    beforeCellDbClicked: (pos: CellPosition, ev: MouseEvent, cell: HTMLDivElement) => boolean | void;
+    afterCellDbClicked: (pos: CellPosition, ev: MouseEvent, cell: HTMLDivElement) => boolean | void;
+    beforeCellMouseDown: (pos: CellPosition, ev: MouseEvent, cell: HTMLDivElement) => boolean | void;
+    afterCellMouseDown: (pos: CellPosition, ev: MouseEvent, cell: HTMLDivElement) => boolean | void;
+    beforeCellMouseMove: (pos: CellPosition, ev: MouseEvent, cell: HTMLDivElement) => boolean | void;
+    afterCellMouseMove: (pos: CellPosition, ev: MouseEvent, cell: HTMLDivElement) => boolean | void;
+    beforeFillerMouseDown: (pos: CellPosition, ev: MouseEvent, filler: HTMLDivElement) => boolean | void;
+    afterFillerMouseDown: (pos: CellPosition, ev: MouseEvent, filler: HTMLDivElement) => boolean | void;
     beforeFilling: (range: FillRange) => boolean | void;
     afterFilling: (range: FillRange) => boolean | void;
     beforeSelectionChange: (start: Coordinate, end: Coordinate) => boolean | void;

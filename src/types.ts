@@ -195,8 +195,11 @@ export interface GridOptions {
     // callback version of property rowClass to set class(es) for each row individually.
     // function should return an array of strings (array of class names).
     getRowClass?: (params: RowClassParams) => string[];
-    // virtual list, default is 20
-    preloadRowCount?: number;
+    // virtual grid overscan
+    overscanRowCount?: number; // default is 5
+    overscanColumnCount?: number; // default is 2
+    // virtual grid scroll 
+    scrollThrottleRate?: number; // 100 (ms)
     // whether to enable the grid drop-down to fill data, 'x' | 'y' | 'xy' | undefined
     fillable?: Fillable;
     // callback called when a cell is right clicked.

@@ -31,14 +31,17 @@ class Grid extends Component<Props> {
 
     protected unsubscribes: (() => void)[] = [];
 
-    protected ignoreScrollEvents = false;
+    protected scrollXNodes: HTMLDivElement[] = [];
+
+    protected scrollYNode: HTMLDivElement;
 
     public componentDidMount = () => {
-
         this.unsubscribes.push(this.props.grid.getRoot().subscribeAny(() => {
             this.resize();
         }));
+    }
 
+    public componentDidUpdate = () => {
         this.resize();
     }
 
@@ -49,8 +52,7 @@ class Grid extends Component<Props> {
     public resize() {
         // If a vertical scroll bar appears, the last column will be misaligned
         // a spacer needs to be added
-        const list = (this.refs.list.current as any).base;
-        const spacerX = list.offsetWidth - list.clientWidth;
+        const spacerX = (this.scrollYNode?.offsetWidth - this.scrollYNode?.clientWidth) || 0;
 
         // fake horizontal scrollbar
         let horizontalScrollHeight = 0;
@@ -62,14 +64,11 @@ class Grid extends Component<Props> {
         const contentWidth = (this.refs.headerContainer?.current?.scrollWidth || 0);
 
         this.refs.header.current.style.paddingRight = spacerX + 'px';
+        // pinned rows
+        this.refs.pinnedTopRows.current.style.paddingRight = spacerX + 'px';
+        this.refs.pinnedBottomRows.current.style.paddingRight = spacerX + 'px';
         this.refs.horizontalScrollWrapper.current.style.height = horizontalScrollHeight + 'px';
         this.refs.horizontalScrollWrapper.current.style.display = horizontalScrollHeight > 0 ? '' : 'none';
-        // rows and pinned rows
-        this.refs.normalCellsContainer.current.style.width = contentWidth + 'px';
-        this.refs.pinnedTopNormalCellsContainer.current.style.width = contentWidth + 'px';
-        this.refs.pinnedTopRows.current.style.paddingRight = spacerX + 'px';
-        this.refs.pinnedBottomNormalCellsContainer.current.style.width = contentWidth + 'px';
-        this.refs.pinnedBottomRows.current.style.paddingRight = spacerX + 'px';
         // horizontal scrollbar
         this.refs.horizontalScrollContainer.current.style.width = contentWidth + 'px';
         this.refs.horizontalLeftSpacer.current.style.width = (this.refs.pinnedLeftColumns?.current?.scrollWidth || 0) + 'px';
@@ -126,29 +125,27 @@ class Grid extends Component<Props> {
         this.refs.columnResizer.current.style.left = offsetX + 'px';
     }
 
+    private active: any = null;
+
+    protected getScrollXNode = (node: HTMLDivElement) => {
+        this.scrollXNodes.push(node);
+
+        node?.addEventListener('mouseenter', (ev) => {
+            this.active = ev.target;
+        });
+    }
+
     protected handleHorizontalScroll = (ev: UIEvent) => {
-
-        // Prevent the horizontal scroll bar from flickering when scrolling
-        if (this.ignoreScrollEvents) return;
-        this.ignoreScrollEvents = true;
-
-        const update = () => {
-            requestAnimationFrame(() => {
-                const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
-                this.refs.normalCells.current.scrollLeft = scrollLeft;
-                this.refs.pinnedTopNormalCells.current.scrollLeft = scrollLeft;
-                this.refs.pinnedBottomNormalCells.current.scrollLeft = scrollLeft;
-                this.refs.horizontalScroll.current.scrollLeft = scrollLeft;
-                this.refs.headerContainer.current.style.transform = `translateX(-${scrollLeft}px)`;
-                this.ignoreScrollEvents = false;
-            });
-        };
-
-        if (ev.target == this.refs.horizontalScroll.current) {
-            requestAnimationFrame(update);
-        } else {
-            update();
+        if (ev.target !== this.active) {
+            return;
         }
+
+        const scrollLeft = (ev.target as HTMLDivElement).scrollLeft;
+        this.scrollXNodes.forEach(node => {
+            if (node === this.active) return;
+            node.scrollLeft = scrollLeft;
+        });
+        this.refs.headerContainer.current.style.transform = `translateX(-${scrollLeft}px)`;
     }
 
     render() {
@@ -173,22 +170,17 @@ class Grid extends Component<Props> {
                         pinnedTopRows={this.props.pinnedTopRows}
                         pinnedBottomRows={this.props.pinnedBottomRows}
                         normalRows={this.props.normalRows}
-                        onHorizontalScroll={this.handleHorizontalScroll}
+                        onScrollHorizontal={this.handleHorizontalScroll}
                         // refs
-                        listRef={this.createRef("list")}
-                        normalCellsContainerRef={this.createRef("normalCellsContainer")}
-                        normalCellsRef={this.createRef("normalCells")}
                         pinnedTopRowsRef={this.createRef("pinnedTopRows")}
-                        pinnedTopNormalCellsContainerRef={this.createRef("pinnedTopNormalCellsContainer")}
-                        pinnedTopNormalCellsRef={this.createRef("pinnedTopNormalCells")}
                         pinnedBottomRowsRef={this.createRef("pinnedBottomRows")}
-                        pinnedBottomNormalCellsContainerRef={this.createRef("pinnedBottomNormalCellsContainer")}
-                        pinnedBottomNormalCellsRef={this.createRef("pinnedBottomNormalCells")}
+                        getScrollXNode={this.getScrollXNode}
+                        getScrollYNode={(node) => this.scrollYNode = node}
                     />
                     {/* fake horizontal scroll bar */}
                     <div ref={this.createRef("horizontalScrollWrapper")} className={styles.horizontalScroll}>
                         <div ref={this.createRef("horizontalLeftSpacer")} className={styles.horizontalLeftSpacer}></div>
-                        <div ref={this.createRef("horizontalScroll")} className={styles.horizontalScrollView} onScroll={this.handleHorizontalScroll}>
+                        <div ref={this.getScrollXNode} className={styles.horizontalScrollView}>
                             <div
                                 ref={this.createRef("horizontalScrollContainer")}
                                 className={styles.horizontalScrollContainer}

@@ -6,7 +6,13 @@ export default defineConfig({
     plugins: [preact()],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'src')
+            '@': path.resolve(__dirname, 'src'),
+            entries: [
+                { find: 'react', replacement: 'preact/compat' },
+                { find: 'react-dom/test-utils', replacement: 'preact/test-utils' },
+                { find: 'react-dom', replacement: 'preact/compat' },
+                { find: 'react/jsx-runtime', replacement: 'preact/jsx-runtime' }
+            ]
         }
     },
     css: {

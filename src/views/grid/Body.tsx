@@ -1,7 +1,5 @@
-import { RefObject } from "preact";
 import Component from "@/views/PureComponent";
 import Grid, { State as RootState } from "@/grid";
-import List from "@/views/list";
 import { connect, withGrid } from "@/views/root";
 import { Menu } from "@/views/menu";
 import { CellPosition, Coordinate, MenuItem } from "@/types";
@@ -10,6 +8,7 @@ import { Button } from "@/utils";
 import { FillRange } from "@/selection/FillRange";
 import Rows from "./Rows";
 import clsx from "clsx";
+import { Ref } from "preact";
 
 import styles from './grid.module.css';
 
@@ -18,8 +17,6 @@ interface Props {
     pinnedTopRows: string[];
     pinnedBottomRows: string[];
     normalRows: string[];
-    rowHeight: number;
-    preloadRowCount: number;
     // actions
     getCoordinate: (row: string, column: string) => Coordinate;
     getCoordLocatedRange: (coord: Coordinate) => CellRange | undefined;
@@ -27,18 +24,13 @@ interface Props {
     selectCells: (start: Coordinate, end: Coordinate) => void;
     setEditing: (pos?: CellPosition) => void;
     setFilling: (filling?: FillRange) => void;
+    // events
+    onScrollHorizontal?: (ev: Event) => void;
     // refs
-    listRef?: RefObject<HTMLElement>;
-    normalCellsContainerRef?: RefObject<HTMLDivElement>;
-    pinnedTopNormalCellsContainerRef?: RefObject<HTMLDivElement>;
-    pinnedBottomNormalCellsContainerRef?: RefObject<HTMLDivElement>;
-    normalCellsRef?: RefObject<HTMLDivElement>;
-    pinnedTopNormalCellsRef?: RefObject<HTMLDivElement>;
-    pinnedBottomNormalCellsRef?: RefObject<HTMLDivElement>;
-    pinnedTopRowsRef?: RefObject<HTMLDivElement>;
-    pinnedBottomRowsRef?: RefObject<HTMLDivElement>;
-    // handlers
-    onHorizontalScroll?: (ev: UIEvent) => void;
+    pinnedTopRowsRef?: Ref<HTMLDivElement>;
+    pinnedBottomRowsRef?: Ref<HTMLDivElement>;
+    getScrollXNode?: (node: HTMLDivElement) => void;
+    getScrollYNode?: (node: HTMLDivElement) => void;
 }
 
 interface State {
@@ -75,17 +67,17 @@ class Body extends Component<Props, State> {
     }
 
     // Double-click the cell to enable editing
-    protected handleCellDbClick = (ev: MouseEvent, row: string, column: string) => {
-        if (this.props.grid.trigger('beforeCellDbClicked', { row, column }, ev) === false) {
+    protected handleCellDbClick = (ev: MouseEvent, cell: HTMLDivElement, row: string, column: string) => {
+        if (this.props.grid.trigger('beforeCellDbClicked', { row, column }, ev, cell) === false) {
             return;
         }
 
         this.props.setEditing({ row, column });
-        this.props.grid.trigger('afterCellDbClicked', { row, column }, ev);
+        this.props.grid.trigger('afterCellDbClicked', { row, column }, ev, cell);
     }
 
-    protected handleCellMouseDown = (ev: MouseEvent, row: string, column: string) => {
-        if (this.props.grid.trigger('beforeCellMouseDown', { row, column }, ev) === false) {
+    protected handleCellMouseDown = (ev: MouseEvent, cell: HTMLDivElement, row: string, column: string) => {
+        if (this.props.grid.trigger('beforeCellMouseDown', { row, column }, ev, cell) === false) {
             return;
         }
 
@@ -144,7 +136,7 @@ class Body extends Component<Props, State> {
             this.handleSelectionChanged();
         }
 
-        this.props.grid.trigger('afterCellMouseDown', { row, column }, ev);
+        this.props.grid.trigger('afterCellMouseDown', { row, column }, ev, cell);
     }
 
     protected handleSelectRow = (row: string) => {
@@ -164,8 +156,8 @@ class Body extends Component<Props, State> {
         this.props.grid.selectRows([row]);
     }
 
-    protected handleCellMouseMove = (ev: MouseEvent, row: string, column: string) => {
-        if (this.props.grid.trigger('beforeCellMouseMove', { row, column }, ev) === false) {
+    protected handleCellMouseMove = (ev: MouseEvent, cell: HTMLDivElement, row: string, column: string) => {
+        if (this.props.grid.trigger('beforeCellMouseMove', { row, column }, ev, cell) === false) {
             return;
         }
 
@@ -200,12 +192,12 @@ class Body extends Component<Props, State> {
             this.handleFillRangeChanged();
         }
 
-        this.props.grid.trigger('afterCellMouseMove', { row, column }, ev);
+        this.props.grid.trigger('afterCellMouseMove', { row, column }, ev, cell);
     }
 
-    protected handleCellFillerMouseDown = (ev: MouseEvent, row: string, column: string) => {
+    protected handleCellFillerMouseDown = (ev: MouseEvent, filler: HTMLDivElement, row: string, column: string) => {
 
-        if (this.props.grid.trigger('beforeFillerMouseDown', { row, column }, ev) === false) {
+        if (this.props.grid.trigger('beforeFillerMouseDown', { row, column }, ev, filler) === false) {
             return;
         }
 
@@ -222,7 +214,7 @@ class Body extends Component<Props, State> {
         this.isFilling = true;
         this.handleFillRangeChanged();
 
-        this.props.grid.trigger('afterFillerMouseDown', { row, column }, ev);
+        this.props.grid.trigger('afterFillerMouseDown', { row, column }, ev, filler);
     }
 
     protected handleMouseUp = () => {
@@ -317,24 +309,6 @@ class Body extends Component<Props, State> {
         }
     }
 
-    /**
-     * Renders
-     */
-    protected listRender = (items: string[]) => {
-        return (
-            <Rows
-                items={items}
-                onCellDbClick={this.handleCellDbClick}
-                onCellMouseDown={this.handleCellMouseDown}
-                onCellMouseMove={this.handleCellMouseMove}
-                onCellFillerMouseDown={this.handleCellFillerMouseDown}
-                handleHorizontalScroll={this.props.onHorizontalScroll}
-                normalCellsRef={this.props.normalCellsRef}
-                normalCellsContainerRef={this.props.normalCellsContainerRef}
-            />
-        )
-    }
-
     render() {
 
         const handleContextMenu = this.props.grid.state('grid').getContextMenuItems
@@ -350,6 +324,8 @@ class Body extends Component<Props, State> {
                 onKeyDown={this.handleKeyDown}
                 onKeyUp={this.handleKeyUp}
                 onKeyPress={this.handleKeyPress}
+                // for keyboard events
+                tabIndex={0}
             >
                 {this.state.isMenuVisible && <Menu
                     onMenuItemClicked={this.hideContextMenu}
@@ -357,43 +333,42 @@ class Body extends Component<Props, State> {
                     coord={this.state.contextMenuCoord}
                     items={this.state.contextMenuItems}
                 />}
-                {
-                    <div className={clsx(styles.pinnedTopRows, {
-                        [styles.noBorder]: this.props.pinnedTopRows.length === 0
-                    })}>
-                        <Rows
-                            selfRef={this.props.pinnedTopRowsRef}
-                            items={this.props.pinnedTopRows}
-                            onCellDbClick={this.handleCellDbClick}
-                            onCellMouseDown={this.handleCellMouseDown}
-                            onCellMouseMove={this.handleCellMouseMove}
-                            onCellFillerMouseDown={this.handleCellFillerMouseDown}
-                            handleHorizontalScroll={this.props.onHorizontalScroll}
-                            normalCellsRef={this.props.pinnedTopNormalCellsRef}
-                            normalCellsContainerRef={this.props.pinnedTopNormalCellsContainerRef}
-                        />
-                    </div>
-                }
-                <List
-                    ref={this.props.listRef}
-                    items={this.props.normalRows}
-                    itemHeight={this.props.rowHeight}
-                    preLoadCount={this.props.preloadRowCount}
-                    render={this.listRender}
-                />
-                <div className={clsx(styles.pinnedBottomRows, {
-                    [styles.noBorder]: this.props.pinnedBottomRows.length === 0
+                <div ref={this.props.pinnedTopRowsRef} className={clsx(styles.pinnedTopRows, {
+                    [styles.noBorder]: this.props.pinnedTopRows.length === 0
                 })}>
                     <Rows
-                        selfRef={this.props.pinnedBottomRowsRef}
-                        items={this.props.pinnedBottomRows}
+                        items={this.props.pinnedTopRows}
+                        onScrollHorizontal={this.props.onScrollHorizontal}
                         onCellDbClick={this.handleCellDbClick}
                         onCellMouseDown={this.handleCellMouseDown}
                         onCellMouseMove={this.handleCellMouseMove}
-                        onCellFillerMouseDown={this.handleCellFillerMouseDown}
-                        handleHorizontalScroll={this.props.onHorizontalScroll}
-                        normalCellsRef={this.props.pinnedBottomNormalCellsRef}
-                        normalCellsContainerRef={this.props.pinnedBottomNormalCellsContainerRef}
+                        onFillerMouseDown={this.handleCellFillerMouseDown}
+                        getScrollXNode={this.props.getScrollXNode}
+                    />
+                </div>
+                <div style={{ height: '100%', position: 'relative', overflow: 'hidden', flexGrow: 1 }}>
+                    <Rows
+                        items={this.props.normalRows}
+                        onScrollHorizontal={this.props.onScrollHorizontal}
+                        onCellDbClick={this.handleCellDbClick}
+                        onCellMouseDown={this.handleCellMouseDown}
+                        onCellMouseMove={this.handleCellMouseMove}
+                        onFillerMouseDown={this.handleCellFillerMouseDown}
+                        getScrollXNode={this.props.getScrollXNode}
+                        getScrollYNode={this.props.getScrollYNode}
+                    />
+                </div>
+                <div ref={this.props.pinnedBottomRowsRef} className={clsx(styles.pinnedBottomRows, {
+                    [styles.noBorder]: this.props.pinnedBottomRows.length === 0
+                })}>
+                    <Rows
+                        items={this.props.pinnedBottomRows}
+                        onScrollHorizontal={this.props.onScrollHorizontal}
+                        onCellDbClick={this.handleCellDbClick}
+                        onCellMouseDown={this.handleCellMouseDown}
+                        onFillerMouseDown={this.handleCellFillerMouseDown}
+                        onCellMouseMove={this.handleCellMouseMove}
+                        getScrollXNode={this.props.getScrollXNode}
                     />
                 </div>
             </div>
@@ -402,10 +377,7 @@ class Body extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => {
-    return {
-        preloadRowCount: state.grid.preloadRowCount,
-        rowHeight: state.row.height,
-    };
+    return {};
 };
 
 const mapActionsToProps = (grid: Grid) => {
