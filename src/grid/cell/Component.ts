@@ -1,7 +1,9 @@
 export abstract class Component<T> {
-
     // Return the DOM element of your component, this is what the grid puts into the DOM
     public abstract gui(): HTMLElement;
+
+    //  Return a Dom Element of you component when cell is selected and readonly
+    public readOnlySelectedGui?(params: T): HTMLElement;
 
     // A hook to perform any necessary operation just after the GUI for this component has been rendered
     // on the screen.

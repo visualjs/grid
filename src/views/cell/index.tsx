@@ -112,6 +112,7 @@ class Cell extends Component<Props> {
     };
 
     componentDidUpdate = () => {
+        console.log(222);
         this.doRender();
     };
 
@@ -212,6 +213,16 @@ class Cell extends Component<Props> {
         this.props.grid.appendChild(this.popup);
     };
 
+    protected getIsSelectedCurrentCellOnly() {
+        return (
+            this.props.isSelected &&
+            this.props.isLeftSelected &&
+            this.props.isRightSelected &&
+            this.props.isTopSelected &&
+            this.props.isBottomSelected
+        );
+    }
+
     // render cell component
     protected doRender() {
         if (this.isEditing) return;
@@ -221,20 +232,21 @@ class Cell extends Component<Props> {
             return;
         }
 
+        const props = {
+            props: this.props.options.cellParams,
+            value: this.getValue(true),
+            column: this.props.options,
+            row: this.props.row,
+            gird: this.props.grid,
+        };
+
         // clean up the cell render before.
         if (this.cellRender && this.cellRender.beforeDestroy) {
             this.cellRender.beforeDestroy();
         }
 
         this.cellRender = new this.props.options.cellRender();
-        this.cellRender.init &&
-            this.cellRender.init({
-                props: this.props.options.cellParams,
-                value: this.getValue(true),
-                column: this.props.options,
-                row: this.props.row,
-                gird: this.props.grid,
-            });
+        this.cellRender.init && this.cellRender.init(props);
 
         if (!this.cellContent.current) {
             return;
@@ -242,7 +254,17 @@ class Cell extends Component<Props> {
 
         this.props.grid.removeChild(this.popup);
         DOM.clean(this.cellContent.current);
-        this.cellContent.current.appendChild(this.cellRender.gui());
+
+        if (
+            this.getIsSelectedCurrentCellOnly() &&
+            this.cellRender.readOnlySelectedGui &&
+            this.props.grid.getColumnOptions(this.props.column).readonly
+        ) {
+            this.cellContent.current.appendChild(this.cellRender.readOnlySelectedGui(props));
+        } else {
+            this.cellContent.current.appendChild(this.cellRender.gui());
+        }
+
         this.cellRender.afterAttached && this.cellRender.afterAttached();
     }
 

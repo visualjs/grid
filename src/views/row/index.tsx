@@ -34,7 +34,7 @@ class Row extends Component<Props> {
             const index = this.props.grid.store('row').getRowIndex(this.props.value);
             const hovered = this.props.grid.state('row').hoveredRow === this.props.value;
             const selected = this.props.grid.state('row').selectedRows.indexOf(this.props.value) !== -1;
-            
+
             if (index % 2 === 0) {
                 DOM.appendClassName(this.self.current, styles.rowStripeCells);
             } else {
