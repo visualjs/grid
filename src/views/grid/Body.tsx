@@ -264,12 +264,6 @@ class Body extends Component<Props, State> {
         this.props.grid.trigger('afterFilling', range);
     }
 
-    protected handleBlur = () => {
-        this.props.grid.selectRows([]);
-        this.selectionStart = this.selectionEnd = null;
-        this.handleSelectionChanged();
-    }
-
     protected handleKeyDown = (ev: KeyboardEvent) => {
         if (this.props.grid.trigger('beforeKeyDown', ev) === false) {
             return;
@@ -319,14 +313,15 @@ class Body extends Component<Props, State> {
 
         return (
             <div
+                ref={this.createRef('self')}
                 className={styles.body}
-                onBlur={this.handleBlur}
                 onMouseLeave={() => this.props.hoverRow(undefined)}
                 onContextMenu={handleContextMenu}
                 onKeyDown={this.handleKeyDown}
                 onKeyUp={this.handleKeyUp}
                 onKeyPress={this.handleKeyPress}
                 // for keyboard events
+                onMouseEnter={() => this.refs.self?.current.focus()}
                 tabIndex={0}
             >
                 {this.state.isMenuVisible && <Menu

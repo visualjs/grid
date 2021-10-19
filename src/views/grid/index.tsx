@@ -34,13 +34,15 @@ class Grid extends Component<Props> {
     protected horizontalScrollbar: HTMLDivElement;
 
     protected scrollXNodes: HTMLDivElement[] = [];
-  
+
     protected scrollYNode: HTMLDivElement;
 
     public componentDidMount = () => {
         this.unsubscribes.push(this.props.grid.getRoot().subscribeAny(() => {
             this.resize();
         }));
+
+        document.addEventListener('click', this.handleClickOutside);
     }
 
     public componentDidUpdate = () => {
@@ -49,6 +51,19 @@ class Grid extends Component<Props> {
 
     public componentWillUnmount = () => {
         this.unsubscribes.forEach(f => f());
+
+        document.removeEventListener('click', this.handleClickOutside);
+    }
+
+    protected handleClickOutside = (ev: Event) => {
+        if (!this.refs.root?.current.contains((ev.target as Node))) {
+            if (this.props.grid.getSelectedRows().length > 0) {
+                this.props.grid.selectRows([]);
+            }
+            if (this.props.grid.state('cell').selections.length > 0) {
+                this.props.grid.selectCells(null, null);
+            }
+        }
     }
 
     public resize() {

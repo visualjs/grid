@@ -45,9 +45,24 @@ export class Menu extends Component<Props> {
             this.refs.self.current.style.top = top;
         }
     }
+
     protected handleClickoutside = (ev: MouseEvent) => {
         if (this.props.onClickOutside && !this.refs.self.current.contains(ev.target as Node)) {
-            this.props.onClickOutside();
+            // setTimeout is required here,
+            // otherwise clicking the menu will clear the selected rows and cells
+            setTimeout(() => {
+                this.props.onClickOutside();
+            }, 0);
+        }
+    }
+
+    protected handleMenuItemClicked = (ev: MouseEvent) => {
+        if (this.props.onMenuItemClicked) {
+            // setTimeout is required here,
+            // otherwise clicking the menu will clear the selected rows and cells
+            setTimeout(() => {
+                this.props.onMenuItemClicked(ev);
+            }, 0);
         }
     }
 
@@ -55,7 +70,7 @@ export class Menu extends Component<Props> {
         return (
             <div ref={this.createRef('self')} style={{ left: this.coord.x, top: this.coord.y }} className={styles.menu}>
                 {this.props.items.map(item => {
-                    return <Item onClick={this.props.onMenuItemClicked} {...item} />;
+                    return <Item onClick={this.handleMenuItemClicked} {...item} />;
                 })}
             </div>
         );

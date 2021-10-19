@@ -28,7 +28,7 @@ export class Store extends BaseStore<State, Actions> {
         }, Object.assign({}, initialState, initial));
 
         this.handle('selectCells', (state, selected) => {
-            if (!selected) {
+            if (!selected || !selected.start || !selected.end) {
                 return { ...state, selections: [] };
             }
             return { ...state, selections: [new CellRange(selected.start, selected.end)] };

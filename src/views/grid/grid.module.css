@@ -57,6 +57,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    outline: none;
 }
 
 .pinned-top-rows {
