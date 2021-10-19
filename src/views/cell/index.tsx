@@ -112,7 +112,6 @@ class Cell extends Component<Props> {
     };
 
     componentDidUpdate = () => {
-        console.log(222);
         this.doRender();
     };
 
@@ -209,6 +208,8 @@ class Cell extends Component<Props> {
 
         this.popup.style.left = rect.left - rootRect.left + 'px';
         this.popup.style.top = rect.top - rootRect.top + 'px';
+        this.popup.style.width = rect.width + 'px';
+        this.popup.style.height = rect.height + 'px';
         this.popup.appendChild(editor);
         this.props.grid.appendChild(this.popup);
     };
