@@ -50,14 +50,6 @@
     box-shadow: var(--column-pinned-left-shadow, none);
 }
 
-.normal-cells-container,
-.pinned-left-cells,
-.pinned-right-cells {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
 /* body */
 .body {
     height: 0;

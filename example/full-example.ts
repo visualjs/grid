@@ -18,7 +18,7 @@ import { showContainer } from './utils';
 
     const columnIteration = 10;
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 2000; i++) {
 
         const countryData = country(i);
         let rowData: RowData = { id: 'row_' + i };
@@ -104,10 +104,10 @@ import { showContainer } from './utils';
             minWidth: 100
         },
         rows: [],
-        rowHeight: 34,
+        rowHeight: 40,
         fillable: 'xy',
-        overscanRowCount: 10,
-        overscanColumnCount: 2,
+        overscanRowCount: 5,
+        overscanColumnCount: 3,
         getColumnMenuItems: (params) => {
             const options = params.grid.getColumnOptions(params.column);
 

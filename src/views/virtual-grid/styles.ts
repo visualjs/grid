@@ -29,6 +29,7 @@ export const STYLE_INNER: JSXInternal.CSSProperties = {
 export const STYLE_PINNED_WRAPPER: JSXInternal.CSSProperties = {
     position: 'relative',
     flexShrink: 0,
+    boxSizing: 'content-box',
 }
 
 export const STYLE_PINNED_ITEM: JSXInternal.CSSProperties = {

@@ -165,7 +165,7 @@ class Grid extends Component<Props> {
                         pinnedTopRows={this.props.pinnedTopRows}
                         pinnedBottomRows={this.props.pinnedBottomRows}
                         normalRows={this.props.normalRows}
-                        onScrollHorizontal={this.handleHorizontalWheel}
+                        onWheelHorizontal={this.handleHorizontalWheel}
                         // refs
                         pinnedTopRowsRef={this.createRef("pinnedTopRows")}
                         pinnedBottomRowsRef={this.createRef("pinnedBottomRows")}

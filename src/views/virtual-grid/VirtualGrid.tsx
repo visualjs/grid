@@ -51,6 +51,7 @@ export interface Props {
     renderRow(rowInfo: RowInfo): JSX.Element;
     renderCell(cellInfo: CellInfo): JSX.Element;
     // events
+    onWheelHorizontal?: (ev: WheelEvent) => void;
     onScrollHorizontal?: (ev: Event) => void;
     onScrollVertical?: (ev: Event) => void;
     // refs
@@ -84,7 +85,9 @@ export class VirtualGrid extends PureComponent<Props, State> {
 
     private columnManager = new SizeAndPositionManager({
         itemCount: this.props.columns.length,
-        itemSizeGetter: this.itemSizeGetter(this.props.columnWidth, i => this.props.columns[i])
+        itemSizeGetter: this.itemSizeGetter(this.props.columnWidth, i => {
+            return this.props.columns[i];
+        })
     });
 
     private onScrollVertical: (...args: any) => void;
@@ -178,13 +181,13 @@ export class VirtualGrid extends PureComponent<Props, State> {
 
         if (nextProps.rowHeight !== rowHeight) {
             this.rowManager.updateConfig({
-                itemSizeGetter: this.itemSizeGetter(nextProps.rowHeight, i => this.props.rows[i]),
+                itemSizeGetter: this.itemSizeGetter(nextProps.rowHeight, i => nextProps.rows[i]),
             });
         }
 
         if (nextProps.columnWidth !== columnWidth) {
             this.columnManager.updateConfig({
-                itemSizeGetter: this.itemSizeGetter(nextProps.columnWidth, i => this.props.columns[i]),
+                itemSizeGetter: this.itemSizeGetter(nextProps.columnWidth, i => nextProps.columns[i]),
             });
         }
 
@@ -213,7 +216,7 @@ export class VirtualGrid extends PureComponent<Props, State> {
                 offsetTop: nextProps.scrollTopOffset || 0,
                 scrollChangeReason: ScrollChangeReason.REQUESTED,
             });
-        } else if (scrollPropsHaveChanged || itemPropsHaveChanged) {
+        } else if (scrollPropsHaveChanged) {
             this.setState({
                 offsetLeft: this.getOffsetForColumn(
                     nextProps.scrollToColumnIndex || 0,
@@ -227,6 +230,8 @@ export class VirtualGrid extends PureComponent<Props, State> {
                 ),
                 scrollChangeReason: ScrollChangeReason.REQUESTED,
             });
+        } else if (itemPropsHaveChanged) {
+            this.forceUpdate();
         }
     }
 
@@ -352,14 +357,14 @@ export class VirtualGrid extends PureComponent<Props, State> {
     private handleMouseWheel = (ev: WheelEvent) => {
         if (ev.deltaX !== 0) {
             ev.preventDefault();
-            this.props.onScrollHorizontal && this.props.onScrollHorizontal(ev);
+            this.props.onWheelHorizontal && this.props.onWheelHorizontal(ev);
         }
     }
 
     private handleScroll = (ev: Event, direction: Direction) => {
 
-        if (direction === Direction.Vertical && typeof this.props.onScrollVertical === 'function') {
-            this.props.onScrollVertical(ev);
+        if (typeof this.props[scrollEventProp[direction]] === 'function') {
+            this.props[scrollEventProp[direction]](ev);
         }
 
         const offset = this.getNodeOffset();

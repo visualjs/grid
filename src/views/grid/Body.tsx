@@ -25,7 +25,7 @@ interface Props {
     setEditing: (pos?: CellPosition) => void;
     setFilling: (filling?: FillRange) => void;
     // events
-    onScrollHorizontal?: (ev: Event) => void;
+    onWheelHorizontal?: (ev: WheelEvent) => void;
     // refs
     pinnedTopRowsRef?: Ref<HTMLDivElement>;
     pinnedBottomRowsRef?: Ref<HTMLDivElement>;
@@ -336,40 +336,40 @@ class Body extends Component<Props, State> {
                 <div ref={this.props.pinnedTopRowsRef} className={clsx(styles.pinnedTopRows, {
                     [styles.noBorder]: this.props.pinnedTopRows.length === 0
                 })}>
-                    <Rows
+                    {this.props.pinnedTopRows.length > 0 && <Rows
                         items={this.props.pinnedTopRows}
-                        onScrollHorizontal={this.props.onScrollHorizontal}
+                        onWheelHorizontal={this.props.onWheelHorizontal}
                         onCellDbClick={this.handleCellDbClick}
                         onCellMouseDown={this.handleCellMouseDown}
                         onCellMouseMove={this.handleCellMouseMove}
                         onFillerMouseDown={this.handleCellFillerMouseDown}
                         getScrollXNode={this.props.getScrollXNode}
-                    />
+                    />}
                 </div>
                 <div style={{ height: '100%', position: 'relative', overflow: 'hidden', flexGrow: 1 }}>
-                    <Rows
+                    {this.props.normalRows.length > 0 && <Rows
                         items={this.props.normalRows}
-                        onScrollHorizontal={this.props.onScrollHorizontal}
+                        onWheelHorizontal={this.props.onWheelHorizontal}
                         onCellDbClick={this.handleCellDbClick}
                         onCellMouseDown={this.handleCellMouseDown}
                         onCellMouseMove={this.handleCellMouseMove}
                         onFillerMouseDown={this.handleCellFillerMouseDown}
                         getScrollXNode={this.props.getScrollXNode}
                         getScrollYNode={this.props.getScrollYNode}
-                    />
+                    />}
                 </div>
                 <div ref={this.props.pinnedBottomRowsRef} className={clsx(styles.pinnedBottomRows, {
                     [styles.noBorder]: this.props.pinnedBottomRows.length === 0
                 })}>
-                    <Rows
+                    {this.props.pinnedBottomRows.length > 0 && <Rows
                         items={this.props.pinnedBottomRows}
-                        onScrollHorizontal={this.props.onScrollHorizontal}
+                        onWheelHorizontal={this.props.onWheelHorizontal}
                         onCellDbClick={this.handleCellDbClick}
                         onCellMouseDown={this.handleCellMouseDown}
                         onFillerMouseDown={this.handleCellFillerMouseDown}
                         onCellMouseMove={this.handleCellMouseMove}
                         getScrollXNode={this.props.getScrollXNode}
-                    />
+                    />}
                 </div>
             </div>
         );

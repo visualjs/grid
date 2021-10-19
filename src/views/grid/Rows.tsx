@@ -8,6 +8,7 @@ import { CellInfo, RowInfo, VirtualGrid } from "@/views/virtual-grid";
 import { ColumnOptions } from "@/types";
 
 import styles from "./grid.module.css";
+import { createRef } from "preact";
 
 interface Props {
     grid: Grid;
@@ -24,6 +25,7 @@ interface Props {
     overscanRowCount: number,
     scrollThrottleRate: number;
     // events
+    onWheelHorizontal?: (ev: WheelEvent) => void;
     onScrollHorizontal?: (ev: Event) => void;
     onScrollVertical?: (ev: Event) => void;
     onCellDbClick?: (ev: MouseEvent, cell: HTMLDivElement, row: string, col: string) => void;
@@ -145,6 +147,7 @@ class Rows extends Component<Props> {
                     overscanColumnCount={this.props.overscanColumnCount}
                     renderRow={this.renderRow}
                     renderCell={this.renderCell}
+                    onWheelHorizontal={this.props.onWheelHorizontal}
                     onScrollHorizontal={this.props.onScrollHorizontal}
                     onScrollVertical={this.props.onScrollVertical}
                     getScrollXNode={this.props.getScrollXNode}
