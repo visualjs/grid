@@ -102,7 +102,7 @@ export class Grid {
     public on<
         K extends keyof typeof Actions | keyof EventsDef,
         H extends Handlers<typeof Actions, EventsDef>,
-    >(event: K, handler: H[K]): Unsubscribe {
+        >(event: K, handler: H[K]): Unsubscribe {
         return this.observer.on(event, handler);
     }
 
@@ -227,9 +227,12 @@ export class Grid {
 
     // parse the data from the clipboard and
     // set the selected cell data according to the order.
-    public pasteFromClipboard(): void {
-        const start = this.state('cell').selections[0]?.start;
-        if (!start) return;
+    public pasteFromClipboard(plainText = false): void {
+        const selection = this.state('cell').selections[0];
+        if (!selection) return;
+
+        const start = selection.start;
+        const cellCount = selection.getCellCount();
 
         readTextFromClipboard().then(str => {
             str = str.replace(/(\r\n|\r|\n)/g, '\n');
@@ -238,13 +241,23 @@ export class Grid {
                 return;
             }
 
-            str.split('\n').forEach((rowData, y) => {
-                rowData.split('\t').forEach((value, x) => {
-                    const coord = { x: x + start.x, y: y + start.y };
-                    this.setCellValueByCoord(coord, value);
-                });
-            });
+            let end = { ...start };
 
+            if (plainText) {
+                this.setCellValueByCoord(start, str);
+            } else {
+                str.split('\n').forEach((rowData, y) => {
+                    rowData.split('\t').forEach((value, x) => {
+                        const coord = { x: x + start.x, y: y + start.y };
+                        if (selection.contains(coord) || cellCount === 1) {
+                            end = coord;
+                            this.setCellValueByCoord(coord, value);
+                        }
+                    });
+                });
+            }
+
+            this.selectCells(start, end);
             this.trigger('afterPaste', str);
         });
     }

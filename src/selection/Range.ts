@@ -42,6 +42,10 @@ export abstract class Range {
         return { x: this.minX + relative.x, y: this.minY + relative.y };
     }
 
+    public getCellCount(): number {
+        return (this.maxX - this.minX + 1) * (this.maxY - this.minY + 1);
+    }
+
     public contains(coord: Coordinate): boolean {
         if (this.isEmpty()) {
             return false;
