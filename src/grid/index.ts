@@ -318,7 +318,7 @@ export class Grid {
     }
 
     // set cell value according to cell position
-    public setCellValue(row: string, column: string, value: any): void {
+    public setCellValue(row: string, column: string, value: any, force = false): void {
         const oldValue = this.getRawCellValue(row, column);
         const columnOptions = this.getColumnOptions(column, row);
 
@@ -328,6 +328,13 @@ export class Grid {
 
         const trans = columnOptions.transformer;
         value = trans ? trans.parse({ value, column: columnOptions, gird: this }) : value;
+
+        // if force is not true and the value is not modified,
+        // dispatch will not be triggered
+        if (oldValue === value && force !== true) {
+            return;
+        }
+
         this.store('row').dispatch('setCellValue', { row, column, value });
     }
 
