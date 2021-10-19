@@ -126,15 +126,9 @@ class Body extends Component<Props, State> {
         // select current active row
         this.handleSelectRow(row);
 
-        if (!this.props.grid.getColumnOptions(column)?.readonly) {
-            // set current active cell as selection star position
-            this.selectionStart = this.selectionEnd = coord;
-            this.isSelecting = true;
-            this.handleSelectionChanged();
-        } else {
-            this.selectionStart = this.selectionEnd = null;
-            this.handleSelectionChanged();
-        }
+        this.selectionStart = this.selectionEnd = coord;
+        this.isSelecting = true;
+        this.handleSelectionChanged();
 
         this.props.grid.trigger('afterCellMouseDown', { row, column }, ev, cell);
     }
@@ -164,10 +158,6 @@ class Body extends Component<Props, State> {
         // update hovered row
         this.props.hoverRow(row);
 
-        if (this.props.grid.getColumnOptions(column)?.readonly) {
-            return;
-        }
-
         const coord = this.props.getCoordinate(row, column);
 
         // If you are selecting a cell range,
@@ -183,7 +173,8 @@ class Body extends Component<Props, State> {
 
         // If you are filling a cell range,
         // update the filling range according to the current hover cell
-        if (this.isFilling) {
+        if (this.isFilling && !this.props.grid.getColumnOptions(column)?.readonly) {
+
             if (this.fillingEnd && this.fillingEnd.x == coord.x && this.fillingEnd.y == coord.y) {
                 return;
             }

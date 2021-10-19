@@ -277,7 +277,7 @@ const mapStateToProps = (state: RootState, { grid, props }: { grid: Grid, props:
 
     const options = grid.getColumnOptions(props.column, props.row);
     const readonly = options?.readonly;
-    const selectBoundary = readonly ? undefined : grid.getSelectBoundary(props.row, props.column);
+    const selectBoundary = grid.getSelectBoundary(props.row, props.column);
     const fillingBoundary = readonly ? undefined : grid.getFillingBoundary(props.row, props.column);
 
     return {
