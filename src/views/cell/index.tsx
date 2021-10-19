@@ -177,6 +177,8 @@ class Cell extends Component<Props> {
 
         this.popup.style.left = rect.left - rootRect.left + 'px';
         this.popup.style.top = rect.top - rootRect.top + 'px';
+        this.popup.style.minWidth = rect.width + 'px';
+        this.popup.style.minHeight = rect.height + 'px';
         this.popup.appendChild(editor);
         this.props.grid.appendChild(this.popup);
     }
@@ -216,26 +218,23 @@ class Cell extends Component<Props> {
 
     render() {
         const cellClassParam = { column: this.props.column, row: this.props.row, grid: this.props.grid };
-
-        let cellClassNames = this.props.options.cellClass || [];
-        // set class(es) for a particular cell.
-        if (this.props.options.getCellClass) {
-            cellClassNames = cellClassNames.concat(this.props.options.getCellClass(cellClassParam));
-        }
-
-        const className = classes({
-            [styles.cell]: true,
-            [styles.cellSelected]: this.props.isSelected,
-            [styles.cellLeftBoundary]: this.props.isLeftSelected,
-            [styles.cellRightBoundary]: this.props.isRightSelected,
-            [styles.cellTopBoundary]: this.props.isTopSelected,
-            [styles.cellBottomBoundary]: this.props.isBottomSelected,
-            [styles.cellFilling]: this.props.isFilling,
-            [styles.cellFillingLeftBoundary]: this.props.isLeftFilling,
-            [styles.cellFillingRightBoundary]: this.props.isRightFilling,
-            [styles.cellFillingTopBoundary]: this.props.isTopFilling,
-            [styles.cellFillingBottomBoundary]: this.props.isBottomFilling,
-        });
+        const className = classes(
+            // set class(es) for a particular cell.
+            this.props.options.cellClass || [],
+            this.props.options.getCellClass ? this.props.options.getCellClass(cellClassParam) : [],
+            {
+                [styles.cell]: true,
+                [styles.cellSelected]: this.props.isSelected,
+                [styles.cellLeftBoundary]: this.props.isLeftSelected,
+                [styles.cellRightBoundary]: this.props.isRightSelected,
+                [styles.cellTopBoundary]: this.props.isTopSelected,
+                [styles.cellBottomBoundary]: this.props.isBottomSelected,
+                [styles.cellFilling]: this.props.isFilling,
+                [styles.cellFillingLeftBoundary]: this.props.isLeftFilling,
+                [styles.cellFillingRightBoundary]: this.props.isRightFilling,
+                [styles.cellFillingTopBoundary]: this.props.isTopFilling,
+                [styles.cellFillingBottomBoundary]: this.props.isBottomFilling,
+            });
 
         let cellStyle: JSXInternal.CSSProperties = {
             ...this.props.style,
@@ -259,7 +258,7 @@ class Cell extends Component<Props> {
         return (
             <div
                 ref={node => this.cell = node}
-                className={className + ' ' + classes(cellClassNames)}
+                className={className}
                 style={cellStyle}
             >
                 <div ref={this.cellContent} className={styles.cellContent}></div>
