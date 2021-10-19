@@ -279,6 +279,8 @@ class Body extends Component<Props, State> {
 
         if (ev.key === 'c' && (ev.ctrlKey || ev.metaKey)) {
             this.props.grid.copySelection();
+        } else if (ev.key === 'v' && (ev.ctrlKey || ev.metaKey) && ev.shiftKey) {
+            this.props.grid.pasteFromClipboard(true);
         } else if (ev.key === 'v' && (ev.ctrlKey || ev.metaKey)) {
             this.props.grid.pasteFromClipboard();
         }
