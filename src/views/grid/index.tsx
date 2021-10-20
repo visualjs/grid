@@ -63,6 +63,10 @@ class Grid extends Component<Props> {
             if (this.props.grid.state('cell').selections.length > 0) {
                 this.props.grid.selectCells(null, null);
             }
+            if (this.props.grid.state('cell').editing) {
+                console.log('stop editing');
+                this.props.grid.stopEditing();
+            }
         }
     }
 
