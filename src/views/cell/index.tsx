@@ -263,7 +263,9 @@ class Cell extends Component<Props> {
             this.props.grid.getColumnOptions(this.props.column).readonly;
 
         if (isUseReadonlyGui) {
-            this.cellContent.current.appendChild(this.cellRender.readOnlySelectedGui(props));
+            const render = document.createElement('div');
+            render.appendChild(this.cellRender.readOnlySelectedGui(props));
+            this.createPopup(render);
         } else {
             this.cellContent.current.appendChild(this.cellRender.gui());
         }
