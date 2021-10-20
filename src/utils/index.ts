@@ -2,6 +2,7 @@ import clsx, { ClassValue } from 'clsx';
 
 export * from './enums';
 export * from './dom';
+export * from './browser';
 export * from './clipboard';
 export * from './shallowEqual';
 export * from './deepCopy';

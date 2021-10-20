@@ -127,8 +127,8 @@ export class VirtualGrid extends PureComponent<Props, State> {
         } = this.props;
 
         this.onScrollVertical = throttle(this.handleScroll, throttleTimeout, throttleRate, Direction.Vertical);
-        // this.onScrollHorizontal = throttle(this.handleScroll, throttleTimeout, throttleRate, Direction.Horizontal);
-        this.onScrollHorizontal = (ev: Event) => this.handleScroll(ev, Direction.Horizontal);
+        this.onScrollHorizontal = throttle(this.handleScroll, throttleTimeout, throttleRate, Direction.Horizontal);
+        // this.onScrollHorizontal = (ev: Event) => this.handleScroll(ev, Direction.Horizontal);
         this.scrollYNode?.addEventListener('scroll', this.onScrollVertical, { passive: true });
         this.scrollXNode?.addEventListener('scroll', this.onScrollHorizontal, { passive: true });
         this.scrollXNode?.addEventListener('wheel', this.handleMouseWheel, { passive: false });
@@ -239,7 +239,7 @@ export class VirtualGrid extends PureComponent<Props, State> {
 
         // hide horizontal scroll bar
         const parent = this.scrollXNode.parentNode as HTMLDivElement;
-        const spacerY = this.scrollXNode.offsetHeight - this.scrollXNode.clientHeight;
+        const spacerY = Math.max(this.scrollXNode.offsetHeight - this.scrollXNode.clientHeight, 17);
         this.scrollXNode.style.height = parent.offsetHeight + spacerY + 'px';
 
         // update offset
@@ -355,8 +355,13 @@ export class VirtualGrid extends PureComponent<Props, State> {
     }
 
     private handleMouseWheel = (ev: WheelEvent) => {
-        if (ev.deltaX !== 0) {
-            ev.preventDefault();
+        if (ev.deltaX == 0) {
+            return;
+        }
+
+        ev.preventDefault();
+
+        if (ev.deltaY == 0) {
             this.props.onWheelHorizontal && this.props.onWheelHorizontal(ev);
         }
     }
@@ -507,7 +512,7 @@ export class VirtualGrid extends PureComponent<Props, State> {
                     }
                     {/* scroll x area */}
                     <div style={{ ...STYLE_SCROLL_HORIZONTAL, overflow: 'hidden', height: totalHeight }}>
-                        <div ref={this.getScrollXRef} style={{ ...STYLE_SCROLL_HORIZONTAL, height: totalHeight + 17 }}>
+                        <div ref={this.getScrollXRef} style={{ ...STYLE_SCROLL_HORIZONTAL }}>
                             <div style={{ ...STYLE_INNER, width: totalWidth }}>
                                 {rows}
                             </div>
