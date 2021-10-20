@@ -10,14 +10,14 @@
     --header-foreground-color: rgba(0, 0, 0, 0.5);
     --header-resizer-active-color: var(--primary-color);
     /* columns */
-    --column-pinned-right-shadow: rgba(0, 0, 0, 0.05) -4px 0px 4px;
-    --column-pinned-left-shadow: rgba(0, 0, 0, 0.05) 4px 0px 4px;
+    --column-pinned-right-shadow: rgba(0, 0, 0, 0.06) -4px 0px 2px;
+    --column-pinned-left-shadow: rgba(0, 0, 0, 0.06) 4px 0px 2px;
     /* rows */
     --row-stripe-background: #fefcfc;
     --row-hover-background: #f8f8f8;
     --row-select-background: rgba(220, 76, 63, 0.1);
-    --rows-pinned-top-shadow: rgba(0, 0, 0, 0.05) 0px 5px 5px;
-    --rows-pinned-bottom-shadow: rgba(0, 0, 0, 0.05) 0px -5px 5px;
+    --rows-pinned-top-shadow: rgba(0, 0, 0, 0.06) 0px 4px 2px;
+    --rows-pinned-bottom-shadow: rgba(0, 0, 0, 0.06) 0px -4px 2px;
     /* cells */
     --cell-selected-background: rgba(220, 76, 63, 0.2);
     --cell-selected-boundary-color: var(--primary-color);

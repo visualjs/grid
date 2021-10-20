@@ -327,7 +327,7 @@ export class Grid {
         }
 
         const trans = columnOptions.transformer;
-        value = trans ? trans.parse({ value, column: columnOptions, gird: this }) : value;
+        value = trans ? trans.parse({ oldValue, value, column: columnOptions, gird: this }) : value;
 
         // if force is not true and the value is not modified,
         // dispatch will not be triggered

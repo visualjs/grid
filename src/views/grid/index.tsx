@@ -4,6 +4,8 @@ import { State as RootState, Grid as GridApi } from "@/grid";
 import { ColumnOptions } from "@/types";
 import Header from '@/views/header';
 import Body from "./Body";
+import { isInvisibleScrollbar } from "@/utils";
+import normalizeWheel from 'normalize-wheel';
 
 import styles from './grid.module.css';
 
@@ -63,6 +65,9 @@ class Grid extends Component<Props> {
             if (this.props.grid.state('cell').selections.length > 0) {
                 this.props.grid.selectCells(null, null);
             }
+            if (this.props.grid.state('cell').editing) {
+                this.props.grid.stopEditing();
+            }
         }
     }
 
@@ -75,7 +80,7 @@ class Grid extends Component<Props> {
         let horizontalScrollHeight = 0;
         if (this.refs.headerContainer.current.scrollWidth > this.refs.normalColumns.current.clientWidth) {
             // we need to show a horizontal scrollbar
-            horizontalScrollHeight = this.refs.horizontalScrollContainer.current.offsetHeight;
+            horizontalScrollHeight = isInvisibleScrollbar() ? 17 : this.refs.horizontalScrollContainer.current.offsetHeight;
         }
 
         const contentWidth = (this.refs.headerContainer?.current?.scrollWidth || 0);
@@ -87,6 +92,7 @@ class Grid extends Component<Props> {
         this.refs.horizontalScrollWrapper.current.style.height = horizontalScrollHeight + 'px';
         this.refs.horizontalScrollWrapper.current.style.display = horizontalScrollHeight > 0 ? '' : 'none';
         // horizontal scrollbar
+        this.refs.horizontalScrollContainer.current.style.height = horizontalScrollHeight + 'px';
         this.refs.horizontalScrollContainer.current.style.width = contentWidth + 'px';
         this.refs.horizontalLeftSpacer.current.style.width = (this.refs.pinnedLeftColumns?.current?.scrollWidth || 0) + 'px';
         this.refs.horizontalRightSpacer.current.style.width = (this.refs.pinnedRightColumns?.current?.offsetWidth || 0) + spacerX + 'px';
@@ -147,7 +153,8 @@ class Grid extends Component<Props> {
     }
 
     protected handleHorizontalWheel = (ev: WheelEvent) => {
-        this.horizontalScrollbar.scrollLeft += ev.deltaX * 1.25;
+        const normalized = normalizeWheel(ev);
+        this.horizontalScrollbar.scrollLeft += normalized.pixelX * 1.25;
     }
 
     protected handleHorizontalScroll = (ev: Event) => {

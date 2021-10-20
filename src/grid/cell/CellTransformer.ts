@@ -2,6 +2,7 @@ import { ColumnOptions } from "@/types";
 import { Grid } from "@/index";
 
 export interface CellTransformerParams {
+    oldValue?: any;
     value: any;
     column: ColumnOptions;
     gird: Grid;

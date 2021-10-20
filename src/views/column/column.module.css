@@ -4,9 +4,16 @@
     flex-shrink: 0;
 }
 
+.header-name {
+    width: 100%;
+    display: block;
+    font-weight: bold;
+}
+
 .header-column-content {
     display: flex;
     flex-shrink: 0;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
     position: relative;
