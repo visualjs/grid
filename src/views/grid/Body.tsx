@@ -222,8 +222,9 @@ class Body extends Component<Props, State> {
         this.props.grid.trigger('afterFillerMouseDown', { row, column }, ev);
     };
 
-    protected handleClickOutside = (ev: UIEvent) => {
-        if (!ev.target.closest('.v-grid-root')) {
+    protected handleClickOutside = (ev: MouseEvent) => {
+        const target = ev.target as HTMLElement;
+        if (!target.closest('.v-grid-root')) {
             this.props.grid.stopEditing();
         }
     };
