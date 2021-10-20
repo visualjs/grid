@@ -37,6 +37,11 @@ export interface RowClassParams {
     grid: Grid;
 }
 
+export interface ColumnClassParams {
+    column: string;
+    grid: Grid;
+}
+
 export interface CellClassParams {
     row: string;
     column: string;
@@ -119,6 +124,15 @@ export interface OverridableColumnOptions {
     // callback version of property cellClass to set class(es) for a particular cell.
     // function should return an array of strings (array of class names).
     getCellClass?: (params: CellClassParams) => string[];
+    // an object of css values for a particular column title.
+    headerStyle?: JSXInternal.CSSProperties;
+    // callback version of property headerStyle to set style for a particular column title.
+    // function should return an object of CSS values.
+    getHeaderStyle?: (params: ColumnClassParams) => JSXInternal.CSSProperties;
+    // class to use for the column title. can be an array of strings.
+    headerClass?: string[];
+    // function should return an array of strings (array of class names).
+    getHeaderClass?: (params: ColumnClassParams) => string[];
 }
 
 // BaseColumnOptions can be overridden by default column options

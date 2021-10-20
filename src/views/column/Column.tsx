@@ -1,14 +1,16 @@
 import Component from "@/views/PureComponent";
-import { connect } from "@/views/root";
-import { State as RootState } from "@/grid";
+import { connect, withGrid } from "@/views/root";
+import Grid, { State as RootState } from "@/grid";
 import { ColumnOptions } from "@/types";
 import { JSXInternal } from "preact/src/jsx";
+import clsx from "clsx";
 
 import styles from './column.module.css';
 
 export interface Props {
     value: string;
     options: ColumnOptions;
+    grid: Grid,
     onResize?: (field: string, width: number, ev: MouseEvent) => void;
     onContextMenu?: (field: string, ev: MouseEvent) => void;
 }
@@ -42,10 +44,24 @@ class Column extends Component<Props> {
             cellStyle.flexGrow = this.options.flex;
         }
 
+        const headerClassParam = { column: this.props.value, grid: this.props.grid };
+
+        const className = clsx(
+            styles.headerColumnContent,
+            // custom class name
+            this.options.headerClass || [],
+            this.options.getHeaderClass ? this.options.getHeaderClass(headerClassParam) : []
+        );
+
+        const headerStyle = {
+            ...this.options.headerStyle,
+            ...(this.options.getHeaderStyle ? this.options.getHeaderStyle(headerClassParam) : {})
+        }
+
         return (
             <div ref={this.createRef("column")} className={styles.headerColumn} style={cellStyle}>
-                <div className={styles.headerColumnContent}>
-                    <span>{this.options.headerName}</span>
+                <div className={className} style={headerStyle}>
+                    <span className={styles.headerName}>{this.options.headerName}</span>
                     {
                         this.props.onContextMenu
                         && <span onClick={this.handleContextMenu} className={`${styles.columnIcon} vg-menu`}></span>
@@ -64,4 +80,4 @@ export default connect((state: RootState, { props }: { props: Props }) => {
     return {
         options: state.column.columns[props.value],
     };
-})(Column);
+})(withGrid(Column));
