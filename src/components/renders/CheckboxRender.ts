@@ -16,7 +16,10 @@ export class CheckboxRender extends CellRenderer<{}> {
 
     public readOnlySelectedGui({ value }: CellRendererParams<{}>): HTMLElement {
         const el = document.createElement('div');
-        el.innerHTML = value;
+        el.style.background = '#fff'
+        el.style.height = `${200}px`
+        el.style.userSelect = 'auto'
+        el.innerHTML = `this a random string from readonly select gui ${Math.random()}`;
         return el;
     }
 

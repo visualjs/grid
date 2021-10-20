@@ -1,6 +1,5 @@
 .root {
     font-size: var(--default-font-size);
-    user-select: none;
     position: relative;
     color: var(--foreground-color, #333);
 }
