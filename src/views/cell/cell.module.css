@@ -84,6 +84,7 @@
 
 .cell-popup-container {
     position: absolute;
+    z-index: 99999;
 }
 
 .cell-fill-handler {
