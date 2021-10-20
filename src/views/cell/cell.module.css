@@ -100,4 +100,5 @@
     right: 0;
     bottom: 0;
     cursor: cell;
+    z-index: 1;
 }
