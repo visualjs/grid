@@ -128,6 +128,42 @@
     z-index: var(--column-resizer-z-index, 2);
 }
 
+/* row draging */
+
+.row-drag-indicator {
+    height: 2px;
+    width: 100%;
+    background-color: var(--header-resizer-active-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: col-resize;
+    z-index: var(--column-resizer-z-index, 2);
+    display: none;
+}
+
+.row-drag-ghost {
+    width: 100px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color, #ffffff);
+    color: var(--foreground-color, red);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    font-size: var(--default-font-size, 12px);
+    padding: 0 10px;
+}
+
+.ghost-icon {
+    padding-right: 10px;
+}
+
 /* loading */
 .loading {
     position: absolute;

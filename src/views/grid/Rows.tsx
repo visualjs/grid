@@ -8,7 +8,12 @@ import { CellInfo, RowInfo, VirtualGrid } from "@/views/virtual-grid";
 import { ColumnOptions } from "@/types";
 
 import styles from "./grid.module.css";
-import { createRef } from "preact";
+
+interface CellElement {
+    column: string;
+    row: string;
+    el: HTMLDivElement;
+}
 
 interface Props {
     grid: Grid;
@@ -42,6 +47,14 @@ class Rows extends Component<Props> {
 
     protected root: HTMLDivElement;
 
+    protected ghost?: HTMLDivElement;
+
+    protected dragIndicator: HTMLDivElement;
+
+    protected currentDragStartRow?: string;
+
+    protected currentDragEndRow?: string;
+
     protected renderCell = ({ row, column, style }: CellInfo) => {
         return (
             <Cell
@@ -61,12 +74,12 @@ class Rows extends Component<Props> {
         );
     }
 
-    protected getActiveCell = (ev: Event, filler?: boolean): { column: string, row: string, el: HTMLDivElement } => {
+    protected getActiveCell = (ev: Event, type: string = "__cell"): CellElement => {
         let el: any = ev.target;
         let column: string, row: string;
         while (el != this.root) {
             // see if the dom element has column and row info
-            if (el.__column && el.__row && el.__filler === filler) {
+            if (el.__column && el.__row && el[type] === true) {
                 // if yes, we have found the cell, and know which row and column it is
                 column = el.__column;
                 row = el.__row;
@@ -93,7 +106,12 @@ class Rows extends Component<Props> {
         if (typeof this.props.onCellMouseDown !== 'function') {
             return;
         }
-        const filler = this.getActiveCell(ev, true);
+        const rowDragHandle = this.getActiveCell(ev, '__dragHandle');
+        if (rowDragHandle) {
+            return this.handleDragStart(ev, this.getActiveCell(ev));
+        }
+
+        const filler = this.getActiveCell(ev, '__filler');
         if (filler) {
             return this.props.onFillerMouseDown(ev, filler.el, filler.row, filler.column);
         }
@@ -113,11 +131,65 @@ class Rows extends Component<Props> {
     }
 
     protected handleMouseMove = (ev: MouseEvent) => {
+        // if a row is being dragged, update the ending row by current active cell.
+        if (this.currentDragStartRow) {
+            return this.updateDragEndRow(this.getActiveCell(ev));
+        }
+
         if (typeof this.props.onCellMouseMove !== 'function') {
             return;
         }
         const cell = this.getActiveCell(ev);
         cell && this.props.onCellMouseMove(ev, cell.el, cell.row, cell.column);
+    }
+
+    protected handleDragStart = (ev: MouseEvent, cell?: CellElement) => {
+        if (!cell) return;
+
+        if (!this.ghost) {
+            this.ghost = document.createElement('div');
+            this.ghost.className = styles.rowDragGhost;
+        }
+        const text = this.props.grid.getCellValue(cell.row, cell.column);
+        this.ghost.innerHTML = `
+            <span class="vg-move ${styles.ghostIcon}"></span>
+            <span>${text}</span>
+        `;
+        this.props.grid.appendChild(this.ghost);
+
+        document.addEventListener('mousemove', this.updateDragGhost);
+        document.addEventListener('mouseup', this.handleDragEnd);
+
+        this.currentDragStartRow = cell.row;
+        this.dragIndicator.style.display = 'block';
+        this.updateDragEndRow(cell);
+        this.updateDragGhost(ev);
+    }
+
+    protected updateDragGhost = (ev: MouseEvent) => {
+        if (!this.ghost) return;
+        const rootRect = this.props.grid.getRootElement().getBoundingClientRect();
+        this.ghost.style.left = ev.clientX - rootRect.left + 10 + 'px';
+        this.ghost.style.top = ev.clientY - rootRect.top + 10 + 'px';
+    }
+
+    protected handleDragEnd = () => {
+        document.removeEventListener('mouseup', this.handleDragEnd);
+        document.removeEventListener('mousemove', this.updateDragGhost);
+        this.props.grid.removeChild(this.ghost);
+        this.dragIndicator.style.display = 'none';
+
+        console.log(this.currentDragStartRow, this.currentDragEndRow);
+
+        this.currentDragStartRow = this.currentDragEndRow = undefined;
+    }
+
+    protected updateDragEndRow = (cell?: CellElement) => {
+        if (!cell) return;
+        const rootRect = this.root.getBoundingClientRect();
+        const cellRect = cell.el.parentElement.getBoundingClientRect();
+        this.currentDragEndRow = cell.row;
+        this.dragIndicator.style.top = (cellRect.bottom - rootRect.top) + 'px';
     }
 
     render() {
@@ -128,8 +200,9 @@ class Rows extends Component<Props> {
                 onMouseUp={this.handleMouseUp}
                 onMouseMove={this.handleMouseMove}
                 onDblClick={this.handleDbClick}
-                style={{ width: '100%', height: '100%' }}
+                style={{ width: '100%', height: '100%', position: 'relative' }}
             >
+                <div ref={node => this.dragIndicator = node} className={styles.rowDragIndicator}></div>
                 <VirtualGrid
                     rows={this.props.items}
                     rowHeight={this.props.rowHeight}

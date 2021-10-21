@@ -48,14 +48,14 @@ import { showContainer } from './utils';
         const pinnedRight = c === 0 ? 'right' : undefined;
 
         columns = columns.concat([
-            { headerName: 'Name', field: `name_${c}`, width: 120, resizable: true, rowDragable: true, cellEditor: InputEditor },
+            { headerName: 'Name', field: `name_${c}`, width: 120, resizable: true, cellEditor: InputEditor },
             {
                 headerName: 'Status', field: `status_${c}`, width: 80, resizable: true,
                 transformer: new BooleanTransformer(),
                 cellRender: CheckboxRender, cellEditor: CheckboxEditor
             },
             {
-                headerName: 'Month', field: `month_${c}`, resizable: true,
+                headerName: 'Month', field: `month_${c}`, resizable: true, rowDragable: true,
                 transformer: new SelectionTransformer({
                     allowNotExistOption: false, options: Object.keys(monthOptions)
                 }),

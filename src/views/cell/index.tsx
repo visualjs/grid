@@ -96,11 +96,14 @@ class Cell extends Component<Props> {
     }
 
     protected bindMetaData = () => {
+        (this.cell as any).__cell = true;
         (this.cell as any).__column = this.props.column;
         (this.cell as any).__row = this.props.row;
 
         if (this.dragHandle) {
             (this.dragHandle as any).__dragHandle = true;
+            (this.dragHandle as any).__column = this.props.column;
+            (this.dragHandle as any).__row = this.props.row;
         }
 
         if (this.filler) {
@@ -235,7 +238,6 @@ class Cell extends Component<Props> {
             this.props.options.cellClass || [],
             this.props.options.getCellClass ? this.props.options.getCellClass(cellClassParam) : [],
             {
-                [styles.cellDragable]: dragable,
                 [styles.cell]: true,
                 [styles.cellSelected]: this.props.isSelected,
                 [styles.cellLeftBoundary]: this.props.isLeftSelected,
