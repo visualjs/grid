@@ -68,13 +68,11 @@ class Body extends Component<Props, State> {
 
     componentDidMount = () => {
         document.addEventListener('mouseup', this.handleMouseUp);
-        document.addEventListener('click', this.handleClickOutside);
         hotkeys(this.hotkeys, this.handleBindHotkeys.bind(this));
     };
 
     componentWillUnmount = () => {
         document.removeEventListener('mouseup', this.handleMouseUp);
-        document.removeEventListener('click', this.handleClickOutside);
         hotkeys.unbind(this.hotkeys);
     };
 
@@ -220,13 +218,6 @@ class Body extends Component<Props, State> {
         this.handleFillRangeChanged();
 
         this.props.grid.trigger('afterFillerMouseDown', { row, column }, ev);
-    };
-
-    protected handleClickOutside = (ev: MouseEvent) => {
-        const target = ev.target as HTMLElement;
-        if (!target.closest('.v-grid-root')) {
-            this.props.grid.stopEditing();
-        }
     };
 
     protected handleMouseUp = () => {
