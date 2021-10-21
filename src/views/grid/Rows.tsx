@@ -8,6 +8,7 @@ import { CellInfo, RowInfo, VirtualGrid } from "@/views/virtual-grid";
 import { ColumnOptions } from "@/types";
 
 import styles from "./grid.module.css";
+import { arrayMoveImmutable } from "@/utils";
 
 interface CellElement {
     column: string;
@@ -179,7 +180,14 @@ class Rows extends Component<Props> {
         this.props.grid.removeChild(this.ghost);
         this.dragIndicator.style.display = 'none';
 
-        console.log(this.currentDragStartRow, this.currentDragEndRow);
+        const store = this.props.grid.store('row');
+        const oldRowIndex = store.getRowInternalIndex(this.currentDragStartRow);
+        const newRowIndex = store.getRowInternalIndex(this.currentDragEndRow);
+        if (oldRowIndex !== undefined && newRowIndex !== undefined && oldRowIndex != newRowIndex) {
+            store.sortRows((rows) => {
+                return arrayMoveImmutable(rows, oldRowIndex, newRowIndex);
+            });
+        }
 
         this.currentDragStartRow = this.currentDragEndRow = undefined;
     }
@@ -189,7 +197,8 @@ class Rows extends Component<Props> {
         const rootRect = this.root.getBoundingClientRect();
         const cellRect = cell.el.parentElement.getBoundingClientRect();
         this.currentDragEndRow = cell.row;
-        this.dragIndicator.style.top = (cellRect.bottom - rootRect.top) + 'px';
+        this.dragIndicator.style.top = (cellRect.top - rootRect.top) + 'px';
+        this.dragIndicator.style.height = cellRect.height + 'px';
     }
 
     render() {

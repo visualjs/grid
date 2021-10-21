@@ -133,13 +133,13 @@
 .row-drag-indicator {
     height: 2px;
     width: 100%;
-    background-color: var(--header-resizer-active-color);
+    background-color: var(--row-drag-indicator-background, --primary-color);
     position: absolute;
     top: 0;
     left: 0;
-    cursor: col-resize;
-    z-index: var(--column-resizer-z-index, 2);
     display: none;
+    z-index: var(--row-drag-indicator-z-index, 2);
+    opacity: var(--row-drag-indicator-opacity, 0.2);
 }
 
 .row-drag-ghost {

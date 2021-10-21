@@ -473,6 +473,10 @@ export class Grid {
         return this.store('row').getRowIndex(id);
     }
 
+    public getRowInternalIndex(id: string): number {
+        return this.store('row').getRowInternalIndex(id);
+    }
+
     public getRowDataByIndex(y: number): RowData {
         return this.store('row').getRowDataByIndex(y);
     }
