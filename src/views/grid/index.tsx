@@ -154,7 +154,7 @@ class Grid extends Component<Props> {
 
     protected handleHorizontalWheel = (ev: WheelEvent) => {
         const normalized = normalizeWheel(ev);
-        this.horizontalScrollbar.scrollLeft += normalized.pixelX * 1.25;
+        this.horizontalScrollbar.scrollLeft += normalized.pixelX;
     }
 
     protected handleHorizontalScroll = (ev: Event) => {
