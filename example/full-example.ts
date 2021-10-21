@@ -87,7 +87,7 @@ import { showContainer } from './utils';
                 cellEditor: RatingEditor
             },
             {
-                headerName: 'Total Winnings', field: `winnings_${c}`, pinned: pinnedRight, resizable: true,
+                headerName: 'Total Winnings', field: `winnings_${c}`, resizable: true,
                 cellEditor: InputEditor,
                 cellParams: { type: 'number' }
             },
