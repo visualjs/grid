@@ -59,7 +59,7 @@ class Row extends Component<Props> {
 
     render() {
 
-        const rowClassParams = {row: this.props.value, grid: this.props.grid};
+        const RowParams = {row: this.props.value, grid: this.props.grid};
 
         let style: JSXInternal.CSSProperties = {
             ...this.props.grid.state('row').rowStyle,
@@ -68,7 +68,7 @@ class Row extends Component<Props> {
 
         // set style for each row individually
         if (this.props.grid.state('row').getRowStyle) {
-            style = Object.assign({}, style, this.props.grid.state('row').getRowStyle(rowClassParams))
+            style = Object.assign({}, style, this.props.grid.state('row').getRowStyle(RowParams))
         }
 
         let classNames = this.props.grid.state('row').rowClass || [];
@@ -76,7 +76,7 @@ class Row extends Component<Props> {
 
         // set class(es) for each row individually.
         if (this.props.grid.state('row').getRowClass) {
-            classNames = classNames.concat(this.props.grid.state('row').getRowClass(rowClassParams));
+            classNames = classNames.concat(this.props.grid.state('row').getRowClass(RowParams));
         }
 
         classNames = unique(classNames);

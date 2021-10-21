@@ -102,3 +102,13 @@
     cursor: cell;
     z-index: 1;
 }
+
+.cell-drag-handle {
+    padding: 0 10px;
+    cursor: move;
+    opacity: 0.6;
+}
+
+.cell:hover .cell-drag-handle {
+    opacity: 1;
+}

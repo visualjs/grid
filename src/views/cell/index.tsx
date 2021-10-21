@@ -36,6 +36,8 @@ class Cell extends Component<Props> {
 
     protected filler: HTMLDivElement;
 
+    protected dragHandle: HTMLDivElement;
+
     protected cellContent = createRef<HTMLDivElement>();
 
     protected popup: HTMLDivElement = null;
@@ -96,6 +98,10 @@ class Cell extends Component<Props> {
     protected bindMetaData = () => {
         (this.cell as any).__column = this.props.column;
         (this.cell as any).__row = this.props.row;
+
+        if (this.dragHandle) {
+            (this.dragHandle as any).__dragHandle = true;
+        }
 
         if (this.filler) {
             (this.filler as any).__filler = true;
@@ -217,12 +223,19 @@ class Cell extends Component<Props> {
     }
 
     render() {
+
+        let dragable = this.options.rowDragable === true;
+        if (typeof this.options.rowDragable === 'function') {
+            dragable = this.options.rowDragable({ row: this.props.row, column: this.props.column, grid: this.props.grid });
+        }
+
         const cellClassParam = { column: this.props.column, row: this.props.row, grid: this.props.grid };
         const className = classes(
             // set class(es) for a particular cell.
             this.props.options.cellClass || [],
             this.props.options.getCellClass ? this.props.options.getCellClass(cellClassParam) : [],
             {
+                [styles.cellDragable]: dragable,
                 [styles.cell]: true,
                 [styles.cellSelected]: this.props.isSelected,
                 [styles.cellLeftBoundary]: this.props.isLeftSelected,
@@ -261,6 +274,11 @@ class Cell extends Component<Props> {
                 className={className}
                 style={cellStyle}
             >
+                {dragable && (
+                    <div ref={node => this.dragHandle = node} className={styles.cellDragHandle}>
+                        <span className="vg-move"></span>
+                    </div>
+                )}
                 <div ref={this.cellContent} className={styles.cellContent}></div>
                 {fillable && (
                     <div

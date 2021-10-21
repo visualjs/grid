@@ -12,7 +12,7 @@ import { showContainer } from './utils';
 
     let rows: RowData[] = [];
     let columns: ColumnsDef = [
-        { headerName: '#', field: '#', width: 80, readonly: true, pinned: 'left', cellRender: IndexRender },
+        { headerName: '#', field: '#', width: 80, readonly: true, pinned: 'left', rowDragable: true, cellRender: IndexRender },
         { headerName: 'ID', field: 'id', width: 100, pinned: 'left', resizable: true },
     ];
 
@@ -48,7 +48,7 @@ import { showContainer } from './utils';
         const pinnedRight = c === 0 ? 'right' : undefined;
 
         columns = columns.concat([
-            { headerName: 'Name', field: `name_${c}`, width: 120, resizable: true, cellEditor: InputEditor },
+            { headerName: 'Name', field: `name_${c}`, width: 120, resizable: true, rowDragable: true, cellEditor: InputEditor },
             {
                 headerName: 'Status', field: `status_${c}`, width: 80, resizable: true,
                 transformer: new BooleanTransformer(),
