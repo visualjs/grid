@@ -1,5 +1,34 @@
-import { ColumnDef, ColumnGroupOptions, ColumnOptions, ColumnsDef, GroupData } from "@/types";
+import { BaseColumnOptions, ColumnDef, ColumnGroupOptions, ColumnOptions, ColumnsDef, GroupData } from "@/types";
 import { counter, unique } from "@/utils";
+
+export function applyDefaultOptions(defs: ColumnsDef, defaults: BaseColumnOptions) {
+    defs = cloneColumnsDef(defs);
+
+    defs.forEach((def, i) => {
+        if (Array.isArray((def as any).children)) {
+            defs[i] = { ...def, children: applyDefaultOptions((def as any).children, defaults) };
+        } else {
+            defs[i] = Object.assign({}, defaults, def);
+        }
+    });
+
+    return defs;
+}
+
+export function cloneColumnsDef(defs: ColumnsDef): ColumnsDef {
+    const newDefs: ColumnsDef = [];
+
+    defs.forEach(def => {
+        if (Array.isArray((def as any).children)) {
+            const children = cloneColumnsDef((def as any).children);
+            newDefs.push({ ...def, children: children });
+        } else {
+            newDefs.push({ ...def });
+        }
+    });
+
+    return newDefs;
+}
 
 // Get the deepest grouping level
 export function columnsDepth(columns: ColumnsDef, currentDepth = 1): number {
@@ -65,9 +94,9 @@ export function paddingColumns(columns: ColumnsDef): ColumnsDef {
 }
 
 export function deepConcat<T>(dist: T[][], src: T[][]) {
-   return dist.map((_, i) => {
-       return dist[i].concat(src[i]);
-   });
+    return dist.map((_, i) => {
+        return dist[i].concat(src[i]);
+    });
 }
 
 // Separate and standardize column groups and column options
@@ -99,15 +128,17 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
         const subResult = normalizedColumns(group.children);
 
         // Combine the current groupe data and the groupe data of the subset into the original data
-        groupsData = Object.assign(groupsData, {[group.id]: {
-            id: group.id,
-            headerName: group.headerName,
-            // The columns under the grouping include all the columns under the grouping subset
-            columns: subResult.columns.map(c => c.field),
-            groups: unique(subResult.groups.flat()),
-            collapsed: group.collapsed,
-            collapsible: group.collapsible,
-        }}, subResult.groupsData);
+        groupsData = Object.assign(groupsData, {
+            [group.id]: {
+                id: group.id,
+                headerName: group.headerName,
+                // The columns under the grouping include all the columns under the grouping subset
+                columns: subResult.columns.map(c => c.field),
+                groups: unique(subResult.groups.flat()),
+                collapsed: group.collapsed,
+                collapsible: group.collapsible,
+            }
+        }, subResult.groupsData);
 
         // If the group is collapsed,
         // hide all columns except the first column under the group
@@ -128,7 +159,7 @@ export function normalizedColumns(columnsDef: ColumnsDef): {
 
     // all columns
     if (groups.length == 0) {
-        return {groups: [], columns, groupsData};
+        return { groups: [], columns, groupsData };
     }
 
     return {

@@ -24,46 +24,43 @@ describe('dispatchers for row', () => {
         expect(store.getRawCellValue('row', 'name')).toBe('new name');
     });
 
-    test('appendRows', () => {
-
+    test('setRows', () => {
         const store = new Store();
-        expect(store.getRowIds().length).toBe(0);
+        store.dispatch('setRows', [
+            {id: '01'},
+            {id: '02'},
+            {id: '03'},
+            {id: '04'},
+            {id: '05'},
+            {id: '06'},
+        ]);
+        store.setPinnedTopRows(['01', '03']);
+        store.setPinnedBottomRows(['02', '04']);
 
-        const cb = jest.fn();
-        store.subscribeAny(cb);
+        expect(store.getRowIds()).toStrictEqual(['05', '06']);
+        expect(store.getPinnedTopRows()).toStrictEqual(['01', '03']);
+        expect(store.getPinnedBottomRows()).toStrictEqual(['02', '04']);
+        expect(store.getRowInternalIndex('01')).toEqual(0);
+        expect(store.getRowInternalIndex('02')).toEqual(1);
+        expect(store.getRowInternalIndex('03')).toEqual(2);
+        expect(store.getRowInternalIndex('04')).toEqual(3);
 
-        store.appendRows([
-            { id: 'row_01', value: 'goodbye' },
-            { id: 'row_02' },
+        store.dispatch('setRows', [
+            {id: '04'},
+            {id: '05'},
+            {id: '01'},
+            {id: '03'},
+            {id: '02'},
         ]);
 
-        expect(store.getRowIds().length).toBe(2);
-        expect(store.getRowIndex('row_01')).toBe(0);
-        expect(store.getRowIndex('row_02')).toBe(1);
-
-        store.appendRows([
-            { id: 'row_03' },
-            { id: 'row_04' },
-        ]);
-
-        expect(store.getRowIds().length).toBe(4);
-        expect(store.getRowIndex('row_01')).toBe(0);
-        expect(store.getRowIndex('row_02')).toBe(1);
-        expect(store.getRowIndex('row_03')).toBe(2);
-        expect(store.getRowIndex('row_04')).toBe(3);
-        expect(store.getRowDataByIndex(0).value).toBe('goodbye');
-
-        store.appendRows([
-            { id: 'row_05' },
-            { id: 'row_01', value: 'joe' },
-        ]);
-
-        expect(store.getRowIds().length).toBe(5);
-        expect(store.getRowIndex('row_01')).toBe(0);
-        expect(store.getRowIndex('row_05')).toBe(4);
-        expect(store.getRowDataByIndex(0).value).toBe('joe');
-
-        expect(cb).toBeCalledTimes(3);
+        expect(store.getRowIds()).toStrictEqual(['05']);
+        expect(store.getPinnedTopRows()).toStrictEqual(['01', '03']);
+        expect(store.getPinnedBottomRows()).toStrictEqual(['04', '02']);
+        expect(store.getRowInternalIndex('04')).toEqual(0);
+        expect(store.getRowInternalIndex('05')).toEqual(1);
+        expect(store.getRowInternalIndex('01')).toEqual(2);
+        expect(store.getRowInternalIndex('03')).toEqual(3);
+        expect(store.getRowInternalIndex('02')).toEqual(4);
     });
 
     test('appendRowsBefore', () => {
@@ -355,5 +352,48 @@ describe('actions for row', () => {
         expect(store.getRowsBetween(-1, 2)).toStrictEqual(['r_01', 'r_02', 'r_03']);
         expect(store.getRowsBetween(2, 5)).toStrictEqual(['r_03', 'r_04', 'r_05', 'r_06']);
         expect(store.getRowsBetween(9, 100)).toStrictEqual(['r_10']);
+    });
+
+
+    test('appendRows', () => {
+
+        const store = new Store();
+        expect(store.getRowIds().length).toBe(0);
+
+        const cb = jest.fn();
+        store.subscribeAny(cb);
+
+        store.appendRows([
+            { id: 'row_01', value: 'goodbye' },
+            { id: 'row_02' },
+        ]);
+
+        expect(store.getRowIds().length).toBe(2);
+        expect(store.getRowIndex('row_01')).toBe(0);
+        expect(store.getRowIndex('row_02')).toBe(1);
+
+        store.appendRows([
+            { id: 'row_03' },
+            { id: 'row_04' },
+        ]);
+
+        expect(store.getRowIds().length).toBe(4);
+        expect(store.getRowIndex('row_01')).toBe(0);
+        expect(store.getRowIndex('row_02')).toBe(1);
+        expect(store.getRowIndex('row_03')).toBe(2);
+        expect(store.getRowIndex('row_04')).toBe(3);
+        expect(store.getRowDataByIndex(0).value).toBe('goodbye');
+
+        store.appendRows([
+            { id: 'row_05' },
+            { id: 'row_01', value: 'joe' },
+        ]);
+
+        expect(store.getRowIds().length).toBe(5);
+        expect(store.getRowIndex('row_01')).toBe(0);
+        expect(store.getRowIndex('row_05')).toBe(4);
+        expect(store.getRowDataByIndex(0).value).toBe('joe');
+
+        expect(cb).toBeCalledTimes(3);
     });
 });

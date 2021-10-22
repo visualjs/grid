@@ -16,6 +16,8 @@
     --row-stripe-background: #fefcfc;
     --row-hover-background: #f8f8f8;
     --row-select-background: rgba(220, 76, 63, 0.1);
+    --row-drag-indicator-background: var(--primary-color);
+    --row-drag-indicator-opacity: 0.2;
     --rows-pinned-top-shadow: rgba(0, 0, 0, 0.06) 0px 4px 2px;
     --rows-pinned-bottom-shadow: rgba(0, 0, 0, 0.06) 0px -4px 2px;
     /* cells */

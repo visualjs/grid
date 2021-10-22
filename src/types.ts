@@ -32,17 +32,17 @@ export interface GetContextMenuItemsParams {
     grid: Grid;
 }
 
-export interface RowClassParams {
+export interface RowParams {
     row: string;
     grid: Grid;
 }
 
-export interface ColumnClassParams {
+export interface ColumnParams {
     column: string;
     grid: Grid;
 }
 
-export interface CellClassParams {
+export interface CellParams {
     row: string;
     column: string;
     grid: Grid;
@@ -106,6 +106,8 @@ export interface OverridableColumnOptions {
     // when a cell is read-only, the cellEditor will be invalid,
     // and the value of the cell cannot be modified even if the drop-down fill is
     readonly?: boolean;
+    // set to true to allow column dragging.
+    sortable?: boolean;
     // format the reading and writing of cell data
     transformer?: CellTransformer;
     // cellRenderer to use for this column
@@ -118,21 +120,21 @@ export interface OverridableColumnOptions {
     cellStyle?: JSXInternal.CSSProperties;
     // callback version of property cellStyle to set style for a particular cell.
     // function should return an object of CSS values.
-    getCellStyle?: (params: CellClassParams) => JSXInternal.CSSProperties;
+    getCellStyle?: (params: CellParams) => JSXInternal.CSSProperties;
     // class to use for the cell. can be an array of strings.
     cellClass?: string[];
     // callback version of property cellClass to set class(es) for a particular cell.
     // function should return an array of strings (array of class names).
-    getCellClass?: (params: CellClassParams) => string[];
+    getCellClass?: (params: CellParams) => string[];
     // an object of css values for a particular column title.
     headerStyle?: JSXInternal.CSSProperties;
     // callback version of property headerStyle to set style for a particular column title.
     // function should return an object of CSS values.
-    getHeaderStyle?: (params: ColumnClassParams) => JSXInternal.CSSProperties;
+    getHeaderStyle?: (params: ColumnParams) => JSXInternal.CSSProperties;
     // class to use for the column title. can be an array of strings.
     headerClass?: string[];
     // function should return an array of strings (array of class names).
-    getHeaderClass?: (params: ColumnClassParams) => string[];
+    getHeaderClass?: (params: ColumnParams) => string[];
 }
 
 // BaseColumnOptions can be overridden by default column options
@@ -149,6 +151,8 @@ export interface BaseColumnOptions extends OverridableColumnOptions {
     visible?: boolean;
     // 'left' | 'right' | undefined
     pinned?: Pinned;
+    // set to true (or return true from function) to allow row dragging.
+    rowDragable?: boolean | ((param: CellParams) => boolean);
     // columnOptionsSelector is a callback to apply different options to the same column of cells in different rows
     columnOptionsSelector?: (params: ColumnSelectorParams) => OverridableColumnOptions;
 }
@@ -203,12 +207,12 @@ export interface GridOptions {
     rowStyle?: JSXInternal.CSSProperties;
     // callback version of property rowStyle to set style for each row individually.
     // function should return an object of CSS values.
-    getRowStyle?: (params: RowClassParams) => JSXInternal.CSSProperties;
+    getRowStyle?: (params: RowParams) => JSXInternal.CSSProperties;
     // CSS class(es) for all rows. provide an array of strings (array of class names).
     rowClass?: string[];
     // callback version of property rowClass to set class(es) for each row individually.
     // function should return an array of strings (array of class names).
-    getRowClass?: (params: RowClassParams) => string[];
+    getRowClass?: (params: RowParams) => string[];
     // virtual grid overscan
     overscanRowCount?: number; // default is 5
     overscanColumnCount?: number; // default is 2

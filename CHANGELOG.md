@@ -1,3 +1,11 @@
+### v1.1.3 / 2021-10-20
+
+- Add horizontal virtual scroll
+- Add add cmd+shift+v shortcut for plain text paste
+- Add custom header style and class
+- Fix sync horizontal scroll
+- Fix cell can't be selected when it's readonly
+
 ### v1.1.2 / 2021-10-08
 
 - Fix in some cases, horizontal scrolling cannot be rolled to the end

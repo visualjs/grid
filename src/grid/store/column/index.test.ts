@@ -1,6 +1,7 @@
 import { Store, defaultColumnOptions } from ".";
 import { useSelector } from "../useSelector";
-import data from '@/grid/data.mock';
+import { data, Transformer } from '@/grid/data.mock';
+import { applyDefaultOptions } from "./utils";
 
 describe('dispatchers for column', () => {
 
@@ -252,4 +253,87 @@ describe('actions for column', () => {
         expect(store.getColumnByIndex(-1)).toBeUndefined();
     });
 
+    test('moveColumn', () => {
+        const trans = new Transformer();
+        store.dispatch('setColumns', {
+            columns: [
+                { field: 'id', pinned: 'left' },
+                { field: 'name', transformer: trans },
+                {
+                    children: [
+                        { field: 'status', pinned: 'left' },
+                        { field: 'month' },
+                    ]
+                },
+                { field: 'game', pinned: 'right' },
+                { field: 'date' }
+            ],
+            defaultOptions: {
+                sortable: true,
+            }
+        });
+
+        const defaults = Object.assign(defaultColumnOptions, { sortable: true });
+        expect(store.getState().groups).toStrictEqual([[ '0', '1', '2', '3', '4' ]]);
+
+        store.moveColumn('id', 'status');
+        expect(store.getState().columnsDef).toStrictEqual(applyDefaultOptions([
+            { field: 'name', transformer: trans },
+            {
+                children: [
+                    { field: 'id', pinned: 'left' },
+                    { field: 'status', pinned: 'left' },
+                    { field: 'month' },
+                ]
+            },
+            { field: 'game', pinned: 'right' },
+            { field: 'date' }
+        ], defaults));
+        expect(store.getState().groups).toStrictEqual([[ '0', '1', '2', '3' ]]);
+
+        store.moveColumn('status', 'month');
+        expect(store.getState().columnsDef).toStrictEqual(applyDefaultOptions([
+            { field: 'name', transformer: trans },
+            {
+                children: [
+                    { field: 'id', pinned: 'left' },
+                    { field: 'month' },
+                    { field: 'status', pinned: 'left' },
+                ]
+            },
+            { field: 'game', pinned: 'right' },
+            { field: 'date' }
+        ], defaults));
+        expect(store.getState().groups).toStrictEqual([[ '0', '1', '2', '3' ]]);
+
+        store.moveColumn('name', 'game');
+        expect(store.getState().columnsDef).toStrictEqual(applyDefaultOptions([
+            {
+                children: [
+                    { field: 'id', pinned: 'left' },
+                    { field: 'month' },
+                    { field: 'status', pinned: 'left' },
+                ]
+            },
+            { field: 'game', pinned: 'right' },
+            { field: 'name', transformer: trans },
+            { field: 'date' }
+        ], defaults));
+        expect(store.getState().groups).toStrictEqual([[ '0', '1', '2', '3' ]]);
+
+        store.moveColumn('name', 'game');
+        expect(store.getState().columnsDef).toStrictEqual(applyDefaultOptions([
+            {
+                children: [
+                    { field: 'id', pinned: 'left' },
+                    { field: 'month' },
+                    { field: 'status', pinned: 'left' },
+                ]
+            },
+            { field: 'name', transformer: trans },
+            { field: 'game', pinned: 'right' },
+            { field: 'date' }
+        ], defaults));
+        expect(store.getState().groups).toStrictEqual([[ '0', '1', '2', '3' ]]);
+    });
 });

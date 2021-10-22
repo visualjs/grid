@@ -12,7 +12,7 @@ import { showContainer } from './utils';
 
     let rows: RowData[] = [];
     let columns: ColumnsDef = [
-        { headerName: '#', field: '#', width: 80, readonly: true, pinned: 'left', cellRender: IndexRender },
+        { headerName: '#', field: '#', width: 80, readonly: true, pinned: 'left', rowDragable: true, cellRender: IndexRender },
         { headerName: 'ID', field: 'id', width: 100, pinned: 'left', resizable: true },
     ];
 
@@ -48,14 +48,18 @@ import { showContainer } from './utils';
         const pinnedRight = c === 0 ? 'right' : undefined;
 
         columns = columns.concat([
-            { headerName: 'Name', field: `name_${c}`, width: 120, resizable: true, cellEditor: InputEditor },
             {
-                headerName: 'Status', field: `status_${c}`, width: 80, resizable: true,
-                transformer: new BooleanTransformer(),
-                cellRender: CheckboxRender, cellEditor: CheckboxEditor
+                headerName: 'Group 01', collapsible: true, children: [
+                    { headerName: 'Name', field: `name_${c}`, width: 120, resizable: true, cellEditor: InputEditor },
+                    {
+                        headerName: 'Status', field: `status_${c}`, width: 80, resizable: true,
+                        transformer: new BooleanTransformer(),
+                        cellRender: CheckboxRender, cellEditor: CheckboxEditor
+                    },
+                ]
             },
             {
-                headerName: 'Month', field: `month_${c}`, resizable: true,
+                headerName: 'Month', field: `month_${c}`, resizable: true, rowDragable: true,
                 transformer: new SelectionTransformer({
                     allowNotExistOption: false, options: Object.keys(monthOptions)
                 }),
@@ -73,9 +77,13 @@ import { showContainer } from './utils';
                 cellEditor: SelectionEditor,
                 cellParams: { options: languageOptions },
             },
-            { headerName: 'Country', field: `country_${c}`, resizable: true },
-            { headerName: 'Continent', field: `continent_${c}`, resizable: true },
-            { headerName: 'Bought', field: `bought_${c}`, resizable: true, cellRender: CheckboxRender },
+            {
+                headerName: 'Group 02', collapsible: true, children: [
+                    { headerName: 'Country', field: `country_${c}`, resizable: true },
+                    { headerName: 'Continent', field: `continent_${c}`, resizable: true },
+                    { headerName: 'Bought', field: `bought_${c}`, resizable: true, cellRender: CheckboxRender },
+                ]
+            },
             {
                 headerName: 'Bank Balance', field: `balance_${c}`, resizable: true,
                 cellEditor: InputEditor,
@@ -87,7 +95,7 @@ import { showContainer } from './utils';
                 cellEditor: RatingEditor
             },
             {
-                headerName: 'Total Winnings', field: `winnings_${c}`, pinned: pinnedRight, resizable: true,
+                headerName: 'Total Winnings', field: `winnings_${c}`, resizable: true,
                 cellEditor: InputEditor,
                 cellParams: { type: 'number' }
             },
@@ -101,7 +109,8 @@ import { showContainer } from './utils';
     const grid = new Grid(container, {
         columns: columns,
         defaultColumnOption: {
-            minWidth: 100
+            sortable: true,
+            minWidth: 100,
         },
         rows: [],
         rowHeight: 40,

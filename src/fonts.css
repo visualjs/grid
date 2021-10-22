@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'vgrid';
   src:
-    url('fonts/vgrid.ttf?68wv88') format('truetype'),
-    url('fonts/vgrid.woff?68wv88') format('woff'),
-    url('fonts/vgrid.svg?68wv88#vgrid') format('svg');
+    url('fonts/vgrid.ttf?fxcgyc') format('truetype'),
+    url('fonts/vgrid.woff?fxcgyc') format('woff'),
+    url('fonts/vgrid.svg?fxcgyc#vgrid') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -24,26 +24,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.vg-skin:before {
-  content: "\e900";
-}
-.vg-cheveron-down:before {
-  content: "\e903";
-}
-.vg-cheveron-left:before {
-  content: "\e904";
-}
-.vg-cheveron-right:before {
-  content: "\e905";
-}
-.vg-cheveron-up:before {
-  content: "\e906";
-}
-.vg-menu:before {
-  content: "\e901";
-}
-.vg-grid:before {
-  content: "\e902";
+.vg-move:before {
+  content: "\e907";
 }
 .vg-copy:before {
   content: "\e92c";
@@ -119,4 +101,25 @@
 }
 .vg-file-excel:before {
   content: "\eae2";
+}
+.vg-skin:before {
+  content: "\e900";
+}
+.vg-cheveron-down:before {
+  content: "\e903";
+}
+.vg-cheveron-left:before {
+  content: "\e904";
+}
+.vg-cheveron-right:before {
+  content: "\e905";
+}
+.vg-cheveron-up:before {
+  content: "\e906";
+}
+.vg-menu:before {
+  content: "\e901";
+}
+.vg-grid:before {
+  content: "\e902";
 }

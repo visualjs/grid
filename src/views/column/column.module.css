@@ -4,12 +4,6 @@
     flex-shrink: 0;
 }
 
-.header-name {
-    width: 100%;
-    display: block;
-    font-weight: bold;
-}
-
 .header-column-content {
     display: flex;
     flex-shrink: 0;
@@ -25,15 +19,23 @@
     border-right: none;
 } */
 
-.header-column-content span:first-of-type {
+.header-column-content .header-name {
+    width: 100%;
+    display: block;
+    font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    padding: 0 4px;
 }
 
 .header-column-content .column-icon {
     flex-shrink: 0;
     cursor: pointer;
+}
+
+.header-column-content .column-drag-handle {
+    cursor: move;
 }
 
 .header-column-content .column-icon-hiden {

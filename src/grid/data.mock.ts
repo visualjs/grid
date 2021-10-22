@@ -2,7 +2,7 @@ import { GridOptions } from "@/types";
 import { CellTransformer } from "..";
 import { CellTransformerParams } from "./cell";
 
-class Transformer extends CellTransformer {
+export class Transformer extends CellTransformer {
 
     constructor(protected prefix = 'trans_') {
         super();

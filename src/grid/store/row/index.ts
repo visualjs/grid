@@ -1,7 +1,7 @@
 import { Store as BaseStore } from "@/grid/store";
-import { RowClassParams, RowData } from "@/types";
+import { RowParams, RowData } from "@/types";
 import { JSXInternal } from "preact/src/jsx";
-import { diff } from "@/utils";
+import { diff, intersect } from "@/utils";
 import update from 'immutability-helper';
 
 export interface Actions {
@@ -15,6 +15,7 @@ export interface Actions {
     takePinnedRows: string[];
     setHoveredRow: string | undefined;
     selectRows: string[];
+    setRows: RowData[];
     appendRowsBefore: { index: number, rows: RowData[] };
     takeRows: string[];
     clear: undefined;
@@ -31,9 +32,9 @@ export interface State {
     selectedRows: string[];
     height: number;
     rowStyle?: JSXInternal.CSSProperties;
-    getRowStyle?: (params: RowClassParams) => JSXInternal.CSSProperties;
+    getRowStyle?: (params: RowParams) => JSXInternal.CSSProperties;
     rowClass?: string[];
-    getRowClass?: (params: RowClassParams) => string[];
+    getRowClass?: (params: RowParams) => string[];
 }
 
 const initialState: State = {
@@ -56,6 +57,7 @@ export class Store extends BaseStore<State, Actions> {
             takePinnedRows: [],
             setHoveredRow: [],
             selectRows: [],
+            setRows: [],
             appendRowsBefore: [],
             takeRows: [],
             clear: [],
@@ -70,6 +72,29 @@ export class Store extends BaseStore<State, Actions> {
                 rows: {
                     [index]: { [column]: { $set: value } }
                 }
+            });
+        });
+
+        this.handle('setRows', (state, rows) => {
+
+            // Reset row indexes
+            const rowIndexes: Record<string, number> = {};
+            rows.forEach((r, i) => {
+                rowIndexes[r.id] = i;
+            });
+
+            const ids = Object.keys(rowIndexes);
+            const pinnedTopRows = intersect(ids, state.pinnedTopRows);
+            const pinnedBottomRows = intersect(ids, state.pinnedBottomRows);
+            const normalsRows = diff(ids, pinnedTopRows, pinnedBottomRows);
+
+            return update(state, {
+                rows: { $set: rows },
+                rowIndexes: { $set: rowIndexes },
+                pinnedTopRows: { $set: pinnedTopRows },
+                pinnedBottomRows: { $set: pinnedBottomRows },
+                normalRows: { $set: normalsRows },
+                selectedRows: { $set: diff(state.selectedRows, ids) }
             });
         });
 
@@ -250,7 +275,7 @@ export class Store extends BaseStore<State, Actions> {
         });
     }
 
-    protected getRowInternalIndex(row: string) {
+    public getRowInternalIndex(row: string) {
         return this._state.rowIndexes[row];
     }
 
@@ -398,6 +423,10 @@ export class Store extends BaseStore<State, Actions> {
         }
 
         return rows;
+    }
+
+    public sortRows(sort: (rows: RowData[]) => RowData[]) {
+        return this.dispatch('setRows', sort(this._state.rows));
     }
 }
 

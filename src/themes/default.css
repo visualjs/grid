@@ -22,6 +22,8 @@
     --row-stripe-background: #f9fafb;
     --row-hover-background: #ecf0f1;
     --row-select-background: rgba(0, 145, 234, 0.1);
+    --row-drag-indicator-background: var(--primary-color);
+    --row-drag-indicator-opacity: 0.2;
     --rows-pinned-top-shadow: rgba(0, 0, 0, 0.1) 0px 4px 2px;
     --rows-pinned-bottom-shadow: rgba(0, 0, 0, 0.1) 0px -4px 2px;
     /* cells */
@@ -42,6 +44,7 @@
     --menu-z-index: 4;
     --column-z-index: 2;
     --column-resizer-z-index: 2;
+    --row-drag-indicator-z-index: 2;
     --loading-z-index: 9;
 
     /* global styles */
