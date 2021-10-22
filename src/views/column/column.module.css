@@ -34,7 +34,7 @@
     cursor: pointer;
 }
 
-.header-column-content .column-drag-handler {
+.header-column-content .column-drag-handle {
     cursor: move;
 }
 

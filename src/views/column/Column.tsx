@@ -63,7 +63,7 @@ class Column extends Component<Props> {
                 <div className={className} style={headerStyle}>
                     {
                         this.options.sortable &&
-                        <span className={clsx(["vg-move", styles.columnIcon, styles.columnDragHandler])}></span>
+                        <span className={clsx(["vg-move", styles.columnIcon, styles.columnDragHandle])}></span>
                     }
                     <span className={styles.headerName}>{this.options.headerName}</span>
                     {
