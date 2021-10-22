@@ -106,6 +106,8 @@ export interface OverridableColumnOptions {
     // when a cell is read-only, the cellEditor will be invalid,
     // and the value of the cell cannot be modified even if the drop-down fill is
     readonly?: boolean;
+    // set to true to allow column dragging.
+    sortable?: boolean;
     // format the reading and writing of cell data
     transformer?: CellTransformer;
     // cellRenderer to use for this column

@@ -61,6 +61,10 @@ class Column extends Component<Props> {
         return (
             <div ref={this.createRef("column")} className={styles.headerColumn} style={cellStyle}>
                 <div className={className} style={headerStyle}>
+                    {
+                        this.options.sortable &&
+                        <span className={clsx(["vg-move", styles.columnIcon, styles.columnDragHandler])}></span>
+                    }
                     <span className={styles.headerName}>{this.options.headerName}</span>
                     {
                         this.props.onContextMenu
