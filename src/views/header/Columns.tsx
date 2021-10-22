@@ -48,6 +48,10 @@ class Columns extends Component<Props> {
 
     protected handleDragStart = (field: string, column: HTMLDivElement, ev: MouseEvent) => {
 
+        if (!this.props.grid.trigger('beforeColumnDragStart', field)) {
+            return;
+        }
+
         if (!this.ghost) {
             this.ghost = document.createElement('div');
             this.ghost.className = styles.columnDragGhost;
@@ -67,6 +71,8 @@ class Columns extends Component<Props> {
 
         this.updateDragEndField(column);
         this.updateDragGhost(ev);
+
+        this.props.grid.trigger('afterColumnDragStart', field);
     }
 
     protected handleDragMove = (ev: MouseEvent) => {
@@ -80,9 +86,16 @@ class Columns extends Component<Props> {
         this.props.grid.removeChild(this.ghost);
         this.dragIndicator.style.display = 'none';
 
-        this.props.grid.store('column').moveColumn(
-            this.currentDragStartField, this.currentDragEndField
-        );
+        const start = this.currentDragStartField;
+        const end = this.currentDragEndField;
+        this.currentDragStartField = this.currentDragEndField = undefined;
+
+        if (!this.props.grid.trigger('beforeColumnDragEnd', start, end)) {
+            return;
+        }
+
+        this.props.grid.store('column').moveColumn(start, end);
+        this.props.grid.trigger('afterColumnDragEnd', start, end);
     }
 
     protected updateDragGhost = (ev: MouseEvent) => {

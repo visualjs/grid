@@ -146,6 +146,9 @@ class Rows extends Component<Props> {
 
     protected handleDragStart = (ev: MouseEvent, cell?: CellElement) => {
         if (!cell) return;
+        if (!this.props.grid.trigger('beforeRowDragStart', cell.row)) {
+            return;
+        }
 
         if (!this.ghost) {
             this.ghost = document.createElement('div');
@@ -165,6 +168,8 @@ class Rows extends Component<Props> {
         this.dragIndicator.style.display = 'block';
         this.updateDragEndRow(cell);
         this.updateDragGhost(ev);
+
+        this.props.grid.trigger('afterRowDragStart', cell.row);
     }
 
     protected updateDragGhost = (ev: MouseEvent) => {
@@ -180,16 +185,24 @@ class Rows extends Component<Props> {
         this.props.grid.removeChild(this.ghost);
         this.dragIndicator.style.display = 'none';
 
+        const start = this.currentDragStartRow;
+        const end = this.currentDragEndRow;
+        this.currentDragStartRow = this.currentDragEndRow = undefined;
+
+        if (!this.props.grid.trigger('beforeRowDragEnd', start, end)) {
+            return;
+        }
+
         const store = this.props.grid.store('row');
-        const oldRowIndex = store.getRowInternalIndex(this.currentDragStartRow);
-        const newRowIndex = store.getRowInternalIndex(this.currentDragEndRow);
+        const oldRowIndex = store.getRowInternalIndex(start);
+        const newRowIndex = store.getRowInternalIndex(end);
         if (oldRowIndex !== undefined && newRowIndex !== undefined && oldRowIndex != newRowIndex) {
             store.sortRows((rows) => {
                 return arrayMoveImmutable(rows, oldRowIndex, newRowIndex);
             });
         }
 
-        this.currentDragStartRow = this.currentDragEndRow = undefined;
+        this.props.grid.trigger('afterRowDragEnd', start, end);
     }
 
     protected updateDragEndRow = (cell?: CellElement) => {

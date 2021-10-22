@@ -29,6 +29,14 @@ export interface EventsDef {
     afterCopy: (text: string) => boolean | void;
     beforePaste: (text: string) => boolean | void;
     afterPaste: (text: string) => boolean | void;
+    beforeRowDragStart: (startRow: string) => boolean | void;
+    afterRowDragStart: (startRow: string) => boolean | void;
+    beforeRowDragEnd: (startRow: string, endRow: string) => boolean | void;
+    afterRowDragEnd: (startRow: string, endRow: string) => boolean | void;
+    beforeColumnDragStart: (startColumn: string) => boolean | void;
+    afterColumnDragStart: (startColumn: string) => boolean | void;
+    beforeColumnDragEnd: (startColumn: string, endColumn: string) => boolean | void;
+    afterColumnDragEnd: (startColumn: string, endColumn: string) => boolean | void;
 }
 
 export const Events: EventsType<EventsDef> = {
@@ -58,4 +66,12 @@ export const Events: EventsType<EventsDef> = {
     afterCopy: [],
     beforePaste: [],
     afterPaste: [],
+    beforeRowDragStart: [],
+    afterRowDragStart: [],
+    beforeRowDragEnd: [],
+    afterRowDragEnd: [],
+    beforeColumnDragStart: [],
+    afterColumnDragStart: [],
+    beforeColumnDragEnd: [],
+    afterColumnDragEnd: [],
 }
