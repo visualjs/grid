@@ -5,7 +5,8 @@ import {
 } from "@/types";
 import { Store as BaseStore } from "@/grid/store";
 import update from 'immutability-helper';
-import { normalizedColumns, paddingColumns } from "./utils";
+import { applyDefaultOptions, cloneColumnsDef, normalizedColumns, paddingColumns } from "./utils";
+import { arrayMoveMutable } from "@/utils";
 
 export interface Actions {
     updateColumnPinned: { field: string, pinned: Pinned };
@@ -19,6 +20,8 @@ export interface Actions {
 }
 
 export interface State {
+    // original columns definition
+    columnsDef: ColumnsDef;
     // save ordered column fields
     pinnedLeftColumns: string[];
     pinnedRightColumns: string[];
@@ -35,6 +38,7 @@ export interface State {
 }
 
 const initialState: State = {
+    columnsDef: [],
     pinnedLeftColumns: [],
     pinnedRightColumns: [],
     normalColumns: [],
@@ -116,11 +120,12 @@ export class Store extends BaseStore<State, Actions> {
 
         this.handle('setColumns', (state, { columns, defaultOptions }) => {
 
-            const normalized = normalizedColumns(paddingColumns(columns));
-
-            const result = this.setColumns(normalized.columns, Object.assign({}, defaultColumnOptions, defaultOptions))
+            const defaults = Object.assign({}, defaultColumnOptions, defaultOptions);
+            const normalized = normalizedColumns(paddingColumns(cloneColumnsDef(columns)));
+            const result = this.setColumns(normalized.columns, defaults);
 
             return update(state, {
+                columnsDef: { $set: applyDefaultOptions(columns, defaults) },
                 pinnedLeftColumns: { $set: result.pinnedLeftColumns },
                 pinnedRightColumns: { $set: result.pinnedRightColumns },
                 normalColumns: { $set: result.normalColumns },
@@ -287,6 +292,39 @@ export class Store extends BaseStore<State, Actions> {
         return this.dispatch('updateGroupCollapsed', {
             group, collapsed: !this._state.groupsData[group].collapsed
         });
+    }
+
+    protected lookForColumn(columnsDef: ColumnsDef, field: string): {parent: ColumnsDef, index: number} {
+        for (let i = 0; i < columnsDef.length; i++) {
+            const item: any = columnsDef[i];
+            // this is a group
+            if (item.children) {
+                const result = this.lookForColumn(item.children, field);
+                if (result) {
+                    return result;
+                }
+            }
+
+            // we found it!
+            if (item.field === field) {
+                return { parent: columnsDef, index: i };
+            }
+        }
+    }
+
+    public moveColumn(column: string, toColumn: string) {
+        const columnsDef = cloneColumnsDef(this._state.columnsDef);
+        const current = this.lookForColumn(columnsDef, column);
+        const target = this.lookForColumn(columnsDef, toColumn);
+
+        if (current.parent == target.parent) {
+            arrayMoveMutable(current.parent, current.index, target.index);
+        } else {
+            const currentColumn = current.parent.splice(current.index, 1)[0];
+            target.parent.splice(target.index, 0, currentColumn);
+        }
+
+        this.dispatch('setColumns', { columns: columnsDef });
     }
 }
 

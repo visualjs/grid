@@ -1,5 +1,39 @@
+import { Transformer } from "@/grid/data.mock";
 import { ColumnDef, ColumnsDef } from "@/types";
-import { columnsDepth, paddingColumns, paddingColumn, normalizedColumns } from "./utils";
+import { columnsDepth, paddingColumns, paddingColumn, normalizedColumns, cloneColumnsDef } from "./utils";
+
+describe('cloneColumnsDef', () => {
+    test('clone', () => {
+        const trans = new Transformer();
+        const getCellClass = () => {
+            return ['cell'];
+        }
+
+        const defs: any = [
+            { field: 'id', pinned: 'left', getCellClass: getCellClass},
+            { field: 'name', transformer: trans },
+            {
+                id: 'group_01', children: [
+                    { field: 'status', pinned: 'left', transformer: trans },
+                    { field: 'month' },
+                ]
+            },
+            { field: 'game', pinned: 'right' },
+            { field: 'date' }
+        ];
+
+        const newDefs: any = cloneColumnsDef(defs);
+        defs[0].headerName = "id";
+        defs[2].children[0].field = 'new status';
+
+        expect(newDefs).not.toBe(defs);
+        expect(newDefs[0].getCellClass).toBe(getCellClass);
+        expect(newDefs[0].headerName).toBe(undefined);
+        expect(newDefs[1].transformer).toBe(trans);
+        expect(newDefs[2]['children'][0].field).toBe('status');
+        expect(newDefs[2]['children'][0].transformer).toBe(trans);
+    });
+});
 
 describe('columnsDepth', () => {
 

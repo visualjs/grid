@@ -80,7 +80,9 @@ class Columns extends Component<Props> {
         this.props.grid.removeChild(this.ghost);
         this.dragIndicator.style.display = 'none';
 
-        console.log(this.currentDragStartField, this.currentDragEndField);
+        this.props.grid.store('column').moveColumn(
+            this.currentDragStartField, this.currentDragEndField
+        );
     }
 
     protected updateDragGhost = (ev: MouseEvent) => {
@@ -117,8 +119,8 @@ class Columns extends Component<Props> {
                         return (
                             <div className={styles.headerColumns} style={style}>
                                 {
-                                    items.map(group => {
-                                        return <Group value={group} columns={columns} />;
+                                    items.map((group, i) => {
+                                        return <Group key={group + String(i)} value={group} columns={columns} />;
                                     })
                                 }
                             </div>
