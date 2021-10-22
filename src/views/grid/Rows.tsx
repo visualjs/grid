@@ -75,7 +75,7 @@ class Rows extends Component<Props> {
         );
     }
 
-    protected getActiveCell = (ev: Event, type: string = "__cell"): CellElement => {
+    protected getActiveCell = (ev: Event, type: string = "__isCell"): CellElement => {
         let el: any = ev.target;
         let column: string, row: string;
         while (el != this.root) {

@@ -96,7 +96,7 @@ class Cell extends Component<Props> {
     }
 
     protected bindMetaData = () => {
-        (this.cell as any).__cell = true;
+        (this.cell as any).__isCell = true;
         (this.cell as any).__column = this.props.column;
         (this.cell as any).__row = this.props.row;
 

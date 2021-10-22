@@ -12,18 +12,40 @@ export interface Props {
     options: ColumnOptions;
     grid: Grid,
     onResize?: (field: string, width: number, ev: MouseEvent) => void;
+    onDragStart?: (field: string, column: HTMLDivElement, ev: MouseEvent) => void;
     onContextMenu?: (field: string, ev: MouseEvent) => void;
 }
 
 class Column extends Component<Props> {
 
+    protected self: HTMLDivElement;
+
     protected get options() {
         return this.props.options;
     }
 
+    componentDidMount() {
+        this.bindMetaData();
+    }
+
+    componentDidUpdate() {
+        this.bindMetaData();
+    }
+
+    protected bindMetaData = () => {
+        (this.self as any).__isColumn = true;
+        (this.self as any).__field = this.options.field;
+    }
+
+    protected handleDragStart = (ev: MouseEvent) => {
+        this.props.onDragStart && this.props.onDragStart(
+            this.options.field, this.self, ev
+        );
+    }
+
     protected handleMouseDown = (ev: MouseEvent) => {
         this.props.onResize && this.props.onResize(
-            this.options.field, this.refs.column.current.offsetWidth, ev
+            this.options.field, this.self.offsetWidth, ev
         );
     }
 
@@ -59,11 +81,11 @@ class Column extends Component<Props> {
         }
 
         return (
-            <div ref={this.createRef("column")} className={styles.headerColumn} style={cellStyle}>
+            <div ref={node => this.self = node} className={styles.headerColumn} style={cellStyle}>
                 <div className={className} style={headerStyle}>
                     {
                         this.options.sortable &&
-                        <span className={clsx(["vg-move", styles.columnIcon, styles.columnDragHandle])}></span>
+                        <span onMouseDown={this.handleDragStart} className={clsx(["vg-move", styles.columnIcon, styles.columnDragHandle])}></span>
                     }
                     <span className={styles.headerName}>{this.options.headerName}</span>
                     {

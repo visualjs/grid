@@ -131,7 +131,6 @@
 /* row draging */
 
 .row-drag-indicator {
-    height: 2px;
     width: 100%;
     background-color: var(--row-drag-indicator-background, --primary-color);
     position: absolute;
