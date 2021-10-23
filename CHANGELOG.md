@@ -1,3 +1,8 @@
+### v1.1.4 / 2021-10-23
+
+- Add row sortable
+- Add column sortable
+
 ### v1.1.3 / 2021-10-20
 
 - Add horizontal virtual scroll
