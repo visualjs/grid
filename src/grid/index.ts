@@ -61,6 +61,7 @@ export class Grid {
             }),
             row: new RowStore({
                 height: props.rowHeight,
+                minHeight: props.minRowHeight,
                 rowStyle: props.rowStyle,
                 getRowStyle: props.getRowStyle,
                 rowClass: props.rowClass,

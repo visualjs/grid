@@ -16,8 +16,6 @@ interface CellElement {
     el: HTMLDivElement;
 }
 
-const MIN_ROW_HEIGHT = 10;
-
 interface Props {
     grid: Grid;
     items: string[];
@@ -179,7 +177,7 @@ class Rows extends Component<Props> {
     protected updateRowResizer = (ev: MouseEvent) => {
         const rootRect = this.root.getBoundingClientRect();
         const rowHeight = ev.clientY - this.currentResizingRow.pos + this.currentResizingRow.height;
-        if (rowHeight >= MIN_ROW_HEIGHT) {
+        if (rowHeight >= this.props.grid.state('row').minHeight) {
             this.rowIndicator.style.top = (ev.clientY - rootRect.top) + 'px';
         }
     }

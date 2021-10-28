@@ -32,6 +32,7 @@ export interface State {
     hoveredRow?: string;
     selectedRows: string[];
     height: number | ((id: string) => number);
+    minHeight: number;
     rowHeights: Record<string, number>;
     rowStyle?: JSXInternal.CSSProperties;
     getRowStyle?: (params: RowParams) => JSXInternal.CSSProperties;
@@ -47,6 +48,7 @@ const initialState: State = {
     normalRows: [],
     selectedRows: [],
     height: 28,
+    minHeight: 20,
     rowHeights: {},
 };
 
