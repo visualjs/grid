@@ -36,6 +36,8 @@ class Cell extends Component<Props> {
 
     protected filler: HTMLDivElement;
 
+    protected resizer: HTMLDivElement;
+
     protected dragHandle: HTMLDivElement;
 
     protected cellContent = createRef<HTMLDivElement>();
@@ -110,6 +112,12 @@ class Cell extends Component<Props> {
             (this.filler as any).__filler = true;
             (this.filler as any).__column = this.props.column;
             (this.filler as any).__row = this.props.row;
+        }
+
+        if (this.resizer) {
+            (this.resizer as any).__resizer = true;
+            (this.resizer as any).__column = this.props.column;
+            (this.resizer as any).__row = this.props.row;
         }
     }
 
@@ -270,6 +278,11 @@ class Cell extends Component<Props> {
             && this.props.isBottomSelected
             && this.props.isRightSelected;
 
+        let rowResizable = this.props.grid.state('grid').rowResizable;
+        if (typeof rowResizable === 'function') {
+            rowResizable = rowResizable(this.props.row);
+        }
+
         return (
             <div
                 ref={node => this.cell = node}
@@ -286,6 +299,12 @@ class Cell extends Component<Props> {
                     <div
                         ref={node => this.filler = node}
                         className={styles.cellFillHandler}
+                    />
+                )}
+                {!!rowResizable && (
+                    <div
+                        ref={node => this.resizer = node}
+                        className={styles.rowResizeHolder}
                     />
                 )}
             </div>

@@ -19,6 +19,10 @@ export interface EventsDef {
     afterContextMenuShow: (pos: CellPosition, items: MenuItem[]) => boolean | void;
     beforeColumnResizing: (column: string, width: number) => boolean | void;
     afterColumnResizing: (column: string, width: number) => boolean | void;
+    beforeRowResizingStart: (row: string, height: number) => boolean | void;
+    afterRowResizingStart: (row: string, height: number) => boolean | void;
+    beforeRowResizingEnd: (row: string, height: number) => boolean | void;
+    afterRowResizingEnd: (row: string, height: number) => boolean | void;
     beforeKeyDown: (ev: KeyboardEvent) => boolean | void;
     afterKeyDown: (ev: KeyboardEvent) => boolean | void;
     beforeKeyPress: (ev: KeyboardEvent) => boolean | void;
@@ -56,6 +60,10 @@ export const Events: EventsType<EventsDef> = {
     afterContextMenuShow: [],
     beforeColumnResizing: [],
     afterColumnResizing: [],
+    beforeRowResizingStart: [],
+    afterRowResizingStart: [],
+    beforeRowResizingEnd: [],
+    afterRowResizingEnd: [],
     beforeKeyDown: [],
     afterKeyDown: [],
     beforeKeyPress: [],

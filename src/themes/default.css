@@ -42,7 +42,6 @@
     --horizontal-scroll-z-index: 1;
     --cell-editing-z-index: 2;
     --menu-z-index: 4;
-    --column-z-index: 2;
     --column-resizer-z-index: 2;
     --row-drag-indicator-z-index: 2;
     --loading-z-index: 9;

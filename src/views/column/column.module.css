@@ -54,5 +54,5 @@
     width: 4px;
     height: 100%;
     cursor: col-resize;
-    z-index: var(--column-z-index, 2);
+    z-index: var(--resize-holder-z-index, 2);
 }

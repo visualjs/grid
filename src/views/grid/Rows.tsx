@@ -16,6 +16,8 @@ interface CellElement {
     el: HTMLDivElement;
 }
 
+const MIN_ROW_HEIGHT = 10;
+
 interface Props {
     grid: Grid;
     items: string[];
@@ -25,7 +27,8 @@ interface Props {
     pinnedRightColumns: string[];
     normalColumns: string[];
     // rows
-    rowHeight: number;
+    defaultRowHeight: number | ((id: string) => number);
+    rowHeights: Record<string, number>;
     // overscan and throttle
     overscanColumnCount: number,
     overscanRowCount: number,
@@ -50,7 +53,7 @@ class Rows extends Component<Props> {
 
     protected ghost?: HTMLDivElement;
 
-    protected dragIndicator: HTMLDivElement;
+    protected rowIndicator: HTMLDivElement;
 
     protected currentDragStartRow?: string;
 
@@ -112,6 +115,11 @@ class Rows extends Component<Props> {
             return this.handleDragStart(ev, this.getActiveCell(ev));
         }
 
+        const resizer = this.getActiveCell(ev, '__resizer');
+        if (resizer) {
+            return this.handleResizeStart(ev, this.getActiveCell(ev));
+        }
+
         const filler = this.getActiveCell(ev, '__filler');
         if (filler) {
             return this.props.onFillerMouseDown(ev, filler.el, filler.row, filler.column);
@@ -144,6 +152,59 @@ class Rows extends Component<Props> {
         cell && this.props.onCellMouseMove(ev, cell.el, cell.row, cell.column);
     }
 
+    protected currentResizingRow?: { row: string, height: number, pos: number };
+
+    protected handleResizeStart = (ev: MouseEvent, cell?: CellElement) => {
+        if (!cell) return;
+
+        const rowHeight = this.getRowHeight(cell.row);
+        if (!this.props.grid.trigger('beforeRowResizingStart', cell.row, rowHeight)) {
+            return;
+        }
+
+        this.currentResizingRow = { row: cell.row, height: rowHeight, pos: ev.clientY };
+
+        this.rowIndicator.style.display = 'block';
+        this.rowIndicator.style.height = '2px';
+        this.rowIndicator.style.opacity = '1';
+
+        document.addEventListener('mousemove', this.updateRowResizer);
+        document.addEventListener('mouseup', this.handleResizeEnd);
+
+        this.updateRowResizer(ev);
+
+        this.props.grid.trigger('afterRowResizingStart', cell.row, rowHeight);
+    }
+
+    protected updateRowResizer = (ev: MouseEvent) => {
+        const rootRect = this.root.getBoundingClientRect();
+        const rowHeight = ev.clientY - this.currentResizingRow.pos + this.currentResizingRow.height;
+        if (rowHeight >= MIN_ROW_HEIGHT) {
+            this.rowIndicator.style.top = (ev.clientY - rootRect.top) + 'px';
+        }
+    }
+
+    protected handleResizeEnd = (ev: MouseEvent) => {
+        document.removeEventListener('mousemove', this.updateRowResizer);
+        document.removeEventListener('mouseup', this.handleResizeEnd);
+
+        if (this.currentResizingRow) {
+            const { row, height, pos } = this.currentResizingRow;
+            const indicatorRect = this.rowIndicator.getBoundingClientRect();
+            const rowHeight = indicatorRect.top - pos + height;
+            const canResizing = this.props.grid.trigger('beforeRowResizingEnd', row, rowHeight);
+
+            canResizing && this.props.grid.store('row').dispatch('setRowHeight', {
+                row: row, height: rowHeight
+            });
+
+            this.props.grid.trigger('afterRowResizingEnd', row, canResizing ? rowHeight : height);
+        }
+
+        this.rowIndicator.style.opacity = '';
+        this.rowIndicator.style.display = 'none';
+    }
+
     protected handleDragStart = (ev: MouseEvent, cell?: CellElement) => {
         if (!cell) return;
         if (!this.props.grid.trigger('beforeRowDragStart', cell.row)) {
@@ -165,7 +226,7 @@ class Rows extends Component<Props> {
         document.addEventListener('mouseup', this.handleDragEnd);
 
         this.currentDragStartRow = cell.row;
-        this.dragIndicator.style.display = 'block';
+        this.rowIndicator.style.display = 'block';
         this.updateDragEndRow(cell);
         this.updateDragGhost(ev);
 
@@ -183,7 +244,7 @@ class Rows extends Component<Props> {
         document.removeEventListener('mouseup', this.handleDragEnd);
         document.removeEventListener('mousemove', this.updateDragGhost);
         this.props.grid.removeChild(this.ghost);
-        this.dragIndicator.style.display = 'none';
+        this.rowIndicator.style.display = 'none';
 
         const start = this.currentDragStartRow;
         const end = this.currentDragEndRow;
@@ -210,8 +271,20 @@ class Rows extends Component<Props> {
         const rootRect = this.root.getBoundingClientRect();
         const cellRect = cell.el.parentElement.getBoundingClientRect();
         this.currentDragEndRow = cell.row;
-        this.dragIndicator.style.top = (cellRect.top - rootRect.top) + 'px';
-        this.dragIndicator.style.height = cellRect.height + 'px';
+        this.rowIndicator.style.top = (cellRect.top - rootRect.top) + 'px';
+        this.rowIndicator.style.height = cellRect.height + 'px';
+    }
+
+    protected getRowHeight = (row: string): number => {
+        if (this.props.rowHeights[row]) {
+            return this.props.rowHeights[row];
+        }
+
+        if (typeof this.props.defaultRowHeight === 'function') {
+            return this.props.defaultRowHeight(row);
+        }
+
+        return this.props.defaultRowHeight;
     }
 
     render() {
@@ -224,10 +297,10 @@ class Rows extends Component<Props> {
                 onDblClick={this.handleDbClick}
                 style={{ width: '100%', height: '100%', position: 'relative' }}
             >
-                <div ref={node => this.dragIndicator = node} className={styles.rowDragIndicator}></div>
+                <div ref={node => this.rowIndicator = node} className={styles.rowIndicator}></div>
                 <VirtualGrid
                     rows={this.props.items}
-                    rowHeight={this.props.rowHeight}
+                    rowHeight={this.getRowHeight}
                     columns={this.props.normalColumns}
                     pinnedLeftClassName={styles.pinnedLeftCells}
                     pinnedRightClassName={styles.pinnedRightCells}
@@ -262,7 +335,8 @@ const mapStateToProps = (state: RootState) => {
         pinnedLeftColumns: state.column.pinnedLeftColumns,
         pinnedRightColumns: state.column.pinnedRightColumns,
         normalColumns: state.column.normalColumns,
-        rowHeight: state.row.height,
+        defaultRowHeight: state.row.height,
+        rowHeights: state.row.rowHeights,
     };
 };
 

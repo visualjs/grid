@@ -55,6 +55,7 @@ export class Grid {
                 overscanRowCount: props.overscanRowCount,
                 overscanColumnCount: props.overscanColumnCount,
                 scrollThrottleRate: props.scrollThrottleRate,
+                rowResizable: props.rowResizable,
                 fillable: props.fillable,
                 getContextMenuItems: props.getContextMenuItems,
             }),
