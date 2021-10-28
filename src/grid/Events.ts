@@ -17,8 +17,10 @@ export interface EventsDef {
     afterSelectionChange: (start: Coordinate, end: Coordinate) => boolean | void;
     beforeContextMenuShow: (pos: CellPosition, items: MenuItem[]) => boolean | void;
     afterContextMenuShow: (pos: CellPosition, items: MenuItem[]) => boolean | void;
-    beforeColumnResizing: (column: string, width: number) => boolean | void;
-    afterColumnResizing: (column: string, width: number) => boolean | void;
+    beforeColumnResizingStart: (column: string, width: number) => boolean | void;
+    afterColumnResizingStart: (column: string, width: number) => boolean | void;
+    beforeColumnResizingEnd: (column: string, width: number) => boolean | void;
+    afterColumnResizingEnd: (column: string, width: number) => boolean | void;
     beforeRowResizingStart: (row: string, height: number) => boolean | void;
     afterRowResizingStart: (row: string, height: number) => boolean | void;
     beforeRowResizingEnd: (row: string, height: number) => boolean | void;
@@ -58,8 +60,10 @@ export const Events: EventsType<EventsDef> = {
     afterSelectionChange: [],
     beforeContextMenuShow: [],
     afterContextMenuShow: [],
-    beforeColumnResizing: [],
-    afterColumnResizing: [],
+    beforeColumnResizingStart: [],
+    afterColumnResizingStart: [],
+    beforeColumnResizingEnd: [],
+    afterColumnResizingEnd: [],
     beforeRowResizingStart: [],
     afterRowResizingStart: [],
     beforeRowResizingEnd: [],
