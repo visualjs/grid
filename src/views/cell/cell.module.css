@@ -114,3 +114,13 @@
 .cell:hover .cell-drag-handle {
     opacity: 1;
 }
+
+.row-resize-holder {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    cursor: row-resize;
+    z-index: var(--resize-holder-z-index, 2);
+}

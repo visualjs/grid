@@ -130,7 +130,7 @@
 
 /* row draging */
 
-.row-drag-indicator {
+.row-indicator {
     width: 100%;
     background-color: var(--row-drag-indicator-background, --primary-color);
     position: absolute;

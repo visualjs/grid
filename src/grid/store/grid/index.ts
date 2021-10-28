@@ -16,6 +16,7 @@ export interface State {
     fillable?: Fillable;
     loading?: boolean;
     destroyed?: boolean;
+    rowResizable?: boolean | ((id: string) => boolean);
     // context menus
     getContextMenuItems?: (params: GetContextMenuItemsParams) => MenuItem[];
 }

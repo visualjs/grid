@@ -114,6 +114,7 @@ import { showContainer } from './utils';
         },
         rows: [],
         rowHeight: 40,
+        rowResizable: true,
         fillable: 'xy',
         overscanRowCount: 5,
         overscanColumnCount: 3,

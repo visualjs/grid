@@ -202,7 +202,11 @@ export interface GridOptions {
     // default column height, default is 30
     headerHeight?: number;
     // default row height, default is 28
-    rowHeight?: number;
+    rowHeight?: number | ((id: string) => number);
+    // min row height, default is 20
+    minRowHeight?: number;
+    // can a row height be adjusted by dragging
+    rowResizable?: boolean | ((id: string) => boolean);
     // providing a CSS style for the rows.
     rowStyle?: JSXInternal.CSSProperties;
     // callback version of property rowStyle to set style for each row individually.
