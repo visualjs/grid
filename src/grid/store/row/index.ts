@@ -20,6 +20,7 @@ export interface Actions {
     takeRows: string[];
     clear: undefined;
     setBaseHeight: number;
+    setRowHeight: { row: string, height: number };
 }
 
 export interface State {
@@ -30,7 +31,9 @@ export interface State {
     normalRows: string[];
     hoveredRow?: string;
     selectedRows: string[];
-    height: number;
+    height: number | ((id: string) => number);
+    minHeight: number;
+    rowHeights: Record<string, number>;
     rowStyle?: JSXInternal.CSSProperties;
     getRowStyle?: (params: RowParams) => JSXInternal.CSSProperties;
     rowClass?: string[];
@@ -45,6 +48,8 @@ const initialState: State = {
     normalRows: [],
     selectedRows: [],
     height: 28,
+    minHeight: 20,
+    rowHeights: {},
 };
 
 export class Store extends BaseStore<State, Actions> {
@@ -62,6 +67,7 @@ export class Store extends BaseStore<State, Actions> {
             takeRows: [],
             clear: [],
             setBaseHeight: [],
+            setRowHeight: [],
         }, Object.assign({}, initialState, initial));
 
         this.handle('setCellValue', (state, { row, column, value }) => {
@@ -264,6 +270,14 @@ export class Store extends BaseStore<State, Actions> {
         this.handle('setBaseHeight', (state, height) => {
             return update(state, {
                 height: { $set: height }
+            });
+        });
+
+        this.handle('setRowHeight', (state, { row, height }) => {
+            return update(state, {
+                rowHeights: {
+                    [row]: { $set: height }
+                }
             });
         });
     }

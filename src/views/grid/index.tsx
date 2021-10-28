@@ -111,7 +111,7 @@ class Grid extends Component<Props> {
      */
 
     protected handleColumnResizeStart = (field: string, width: number, ev: MouseEvent) => {
-        if (this.props.grid.trigger('beforeColumnResizing', field, width) === false) {
+        if (this.props.grid.trigger('beforeColumnResizingStart', field, width) === false) {
             return;
         }
 
@@ -122,6 +122,8 @@ class Grid extends Component<Props> {
         this.refs.columnResizer.current.style.left = offsetX + 'px';
         this.refs.columnResizer.current.style.width = '2px';
         this.resizingColumn = { field, width, pos: ev.clientX };
+
+        this.props.grid.trigger('afterColumnResizingStart', field, width);
     }
 
     protected handleMouseUp = (ev: MouseEvent) => {
@@ -138,8 +140,9 @@ class Grid extends Component<Props> {
                 width: Math.max(width, minWidth)
             };
 
-            this.props.grid.store('column').dispatch('updateColumnWidth', param);
-            this.props.grid.trigger('afterColumnResizing', param.field, param.width);
+            const canResizing = this.props.grid.trigger('beforeColumnResizingEnd', param.field, width);
+            canResizing && this.props.grid.store('column').dispatch('updateColumnWidth', param);
+            this.props.grid.trigger('afterColumnResizingEnd', param.field, canResizing ? param.width : this.resizingColumn.width);
         }
     }
 

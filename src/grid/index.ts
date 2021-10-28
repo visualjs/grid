@@ -55,11 +55,13 @@ export class Grid {
                 overscanRowCount: props.overscanRowCount,
                 overscanColumnCount: props.overscanColumnCount,
                 scrollThrottleRate: props.scrollThrottleRate,
+                rowResizable: props.rowResizable,
                 fillable: props.fillable,
                 getContextMenuItems: props.getContextMenuItems,
             }),
             row: new RowStore({
                 height: props.rowHeight,
+                minHeight: props.minRowHeight,
                 rowStyle: props.rowStyle,
                 getRowStyle: props.getRowStyle,
                 rowClass: props.rowClass,
