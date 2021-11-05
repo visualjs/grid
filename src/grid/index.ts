@@ -316,13 +316,15 @@ export class Grid {
         const columnOptions = this.getColumnOptions(column, row);
 
         if (oldValue === undefined || columnOptions === undefined || columnOptions.readonly) {
-            return;
+            if(args.force !== true){
+                return;
+            }
         }
 
         const trans = columnOptions.transformer;
         value = trans ? trans.parse({ value, column: columnOptions, gird: this, oldValue }) : value;
 
-        if (oldValue === value) {
+        if (oldValue === value && args.force !== true) {
             return;
         }
 

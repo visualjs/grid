@@ -2,7 +2,8 @@
 export type Listener<P, S> = (payload?: P, newState?: S, oldState?: S) => void;
 
 export type dispatchArgs = {
-    stopEventEmit:boolean
+    stopEventEmit:boolean,
+    force:boolean;
 }
 
 export class Store<S, A> {

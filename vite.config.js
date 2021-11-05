@@ -20,6 +20,7 @@ export default defineConfig({
             entry: path.resolve(__dirname, 'src/index.ts'),
             name: 'VisualJS',
             fileName: (format) => `visual-grid.${format}.js`
-        }
+        },
+        minify:false
     }
 })
