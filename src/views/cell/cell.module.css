@@ -93,17 +93,6 @@
     position: absolute;
 }
 
-.cell-fill-handler {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background-color: var(--primary-color, #0091ea);
-    right: 0;
-    bottom: 0;
-    cursor: cell;
-    z-index: 1;
-}
-
 .cell-drag-handle {
     padding: 0 10px;
     cursor: move;
@@ -113,6 +102,17 @@
 
 .cell:hover .cell-drag-handle {
     opacity: 1;
+}
+
+.cell-fill-handler {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: var(--primary-color, #0091ea);
+    right: 0;
+    bottom: 0;
+    cursor: cell;
+    z-index: var(--resize-holder-z-index, 2);
 }
 
 .row-resize-holder {

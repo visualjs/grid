@@ -1,7 +1,6 @@
 import Component from "@/views/PureComponent";
 import { createRef } from "preact";
 import { Grid, State as RootState } from "@/grid";
-import { connect } from "@/views/root";
 import { ColumnOptions, Fillable } from "@/types";
 import { classes, DOM } from "@/utils";
 import { withGrid } from "@/views/root";
@@ -15,8 +14,9 @@ interface Props {
     row: string;
     column: string;
     style?: JSXInternal.CSSProperties;
-    rawValue: any;
-    options: ColumnOptions;
+}
+
+interface State {
     isSelected: boolean;
     isLeftSelected: boolean;
     isRightSelected: boolean;
@@ -30,7 +30,7 @@ interface Props {
     fillable: Fillable;
 }
 
-class Cell extends Component<Props> {
+class Cell extends Component<Props, State> {
 
     protected cell: HTMLDivElement;
 
@@ -50,10 +50,14 @@ class Cell extends Component<Props> {
 
     protected cellRender: CellRenderer<any>;
 
-    protected unsubscribeEditing: () => void;
+    protected unsubscribes: (() => void)[] = [];
 
-    get options() {
-        return this.props.options;
+    get grid() {
+        return this.props.grid;
+    }
+
+    get options(): ColumnOptions {
+        return this.grid.getColumnOptions(this.props.column, this.props.row);
     }
 
     constructor(props: Props) {
@@ -64,23 +68,43 @@ class Cell extends Component<Props> {
         this.bindMetaData();
         this.doRender();
 
+        this.unsubscribes.push(this.props.grid.store('cell').subscribeAny(() => {
+            const selectBoundary = this.grid.getSelectBoundary(this.props.row, this.props.column);
+            const fillingBoundary = this.options?.readonly ? undefined : this.grid.getFillingBoundary(this.props.row, this.props.column);
+
+            this.setState({
+                fillable: this.grid.state('grid').fillable,
+                isSelected: selectBoundary !== undefined,
+                isLeftSelected: selectBoundary && selectBoundary.left,
+                isRightSelected: selectBoundary && selectBoundary.right,
+                isTopSelected: selectBoundary && selectBoundary.top,
+                isBottomSelected: selectBoundary && selectBoundary.bottom,
+                isFilling: fillingBoundary !== undefined,
+                isLeftFilling: fillingBoundary && fillingBoundary.left,
+                isRightFilling: fillingBoundary && fillingBoundary.right,
+                isTopFilling: fillingBoundary && fillingBoundary.top,
+                isBottomFilling: fillingBoundary && fillingBoundary.bottom,
+            })
+        }));
+
         if (!this.options.cellEditor || this.options.readonly) {
             return;
         }
 
-        this.unsubscribeEditing = this.props.grid.store('cell').subscribeAny(() => {
-            const pos = this.props.grid.state('cell').editing;
+        this.unsubscribes.push(this.props.grid.store('cell').subscribeAny(() => {
+            const state = this.props.grid.state('cell');
+            const pos = state.editing;
             const shouldEditing = Boolean(pos && pos.row === this.props.row && pos.column === this.props.column);
 
             if (this.isEditing !== shouldEditing) {
                 this.isEditing = shouldEditing;
                 this.handleCellEditing();
             }
-        });
+        }));
     }
 
     componentWillUnmount = () => {
-        this.unsubscribeEditing && this.unsubscribeEditing();
+        this.unsubscribes.forEach(fn => fn());
         this.props.grid.removeChild(this.popup);
 
         // clean cell render and cell editor
@@ -124,7 +148,7 @@ class Cell extends Component<Props> {
     // Actions
     protected getValue(raw: boolean = false): any {
         if (raw) {
-            return this.props.rawValue;
+            return this.grid.getRawCellValue(this.props.row, this.props.column);
         }
 
         return this.props.grid.getCellValue(this.props.row, this.props.column);
@@ -149,7 +173,6 @@ class Cell extends Component<Props> {
             }
             return;
         }
-
 
         const editor = document.createElement('div');
         DOM.clean(this.cellContent.current);
@@ -204,7 +227,7 @@ class Cell extends Component<Props> {
     protected doRender() {
         if (this.isEditing) return;
 
-        if (!this.props.options.cellRender) {
+        if (!this.options.cellRender) {
             this.cellContent.current && (this.cellContent.current.textContent = this.getValue());
             return;
         }
@@ -214,11 +237,11 @@ class Cell extends Component<Props> {
             this.cellRender.beforeDestroy();
         }
 
-        this.cellRender = new this.props.options.cellRender();
+        this.cellRender = new this.options.cellRender();
         this.cellRender.init && this.cellRender.init({
-            props: this.props.options.cellParams,
+            props: this.options.cellParams,
             value: this.getValue(true),
-            column: this.props.options,
+            column: this.options,
             row: this.props.row,
             gird: this.props.grid,
         });
@@ -243,20 +266,20 @@ class Cell extends Component<Props> {
         const cellClassParam = { column: this.props.column, row: this.props.row, grid: this.props.grid };
         const className = classes(
             // set class(es) for a particular cell.
-            this.props.options.cellClass || [],
-            this.props.options.getCellClass ? this.props.options.getCellClass(cellClassParam) : [],
+            this.options.cellClass || [],
+            this.options.getCellClass ? this.options.getCellClass(cellClassParam) : [],
             {
                 [styles.cell]: true,
-                [styles.cellSelected]: this.props.isSelected,
-                [styles.cellLeftBoundary]: this.props.isLeftSelected,
-                [styles.cellRightBoundary]: this.props.isRightSelected,
-                [styles.cellTopBoundary]: this.props.isTopSelected,
-                [styles.cellBottomBoundary]: this.props.isBottomSelected,
-                [styles.cellFilling]: this.props.isFilling,
-                [styles.cellFillingLeftBoundary]: this.props.isLeftFilling,
-                [styles.cellFillingRightBoundary]: this.props.isRightFilling,
-                [styles.cellFillingTopBoundary]: this.props.isTopFilling,
-                [styles.cellFillingBottomBoundary]: this.props.isBottomFilling,
+                [styles.cellSelected]: this.state.isSelected,
+                [styles.cellLeftBoundary]: this.state.isLeftSelected,
+                [styles.cellRightBoundary]: this.state.isRightSelected,
+                [styles.cellTopBoundary]: this.state.isTopSelected,
+                [styles.cellBottomBoundary]: this.state.isBottomSelected,
+                [styles.cellFilling]: this.state.isFilling,
+                [styles.cellFillingLeftBoundary]: this.state.isLeftFilling,
+                [styles.cellFillingRightBoundary]: this.state.isRightFilling,
+                [styles.cellFillingTopBoundary]: this.state.isTopFilling,
+                [styles.cellFillingBottomBoundary]: this.state.isBottomFilling,
             });
 
         let cellStyle: JSXInternal.CSSProperties = {
@@ -274,11 +297,11 @@ class Cell extends Component<Props> {
             cellStyle.flexGrow = this.options.flex;
         }
 
-        const fillable = this.props.fillable !== undefined
-            && this.props.isBottomSelected
-            && this.props.isRightSelected;
+        const fillable = this.state.fillable !== undefined
+            && this.state.isBottomSelected
+            && this.state.isRightSelected;
 
-        let rowResizable = this.props.grid.state('grid').rowResizable;
+        let rowResizable = this.grid.state('grid').rowResizable;
         if (typeof rowResizable === 'function') {
             rowResizable = rowResizable(this.props.row);
         }
@@ -295,16 +318,16 @@ class Cell extends Component<Props> {
                     </div>
                 )}
                 <div ref={this.cellContent} className={styles.cellContent}></div>
-                {fillable && (
-                    <div
-                        ref={node => this.filler = node}
-                        className={styles.cellFillHandler}
-                    />
-                )}
                 {!!rowResizable && (
                     <div
                         ref={node => this.resizer = node}
                         className={styles.rowResizeHolder}
+                    />
+                )}
+                {fillable && (
+                    <div
+                        ref={node => this.filler = node}
+                        className={styles.cellFillHandler}
                     />
                 )}
             </div>
@@ -312,28 +335,4 @@ class Cell extends Component<Props> {
     }
 }
 
-const mapStateToProps = (state: RootState, { grid, props }: { grid: Grid, props: Props }) => {
-
-    const options = grid.getColumnOptions(props.column, props.row);
-    const readonly = options?.readonly;
-    const selectBoundary = grid.getSelectBoundary(props.row, props.column);
-    const fillingBoundary = readonly ? undefined : grid.getFillingBoundary(props.row, props.column);
-
-    return {
-        rawValue: grid.getRawCellValue(props.row, props.column),
-        isSelected: selectBoundary !== undefined,
-        isLeftSelected: selectBoundary && selectBoundary.left,
-        isRightSelected: selectBoundary && selectBoundary.right,
-        isTopSelected: selectBoundary && selectBoundary.top,
-        isBottomSelected: selectBoundary && selectBoundary.bottom,
-        isFilling: fillingBoundary !== undefined,
-        isLeftFilling: fillingBoundary && fillingBoundary.left,
-        isRightFilling: fillingBoundary && fillingBoundary.right,
-        isTopFilling: fillingBoundary && fillingBoundary.top,
-        isBottomFilling: fillingBoundary && fillingBoundary.bottom,
-        options: options,
-        fillable: state.grid.fillable,
-    };
-};
-
-export default connect(mapStateToProps)(withGrid(Cell));
+export default withGrid(Cell);
