@@ -6,9 +6,9 @@ import Cell from "@/views/cell";
 import withGrid from "@/views/root/withGrid";
 import { CellInfo, RowInfo, VirtualGrid } from "@/views/virtual-grid";
 import { ColumnOptions } from "@/types";
+import { arrayMoveImmutable } from "@/utils";
 
 import styles from "./grid.module.css";
-import { arrayMoveImmutable } from "@/utils";
 
 interface CellElement {
     column: string;

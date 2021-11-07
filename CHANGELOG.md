@@ -1,3 +1,7 @@
+### v1.1.5 / 2021-10-29
+
+- Add row height adjustment
+
 ### v1.1.4 / 2021-10-23
 
 - Add row sortable

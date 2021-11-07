@@ -24,6 +24,7 @@ const defaultGridOptions = {
     height: '100%',
     headerHeight: 30,
     rowHeight: 28,
+    minRowHeight: 20,
     overscanRowCount: 5,
     overscanColumnCount: 2,
 }

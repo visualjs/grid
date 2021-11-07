@@ -324,7 +324,7 @@ class Body extends Component<Props, State> {
                 <div ref={this.props.pinnedTopRowsRef} className={clsx(styles.pinnedTopRows, {
                     [styles.noBorder]: this.props.pinnedTopRows.length === 0
                 })}>
-                    {this.props.pinnedTopRows.length > 0 && <Rows
+                    <Rows
                         items={this.props.pinnedTopRows}
                         onWheelHorizontal={this.props.onWheelHorizontal}
                         onCellDbClick={this.handleCellDbClick}
@@ -332,7 +332,7 @@ class Body extends Component<Props, State> {
                         onCellMouseMove={this.handleCellMouseMove}
                         onFillerMouseDown={this.handleCellFillerMouseDown}
                         getScrollXNode={this.props.getScrollXNode}
-                    />}
+                    />
                 </div>
                 <div style={{ height: '100%', position: 'relative', overflow: 'hidden', flexGrow: 1 }}>
                     {this.props.normalRows.length > 0 && <Rows
@@ -349,7 +349,7 @@ class Body extends Component<Props, State> {
                 <div ref={this.props.pinnedBottomRowsRef} className={clsx(styles.pinnedBottomRows, {
                     [styles.noBorder]: this.props.pinnedBottomRows.length === 0
                 })}>
-                    {this.props.pinnedBottomRows.length > 0 && <Rows
+                    <Rows
                         items={this.props.pinnedBottomRows}
                         onWheelHorizontal={this.props.onWheelHorizontal}
                         onCellDbClick={this.handleCellDbClick}
@@ -357,7 +357,7 @@ class Body extends Component<Props, State> {
                         onFillerMouseDown={this.handleCellFillerMouseDown}
                         onCellMouseMove={this.handleCellMouseMove}
                         getScrollXNode={this.props.getScrollXNode}
-                    />}
+                    />
                 </div>
             </div>
         );
