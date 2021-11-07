@@ -60,15 +60,12 @@ class Cell extends Component<Props, State> {
         return this.grid.getColumnOptions(this.props.column, this.props.row);
     }
 
-    constructor(props: Props) {
-        super(props);
-    }
-
     componentDidMount = () => {
         this.bindMetaData();
         this.doRender();
 
         this.unsubscribes.push(this.props.grid.store('cell').subscribeAny(() => {
+
             const selectBoundary = this.grid.getSelectBoundary(this.props.row, this.props.column);
             const fillingBoundary = this.options?.readonly ? undefined : this.grid.getFillingBoundary(this.props.row, this.props.column);
 
