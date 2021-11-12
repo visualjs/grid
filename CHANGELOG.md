@@ -1,3 +1,9 @@
+### v1.1.6 / 2021-11-12
+
+- Fix row height cannot be adjusted when minRowHeight is not defined
+- Fix rows cannot be scrolled horizontally
+- Refactor cell update strategy
+
 ### v1.1.5 / 2021-10-29
 
 - Add row height adjustment
