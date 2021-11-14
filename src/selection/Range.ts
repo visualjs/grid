@@ -2,13 +2,13 @@ import { Coordinate } from "@/types";
 
 export abstract class Range {
 
-    protected minX: number;
+    public minX: number;
 
-    protected minY: number;
+    public minY: number;
 
-    protected maxX: number;
+    public maxX: number;
 
-    protected maxY: number;
+    public maxY: number;
 
     protected abstract isEmpty(): boolean;
 
