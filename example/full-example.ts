@@ -233,6 +233,10 @@ import data from './data/data';
         console.log(row + ' - ' + 'removed!');
     });
 
+    grid.on('afterCopy', (text,table) => {
+        console.log(text,table);
+    });
+
     if (isUseTestData) {
         grid.appendRows(data.rows);
     } else {

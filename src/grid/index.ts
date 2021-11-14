@@ -205,14 +205,22 @@ export class Grid {
     // copy the currently selected cell data to the clipboard.
     public copySelection(): void {
         let text = '';
+        let tableStructure: any[] = [];
         this.state('cell').selections.forEach((range) => {
             let lastRow = -1;
+            const { minY } = range;
             range.each((coord) => {
                 if (lastRow !== -1) {
                     text += coord.y !== lastRow ? '\n' : '\t';
                 }
 
-                text += this.getCellValueByCoord(coord);
+                const textData = this.getCellValueByCoord(coord);
+                let y = coord.y - minY;
+
+                //  save table structure
+                tableStructure[y] ? tableStructure[y].push(textData) : (tableStructure[y] = [textData]);
+
+                text += textData;
                 lastRow = coord.y;
             });
         });
@@ -223,7 +231,7 @@ export class Grid {
 
         writeTextToClipboard(text);
 
-        this.trigger('afterCopy', text);
+        this.trigger('afterCopy', text, tableStructure);
     }
 
     // parse the data from the clipboard and
@@ -242,9 +250,9 @@ export class Grid {
             let theLastCellCoord = { x: start.x, y: start.y };
 
             //  skip style if shift was pressed
-            if(isRemoveStyle){
+            if (isRemoveStyle) {
                 this.setCellValueByCoord(theLastCellCoord, str);
-            }else{
+            } else {
                 str.split('\n').forEach((rowData, y) => {
                     rowData.split('\t').forEach((value, x) => {
                         const coord = { x: x + start.x, y: y + start.y };
@@ -316,7 +324,7 @@ export class Grid {
         const columnOptions = this.getColumnOptions(column, row);
 
         if (oldValue === undefined || columnOptions === undefined || columnOptions.readonly) {
-            if(args.force !== true){
+            if (args.force !== true) {
                 return;
             }
         }

@@ -26,7 +26,7 @@ export interface EventsDef {
     beforeKeyUp: (ev: KeyboardEvent) => boolean | void;
     afterKeyUp: (ev: KeyboardEvent) => boolean | void;
     beforeCopy: (text: string) => boolean | void;
-    afterCopy: (text: string) => boolean | void;
+    afterCopy: (text: string, tableStructure:any[][]) => boolean | void;
     beforePaste: (text: string) => boolean | void;
     afterPaste: (text: string) => boolean | void;
 }
