@@ -1,4 +1,4 @@
-import { CellTransformer, CellTransformerParams } from "@/grid/cell";
+import { CellTransformer, CellTransformerParams } from '@/grid/cell';
 
 export interface Props {
     allowNotExistOption?: boolean;
@@ -6,9 +6,20 @@ export interface Props {
 }
 
 export class SelectionTransformer extends CellTransformer {
-
     constructor(protected props: Props = { allowNotExistOption: true }) {
         super();
+    }
+
+    public formatCopy(params: CellTransformerParams): string {
+        if ('string' === typeof params.value) {
+            return 'from copy ' + params.value;
+        }
+
+        if (Array.isArray(params.value)) {
+            return 'from copy ' + params.value.toString();
+        }
+
+        return '';
     }
 
     public format(params: CellTransformerParams): string {
@@ -32,8 +43,8 @@ export class SelectionTransformer extends CellTransformer {
             const values = params.value.split(',');
             if (!this.props.allowNotExistOption) {
                 return values.filter((val) => {
-                    return this.props.options.indexOf(val) > -1
-                })
+                    return this.props.options.indexOf(val) > -1;
+                });
             }
 
             return values;

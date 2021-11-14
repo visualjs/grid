@@ -214,7 +214,7 @@ export class Grid {
                     text += coord.y !== lastRow ? '\n' : '\t';
                 }
 
-                const textData = this.getCellValueByCoord(coord);
+                const textData = this.getCellCopyValueByCoord(coord);
                 let y = coord.y - minY;
 
                 //  save table structure
@@ -305,6 +305,18 @@ export class Grid {
         return this.getRawCellValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x));
     }
 
+    public getCellCopyValue(row: string, column: string): any {
+        const columnOptions = this.getColumnOptions(column, row);
+        const trans = columnOptions?.transformer;
+        const value = this.getRawCellValue(row, column);
+
+        return trans
+            ? trans.formatCopy
+                ? trans.formatCopy({ value, column: columnOptions, gird: this })
+                : trans.format({ value, column: columnOptions, gird: this })
+            : value;
+    }
+
     // Get cell data with transformer applied
     public getCellValue(row: string, column: string): any {
         const columnOptions = this.getColumnOptions(column, row);
@@ -312,6 +324,10 @@ export class Grid {
         const value = this.getRawCellValue(row, column);
 
         return trans ? trans.format({ value, column: columnOptions, gird: this }) : value;
+    }
+
+    public getCellCopyValueByCoord(coord: Coordinate): any {
+        return this.getCellCopyValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x));
     }
 
     public getCellValueByCoord(coord: Coordinate): any {

@@ -12,6 +12,9 @@ export abstract class CellTransformer {
     // Format cell data before rendering without cellRender or copy to clipboard
     abstract format(params: CellTransformerParams): string;
 
+    // Format cell data when user excute copy
+    formatCopy?(params: CellTransformerParams): string;
+
     // Parse input data before setting new value
     abstract parse(params: CellTransformerParams): any;
 }
