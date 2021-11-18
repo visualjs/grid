@@ -1,4 +1,5 @@
 import { CellTransformer, CellTransformerParams } from '@/grid/cell';
+import { ParseFromClipboardParams } from '@/grid/cell/CellTransformer';
 
 export interface Props {
     allowNotExistOption?: boolean;
@@ -10,16 +11,8 @@ export class SelectionTransformer extends CellTransformer {
         super();
     }
 
-    public formatCopy(params: CellTransformerParams): string {
-        if ('string' === typeof params.value) {
-            return 'from copy ' + params.value;
-        }
-
-        if (Array.isArray(params.value)) {
-            return 'from copy ' + params.value.toString();
-        }
-
-        return '';
+    public parseFromClipboard(params: ParseFromClipboardParams): any {
+        return params.value.value + 'copy from parseFromClipboard';
     }
 
     public format(params: CellTransformerParams): string {

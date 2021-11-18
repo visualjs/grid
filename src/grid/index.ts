@@ -19,10 +19,11 @@ import { Store as RowStore } from '@/grid/store/row';
 import { Store as CellStore } from '@/grid/store/cell';
 import { Store as ColumnStore } from '@/grid/store/column';
 import CellRange from '@/selection/CellRange';
-import { readTextFromClipboard, writeTextToClipboard } from '@/utils';
+import { coordsTo2dArray, readTextFromClipboard, writeTextToClipboard } from '@/utils';
 import { Observer, Handlers } from './Observer';
 import Actions from './Actions';
 import { Events, EventsDef } from './Events';
+import { CopyDataItemFormat, GsClipboard } from 'gs-clipboard';
 
 const defaultGridOptions = {
     width: '100%',
@@ -31,6 +32,7 @@ const defaultGridOptions = {
     rowHeight: 28,
     preloadRowCount: 20,
     disabledVirtualScrolling: false,
+    GSClipboardOptions: {},
 };
 
 export interface Stores {
@@ -46,10 +48,14 @@ export type State = RootState<Stores>;
 export class Grid {
     protected root: Store;
 
+    protected GS: GsClipboard;
+
     protected observer: Observer<EventsDef, typeof Actions>;
 
     constructor(protected container: HTMLElement, props: GridOptions, render = defaultRender) {
         props = Object.assign({ grid: this }, defaultGridOptions, props);
+
+        this.GS = new GsClipboard(props.GSClipboardOptions);
 
         this.root = new Root({
             grid: new GridStore({
@@ -187,6 +193,7 @@ export class Grid {
     // the destruction of the grid is asynchronous
     public destroy(): Promise<void> {
         this.store('grid').destroy();
+        this.GS.destroy();
         return new Promise<void>((resolve) => {
             setTimeout(resolve, 0);
         });
@@ -204,34 +211,21 @@ export class Grid {
 
     // copy the currently selected cell data to the clipboard.
     public copySelection(): void {
-        let text = '';
-        let tableStructure: any[] = [];
+        let cellCoords: Array<CopyDataItemFormat & Coordinate> = [];
         this.state('cell').selections.forEach((range) => {
-            let lastRow = -1;
-            const { minY } = range;
             range.each((coord) => {
-                if (lastRow !== -1) {
-                    text += coord.y !== lastRow ? '\n' : '\t';
-                }
-
-                const textData = this.getCellCopyValueByCoord(coord);
-                let y = coord.y - minY;
-
-                //  save table structure
-                tableStructure[y] ? tableStructure[y].push(textData) : (tableStructure[y] = [textData]);
-
-                text += textData;
-                lastRow = coord.y;
+                const textData = this.getCellValueByCoord(coord);
+                cellCoords.push({ value: textData, type: this.getColumnByIndex(coord.x), ...coord });
             });
         });
 
-        if (this.trigger('beforeCopy', text) === false) {
+        if (this.trigger('beforeCopy', this.GS.formatCopyData(coordsTo2dArray(cellCoords)).text) === false) {
             return;
         }
 
-        writeTextToClipboard(text);
+        const clipboardData = this.GS.setCopy(coordsTo2dArray(cellCoords));
 
-        this.trigger('afterCopy', text, tableStructure);
+        this.trigger('afterCopy', clipboardData.text);
     }
 
     // parse the data from the clipboard and
@@ -240,33 +234,35 @@ export class Grid {
         const start = this.state('cell').selections[0]?.start;
         if (!start) return;
 
-        readTextFromClipboard().then((str) => {
-            str = str.replace(/(\r\n|\r|\n)/g, '\n');
+        (async () => {
+            let startCoord: Coordinate = { x: start.x, y: start.y };
+            const clipboardData = await this.GS.getDataFromClipboard();
 
-            if (this.trigger('beforePaste', str) === false) {
+            if (this.trigger('beforePaste', clipboardData.text) === false) {
                 return;
             }
 
-            let theLastCellCoord = { x: start.x, y: start.y };
-
-            //  skip style if shift was pressed
             if (isRemoveStyle) {
-                this.setCellValueByCoord(theLastCellCoord, str);
+                this.setCellValueByCoord(startCoord, clipboardData.text);
             } else {
-                str.split('\n').forEach((rowData, y) => {
-                    rowData.split('\t').forEach((value, x) => {
-                        const coord = { x: x + start.x, y: y + start.y };
-                        theLastCellCoord = coord;
-                        this.setCellValueByCoord(coord, value);
+                clipboardData.clipboardType.map((row: CopyDataItemFormat[], y) => {
+                    row.map((item: CopyDataItemFormat, x) => {
+                        this.setCellValueByCoord(
+                            {
+                                x: x + startCoord.x,
+                                y: y + startCoord.y,
+                            },
+                            item,
+                            {
+                                setFromClipboard: true,
+                            }
+                        );
                     });
                 });
             }
 
-            //  set Cell selection after pasted
-            this.selectCells({ x: start.x, y: start.y }, theLastCellCoord);
-
-            this.trigger('afterPaste', str);
-        });
+            this.trigger('afterPaste', clipboardData.text);
+        })();
     }
 
     /**
@@ -305,18 +301,6 @@ export class Grid {
         return this.getRawCellValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x));
     }
 
-    public getCellCopyValue(row: string, column: string): any {
-        const columnOptions = this.getColumnOptions(column, row);
-        const trans = columnOptions?.transformer;
-        const value = this.getRawCellValue(row, column);
-
-        return trans
-            ? trans.formatCopy
-                ? trans.formatCopy({ value, column: columnOptions, gird: this })
-                : trans.format({ value, column: columnOptions, gird: this })
-            : value;
-    }
-
     // Get cell data with transformer applied
     public getCellValue(row: string, column: string): any {
         const columnOptions = this.getColumnOptions(column, row);
@@ -326,16 +310,17 @@ export class Grid {
         return trans ? trans.format({ value, column: columnOptions, gird: this }) : value;
     }
 
-    public getCellCopyValueByCoord(coord: Coordinate): any {
-        return this.getCellCopyValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x));
-    }
-
     public getCellValueByCoord(coord: Coordinate): any {
         return this.getCellValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x));
     }
 
     // set cell value according to cell position
-    public setCellValue(row: string, column: string, value: any, args: Partial<dispatchArgs> = {}): void {
+    public setCellValue(
+        row: string,
+        column: string,
+        value: any,
+        args: Partial<dispatchArgs> & { setFromClipboard?: boolean } = {}
+    ): void {
         const oldValue = this.getRawCellValue(row, column);
         const columnOptions = this.getColumnOptions(column, row);
 
@@ -346,7 +331,14 @@ export class Grid {
         }
 
         const trans = columnOptions.transformer;
-        value = trans ? trans.parse({ value, column: columnOptions, gird: this, oldValue }) : value;
+
+        if (args.setFromClipboard) {
+            value = trans?.parseFromClipboard
+                ? trans.parseFromClipboard({ value, column: columnOptions, gird: this, oldValue })
+                : value.value;
+        } else {
+            value = trans ? trans.parse({ value, column: columnOptions, gird: this, oldValue }) : value;
+        }
 
         if (oldValue === value && args.force !== true) {
             return;
@@ -355,7 +347,11 @@ export class Grid {
         this.store('row').dispatch('setCellValue', { row, column, value }, args);
     }
 
-    public setCellValueByCoord(coord: Coordinate, value: any, args: Partial<dispatchArgs> = {}): void {
+    public setCellValueByCoord(
+        coord: Coordinate,
+        value: any,
+        args: Partial<dispatchArgs> & { setFromClipboard?: boolean } = {}
+    ): void {
         return this.setCellValue(this.getRowIdByIndex(coord.y), this.getColumnByIndex(coord.x), value, args);
     }
 

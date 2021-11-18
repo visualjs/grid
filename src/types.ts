@@ -1,6 +1,7 @@
-import { CellRenderer, CellEditor, CellTransformer } from "@/grid/cell";
-import { JSXInternal } from "preact/src/jsx";
-import Grid from "./grid";
+import { CellRenderer, CellEditor, CellTransformer } from '@/grid/cell';
+import { JSXInternal } from 'preact/src/jsx';
+import Grid from './grid';
+import { GsClipboardOptions } from 'gs-clipboard';
 
 export type Unsubscribe = () => void;
 
@@ -41,7 +42,7 @@ export interface CellClassParams {
     row: string;
     column: string;
     grid: Grid;
-};
+}
 
 export interface Styles {
     [key: string]: string;
@@ -71,11 +72,11 @@ export interface RowData {
 }
 
 interface ICellRenderer {
-    new(): CellRenderer<unknown>;
+    new (): CellRenderer<unknown>;
 }
 
 interface ICellEditor {
-    new(): CellEditor<unknown>;
+    new (): CellEditor<unknown>;
 }
 
 export type RowPinned = 'top' | 'bottom' | undefined;
@@ -163,7 +164,7 @@ export interface ColumnGroupOptions {
     children: (ColumnGroupOptions | ColumnOptions)[];
 }
 
-export type ColumnDef = (ColumnGroupOptions | ColumnOptions);
+export type ColumnDef = ColumnGroupOptions | ColumnOptions;
 export type ColumnsDef = ColumnDef[];
 
 export type Fillable = 'x' | 'y' | 'xy' | undefined;
@@ -203,4 +204,7 @@ export interface GridOptions {
     fillable?: Fillable;
     // callback called when a cell is right clicked.
     getContextMenuItems?: (params: GetContextMenuItemsParams) => MenuItem[];
+    //  gs-clipboard options https://github.com/carl-jin/gs-clipboard
+    //  it will sent to gs-clipboard
+    GSClipboardOptions?: GsClipboardOptions;
 }
