@@ -1,5 +1,4 @@
-import { CellTransformer, CellTransformerParams } from '@/grid/cell';
-import { ParseFromClipboardParams } from '@/grid/cell/CellTransformer';
+import { CellTransformer, CellTransformerParams, ParseFromClipboardParams } from '@/grid/cell';
 
 export interface Props {
     allowNotExistOption?: boolean;

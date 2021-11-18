@@ -1,11 +1,14 @@
-import { GridOptions } from "@/types";
-import { CellTransformer } from "..";
-import { CellTransformerParams } from "./cell";
+import { GridOptions } from '@/types';
+import { CellTransformer } from '..';
+import { CellTransformerParams, ParseFromClipboardParams } from './cell';
 
 class Transformer extends CellTransformer {
-
     constructor(protected prefix = 'trans_') {
         super();
+    }
+
+    public parseFromClipboard(params: ParseFromClipboardParams): any {
+        return params.value;
     }
 
     format(params: CellTransformerParams): string {
@@ -24,14 +27,15 @@ export const data: GridOptions = {
         { field: 'name', transformer: new Transformer() },
         { field: 'status', pinned: 'left' },
         {
-            field: 'month', columnOptionsSelector: (params) => {
+            field: 'month',
+            columnOptionsSelector: (params) => {
                 return {
-                    readonly: params.row === 'r_10'
+                    readonly: params.row === 'r_10',
                 };
-            }
+            },
         },
         { field: 'game', pinned: 'right' },
-        { field: 'date', readonly: true }
+        { field: 'date', readonly: true },
     ],
     rows: [
         { id: 'r_01', status: 'status_01', name: 'name_01', month: 'month_01', date: 'date_01', game: 'game_01' },
