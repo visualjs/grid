@@ -2051,10 +2051,10 @@ graceful-fs@^4.2.4:
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.8.tgz"
   integrity sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==
 
-gs-clipboard@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/gs-clipboard/-/gs-clipboard-0.0.6.tgz#25d0e58349860092ce25b54c32bb12598d3e92aa"
-  integrity sha512-Dellz1Z6UKufwPI6mORx8xF7YX9UGl3mn0zhNCcWoCxgTYofUmRPv5IoO1llFvN1ofPGjpwTh9e4UZduG666yg==
+gs-clipboard@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/gs-clipboard/-/gs-clipboard-0.0.8.tgz#1b4078e8e65d39775317c2e63d1ab3d8da46d6fd"
+  integrity sha512-49BH9eNHN8INMM9xEo9nWdq7W0If3lst0ndUjuGaK0IdNK6N7Y3khMW/KnHYq68aQSTyqRUdvEnSVBgK9jUNdg==
   dependencies:
     lodash-es "^4.17.21"
     tsc-alias "^1.4.1"
