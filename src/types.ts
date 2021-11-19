@@ -136,6 +136,8 @@ export interface BaseColumnOptions extends OverridableColumnOptions {
     visible?: boolean;
     // 'left' | 'right' | undefined
     pinned?: Pinned;
+    //  col type
+    type?:string;
     // columnOptionsSelector is a callback to apply different options to the same column of cells in different rows
     columnOptionsSelector?: (params: ColumnSelectorParams) => OverridableColumnOptions;
 }

@@ -1,10 +1,10 @@
 {
     "name": "grid-keeping-latest",
-    "version": "1.1.31",
+    "version": "1.1.32",
     "description": "Fork from https://github.com/visualjs/grid for keeping latest version on npm",
     "main": "./dist/visual-grid.umd.js",
     "module": "./dist/visual-grid.es.js",
-    "types": "./dist/index.d.ts",
+    "types": "./dist/src/index.d.ts",
     "scripts": {
         "dev": "vite --force",
         "build": "vite build && tsc -p ./tsconfig.dist.json -emitDeclarationOnly && tsc-alias -p ./tsconfig.dist.json && cp -r ./src/themes ./dist",

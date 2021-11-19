@@ -215,7 +215,8 @@ export class Grid {
         this.state('cell').selections.forEach((range) => {
             range.each((coord) => {
                 const textData = this.getCellValueByCoord(coord);
-                cellCoords.push({ value: textData, type: this.getColumnByIndex(coord.x), ...coord });
+                const colOption = this.getColumnOptionsByIndex(coord.x)
+                cellCoords.push({ value: textData, type: colOption.type ?? colOption.field, ...coord });
             });
         });
 
