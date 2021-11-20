@@ -170,7 +170,7 @@ class Body extends Component<Props, State> {
         }
 
         // update hovered row
-        this.props.hoverRow(row);
+        // this.props.hoverRow(row);
 
         const coord = this.props.getCoordinate(row, column);
 

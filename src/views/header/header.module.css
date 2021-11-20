@@ -9,7 +9,8 @@
 .header-columns {
     display: flex;
     color: var(--header-foreground-color);
-    font-weight: 600;
+    font-weight: normal;
+    font-size: 12px;
     white-space: nowrap;
     border-bottom: 1px solid var(--border-color);
 }

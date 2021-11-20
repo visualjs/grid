@@ -2051,6 +2051,14 @@ graceful-fs@^4.2.4:
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.8.tgz"
   integrity sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==
 
+grid-keeping-latest@^1.1.33:
+  version "1.1.33"
+  resolved "https://registry.yarnpkg.com/grid-keeping-latest/-/grid-keeping-latest-1.1.33.tgz#122223436a466cb499ebc2758b719317179867ee"
+  integrity sha512-BinnPIJZHRvTy6D0S4zYGT/WlxArhn3HgP8N/dnrKFP6P2NPj/5uEvxd5T55a2EAHLM9CN8wvGDcZBjwL8KWCg==
+  dependencies:
+    gs-clipboard "^0.0.8"
+    hotkeys-js "^3.8.7"
+
 gs-clipboard@^0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/gs-clipboard/-/gs-clipboard-0.0.8.tgz#1b4078e8e65d39775317c2e63d1ab3d8da46d6fd"

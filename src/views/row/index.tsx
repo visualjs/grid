@@ -32,8 +32,8 @@ class Row extends Component<Props> {
             if (!this.self.current) return;
 
             const index = this.props.grid.store('row').getRowIndex(this.props.value);
-            const hovered = this.props.grid.state('row').hoveredRow === this.props.value;
-            const selected = this.props.grid.state('row').selectedRows.indexOf(this.props.value) !== -1;
+            // const hovered = this.props.grid.state('row').hoveredRow === this.props.value;
+            // const selected = this.props.grid.state('row').selectedRows.indexOf(this.props.value) !== -1;
 
             if (index % 2 === 0) {
                 DOM.appendClassName(this.self.current, styles.rowStripeCells);
@@ -41,17 +41,17 @@ class Row extends Component<Props> {
                 DOM.removeClassName(this.self.current, styles.rowStripeCells);
             }
 
-            if (hovered) {
-                DOM.appendClassName(this.self.current, styles.rowCellsHover);
-            } else {
-                DOM.removeClassName(this.self.current, styles.rowCellsHover);
-            }
-
-            if (selected) {
-                DOM.appendClassName(this.self.current, styles.rowCellsSelect);
-            } else {
-                DOM.removeClassName(this.self.current, styles.rowCellsSelect);
-            }
+            // if (hovered) {
+            //     DOM.appendClassName(this.self.current, styles.rowCellsHover);
+            // } else {
+            //     DOM.removeClassName(this.self.current, styles.rowCellsHover);
+            // }
+            //
+            // if (selected) {
+            //     DOM.appendClassName(this.self.current, styles.rowCellsSelect);
+            // } else {
+            //     DOM.removeClassName(this.self.current, styles.rowCellsSelect);
+            // }
         });
     }
 

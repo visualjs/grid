@@ -3,7 +3,7 @@
 
     /* global */
     --primary-color: #0091ea;
-    --border-color: #bdc3c7;
+    --border-color: #E2E3E3;
     --border-radius: none;
     --default-font-size: 13px;
     --foreground-color: rgba(0, 0, 0, 0.9);
@@ -11,8 +11,8 @@
     --loading-background: rgba(255, 255, 255, 0.8);
     --loading-forground: #0091ea;
     /* headers */
-    --header-background-color: #eaeaea;
-    --header-foreground-color: #222;
+    --header-background-color: #F8F9FA;
+    --header-foreground-color: #5F6368;
     --header-resizer-active-color: var(--primary-color);
     /* columns */
     --column-pinned-right-shadow: rgba(0, 0, 0, 0.1) -4px 0px 0px 0px;
